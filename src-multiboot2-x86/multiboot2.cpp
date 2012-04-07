@@ -1,8 +1,17 @@
 // Copyright (C) 2012 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
+#include "config.h"
+
 #include <aasgard/aasgard.h>
 
 #include <multiboot2/multiboot2.h>
+
+#include <x86/xapic.h>
+#include <x86/x2apic.h>
+#include <x86/cpuid.h>
+#include <x86/gdt.h>
+#include <x86/idt.h>
+#include <x86/msr.h>
 
 #include "x86.h"
 
@@ -30,7 +39,6 @@ request __attribute__(( used, aligned(8), section(".multiboot2") )) =
   },
 };
 
-
 //! Multiboot2 client entry
 //!
 //! @see start.S
@@ -43,6 +51,10 @@ void multiboot2_entry ( uint32_t magic, multiboot2::information_header * mbi )
   if (not(is_aligned(mbi, 8))) return;
 
   load_global_descriptor_table();
+
+  load_interrupt_descriptor_table();
+
+  x86::enable_interrupts();
 
   // TODO: continue...
 
