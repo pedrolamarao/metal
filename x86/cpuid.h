@@ -1,3 +1,5 @@
+// Copyright (C) 2012 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+
 #pragma once
 
 //! Declarations
