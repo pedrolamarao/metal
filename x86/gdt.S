@@ -2,15 +2,19 @@
 
 .att_syntax
 
-// load_global_descriptor_table [ fastcall ] : ( base : address , limit : size ) -> ()
+// TODO: this should be placed in the .recycle section
 
-.global __load_global_descriptor_table
+.type gdtr, STT_OBJECT
 
 gdtr:
 	.short 0
     .long 0
 
-// TODO: this should be placed in the 'recyclable' section
+// x86::internal::__load_global_descriptor_table [ fastcall ] : ( base : address , limit : size ) -> ()
+
+.global __load_global_descriptor_table
+.type   __load_global_descriptor_table, STT_FUNC
+.func   __load_global_descriptor_table
 
 __load_global_descriptor_table:
 	mov %ecx, gdtr + 2
@@ -18,9 +22,13 @@ __load_global_descriptor_table:
 	lgdt gdtr
 	ret
 
-// reload_segment_registers [ fastcall ] : ( code : size , data : size ) -> ()
+.endfunc
+
+// x86::internal::__reload_segment_registers [ fastcall ] : ( code : size , data : size ) -> ()
 
 .global __reload_segment_registers
+.type   __reload_segment_registers, STT_FUNC
+.func   __reload_segment_registers
 
 __reload_segment_registers:
 	push %ecx
@@ -34,3 +42,5 @@ reload:
 	mov %dx, %gs
 	mov %dx, %ss
 	ret
+
+.endfunc
