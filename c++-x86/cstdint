@@ -1,0 +1,48 @@
+// Copyright (C) 2012 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+
+#pragma once
+
+#if __cplusplus < 201103L
+# define constexpr
+# define nullptr (static_cast<void*>(0))
+#endif
+
+
+namespace std
+{
+  typedef signed char int8_t ;
+
+  typedef signed short int int16_t ;
+
+  typedef signed int int32_t ;
+
+  typedef signed long int int64_t ;
+
+  typedef unsigned char uint8_t ;
+
+  typedef unsigned short int uint16_t ;
+
+  typedef unsigned int uint32_t ;
+
+  typedef unsigned long int uint64_t ;
+
+  typedef decltype((char*)(0) - (char*)(0)) size_t ;
+}
+
+typedef signed char int8_t ;
+
+typedef signed short int int16_t ;
+
+typedef signed int int32_t ;
+
+typedef signed long int int64_t ;
+
+typedef unsigned char uint8_t ;
+
+typedef unsigned short int uint16_t ;
+
+typedef unsigned int uint32_t ;
+
+typedef unsigned long int uint64_t ;
+
+typedef decltype((char*)(0) - (char*)(0)) size_t ;
