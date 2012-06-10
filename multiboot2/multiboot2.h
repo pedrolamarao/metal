@@ -1,6 +1,7 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
+
 
 namespace multiboot2
 {
@@ -426,6 +427,8 @@ namespace multiboot2
     uint8_t rsdp [];
   };
 
+  auto rsdp ( acpi_information const & ) -> void const * ;
+
   // TODO: declare accessors
 
   //! Multiboot network information
@@ -540,6 +543,12 @@ namespace multiboot2
   auto name (boot_loader_name_information const & x) -> char const *
   {
     return x.name;
+  }
+
+  inline
+  auto rsdp (acpi_information const & x) -> void const *
+  {
+    return x.rsdp;
   }
 
 }
