@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <cstdint>
+
+
 //! Declarations
 
 namespace x86
