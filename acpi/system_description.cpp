@@ -11,10 +11,6 @@ static_assert(__is_standard_layout(acpi::wide_root_system_description), "acpi::w
 
 static_assert(__is_standard_layout(acpi::fixed_system_description), "acpi::fixed_system_description is not standard layout");
 
-static_assert(__is_standard_layout(acpi::differentiated_system_description), "acpi::differentiated_system_description is not standard layout");
-
-static_assert(__is_standard_layout(acpi::secondary_system_description), "acpi::secondary_system_description is not standard layout");
-
 static_assert(__is_standard_layout(acpi::apic_system_description), "acpi::apic_system_description is not standard layout");
 
 static_assert(__is_standard_layout(acpi::apic_description), "acpi::apic_description is not standard layout");
