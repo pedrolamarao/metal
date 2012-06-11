@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <cstdint>
+
+
 //! Declarations
 
 namespace x86
@@ -14,8 +17,7 @@ namespace x86
   {
   public:
 
-    constexpr
-    interrupt_gate_descriptor ();
+    interrupt_gate_descriptor () = default ;
 
     constexpr
     interrupt_gate_descriptor ( uint16_t segment, uint32_t address, uint8_t access );
@@ -26,11 +28,11 @@ namespace x86
     constexpr
     interrupt_gate_descriptor ( uint16_t segment, void (* address) (), uint8_t access );
 
-    void set ( uint16_t segment, uint32_t address, uint16_t access );
+    void set ( uint16_t segment, uint32_t address, uint8_t access );
 
-    void set ( uint16_t segment, void * address, uint16_t access );
+    void set ( uint16_t segment, void * address, uint8_t access );
 
-    void set ( uint16_t segment, void (* address) (), uint16_t access );
+    void set ( uint16_t segment, void (* address) (), uint8_t access );
 
   private:
 
@@ -87,17 +89,6 @@ namespace x86
   }
 
   inline constexpr
-  interrupt_gate_descriptor::interrupt_gate_descriptor () :
-    _offset_lower(0),
-    _segment(0),
-    _unused(0),
-    _type(0),
-    _offset_upper(0)
-  {
-
-  }
-
-  inline constexpr
   interrupt_gate_descriptor::interrupt_gate_descriptor ( uint16_t segment, uint32_t address, uint8_t access ) :
     _offset_lower(address & 0xFFFF),
     _segment(segment),
@@ -131,7 +122,7 @@ namespace x86
   }
 
   inline
-  void interrupt_gate_descriptor::set ( uint16_t segment, uint32_t address, uint16_t access )
+  void interrupt_gate_descriptor::set ( uint16_t segment, uint32_t address, uint8_t access )
   {
     _offset_lower = address & 0xFFFF;
     _segment = segment;
@@ -140,13 +131,13 @@ namespace x86
   }
 
   inline
-  void interrupt_gate_descriptor::set ( uint16_t segment, void * address, uint16_t access )
+  void interrupt_gate_descriptor::set ( uint16_t segment, void * address, uint8_t access )
   {
     set(segment, (uint32_t)(address), access);
   }
 
   inline
-  void interrupt_gate_descriptor::set ( uint16_t segment, void (* address) (), uint16_t access )
+  void interrupt_gate_descriptor::set ( uint16_t segment, void (* address) (), uint8_t access )
   {
     set(segment, (uint32_t)(address), access);
   }
