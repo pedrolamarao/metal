@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <cstdint>
+
+
 //! Declarations
 
 namespace x86
@@ -15,8 +18,7 @@ namespace x86
   {
   public:
 
-    constexpr
-    segment_descriptor () ;
+    segment_descriptor () = default ;
 
     constexpr
     segment_descriptor ( uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity ) ;
@@ -130,18 +132,6 @@ namespace x86
 
     extern "C"
     void __reload_segment_registers ( uint32_t code, uint32_t data ) __attribute__(( fastcall )) ;
-
-  }
-
-  inline constexpr
-  segment_descriptor::segment_descriptor () :
-    _limit_lower(0),
-    _base_lower(0),
-    _base_middle(0),
-    _access(0),
-    _granularity(0),
-    _base_upper(0)
-  {
 
   }
 
