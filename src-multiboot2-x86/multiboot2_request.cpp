@@ -1,27 +1,18 @@
-#include <multiboot2/multiboot2.h>
+#include <multiboot2/header.h>
 
 
-using namespace multiboot2;
-
-
-//! Multiboot2 information request object
-
-struct
+namespace
 {
-  request_header     header;
-  request_entry_base last;
+  using namespace multiboot2;
+
+  struct
+  {
+    header_prologue prologue;
+    end_request     end;
+  }
+  constexpr request __attribute__(( used, section(".multiboot2") )) =
+  {
+    { architecture_type::x86, sizeof(request), },
+    { },
+  };
 }
-request __attribute__(( used, aligned(8), section(".multiboot2") )) =
-{
-  {
-    request_magic,
-    request_architecture::x86,
-    sizeof(request),
-    (- (request_magic + (uint32_t)(request_architecture::x86) + sizeof(request))),
-  },
-  {
-    request_type::end,
-    request_flag::none,
-    8,
-  },
-};
