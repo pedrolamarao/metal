@@ -1,44 +1,24 @@
-// Copyright (C) 2012 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2012,2013,2014,2015,2016 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
-
-#if __cplusplus < 201103L
-# define constexpr
-# define nullptr (static_cast<void*>(0))
-#endif
 
 
 namespace std
 {
-  typedef signed char int8_t ;
+  using int8_t = signed char;
 
-  typedef signed short int int16_t ;
+  using int16_t = signed short int;
 
-  typedef signed int int32_t ;
+  using int32_t = signed int;
 
-  typedef signed long int int64_t ;
+  using int64_t = signed long int;
 
-  typedef unsigned char uint8_t ;
+  using uint8_t = unsigned char;
 
-  typedef unsigned short int uint16_t ;
+  using uint16_t = unsigned short int;
 
-  typedef unsigned int uint32_t ;
+  using uint32_t = unsigned int;
 
-  typedef unsigned long int uint64_t ;
+  using uint64_t = unsigned long int;
 }
 
-typedef signed char int8_t ;
-
-typedef signed short int int16_t ;
-
-typedef signed int int32_t ;
-
-typedef signed long int int64_t ;
-
-typedef unsigned char uint8_t ;
-
-typedef unsigned short int uint16_t ;
-
-typedef unsigned int uint32_t ;
-
-typedef unsigned long int uint64_t ;
