@@ -1,4 +1,4 @@
-// Copyright (C) 2015 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2015,2016 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
@@ -9,27 +9,27 @@ namespace x86
 {
 	struct apic_location
 	{
-		uint32_t value;
-		uint32_t unused0;
-		uint32_t unused1;
-		uint32_t unused2;
+		std::uint32_t value;
+		std::uint32_t unused0;
+		std::uint32_t unused1;
+		std::uint32_t unused2;
 	};
 
 	struct apic_r_location : public apic_location
 	{
-		constexpr explicit operator uint32_t () const { return value; }
+		constexpr explicit operator std::uint32_t () const { return value; }
 	};
 
 	struct apic_w_location : public apic_location
 	{
-		auto operator= (uint32_t x) -> apic_w_location & { value = x; return *this; }
+		auto operator= (std::uint32_t x) -> apic_w_location & { value = x; return *this; }
 	};
 
 	struct apic_rw_location : public apic_location
 	{
-		constexpr explicit operator uint32_t () const { return value; }
+		constexpr explicit operator std::uint32_t () const { return value; }
 
-		auto operator= (uint32_t x) -> apic_rw_location & { value = x; return *this; }
+		auto operator= (std::uint32_t x) -> apic_rw_location & { value = x; return *this; }
 	};
 
 	struct apic_memory_map
@@ -59,13 +59,13 @@ namespace x86
 	}
 
 	constexpr inline
-	auto is_apic_enabled (uint64_t location) -> bool
+	auto is_apic_enabled (std::uint64_t location) -> bool
 	{
 		return false;
 	}
 
 	constexpr inline
-	auto get_apic_memory_map (uint64_t location) -> apic_memory_map *
+	auto get_apic_memory_map (std::uint64_t location) -> apic_memory_map *
 	{
 		return nullptr;
 	}

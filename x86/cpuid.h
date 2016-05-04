@@ -1,4 +1,4 @@
-// Copyright (C) 2012 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2012,2013,2014,2015,2016 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
@@ -25,31 +25,31 @@ namespace x86
     //! @pre has_cpuid()
     //! @pre id <= cpuid(0).a()
 
-    cpuid (uint32_t id, uint32_t extra) ;
+    cpuid (std::uint32_t id, std::uint32_t extra) ;
 
     //! @pre has_cpuid()
     //! @pre id <= cpuid(0).a()
 
-    cpuid (uint32_t id) ;
+    cpuid (std::uint32_t id) ;
 
     constexpr
-    auto a () -> uint32_t ;
+    auto a () -> std::uint32_t ;
 
     constexpr
-    auto b () -> uint32_t ;
+    auto b () -> std::uint32_t ;
 
     constexpr
-    auto c () -> uint32_t ;
+    auto c () -> std::uint32_t ;
 
     constexpr
-    auto d () -> uint32_t ;
+    auto d () -> std::uint32_t ;
 
   private:
 
-    uint32_t eax;
-    uint32_t ebx;
-    uint32_t ecx;
-    uint32_t edx;
+    std::uint32_t eax;
+    std::uint32_t ebx;
+    std::uint32_t ecx;
+    std::uint32_t edx;
 
   };
 
@@ -67,7 +67,7 @@ namespace x86
     bool __has_cpuid () __attribute__(( fastcall )) ;
 
     extern "C"
-    void __read_cpuid (uint32_t leaf, uint32_t extra, cpuid & out) __attribute__(( fastcall )) ;
+    void __read_cpuid (std::uint32_t leaf, std::uint32_t extra, cpuid & out) __attribute__(( fastcall )) ;
 
   }
 
@@ -84,37 +84,37 @@ namespace x86
   }
 
   inline
-  cpuid::cpuid (uint32_t id, uint32_t extra) : eax(0), ebx(0), ecx(0), edx(0)
+  cpuid::cpuid (std::uint32_t id, std::uint32_t extra) : eax(0), ebx(0), ecx(0), edx(0)
   {
     internal::__read_cpuid(id, extra, (* this));
   }
 
   inline
-  cpuid::cpuid (uint32_t id) : cpuid(id, 0)
+  cpuid::cpuid (std::uint32_t id) : cpuid(id, 0)
   {
 
   }
 
   inline constexpr
-  auto cpuid::a () -> uint32_t
+  auto cpuid::a () -> std::uint32_t
   {
     return eax;
   }
 
   inline constexpr
-  auto cpuid::b () -> uint32_t
+  auto cpuid::b () -> std::uint32_t
   {
     return ebx;
   }
 
   inline constexpr
-  auto cpuid::c () -> uint32_t
+  auto cpuid::c () -> std::uint32_t
   {
     return ecx;
   }
 
   inline constexpr
-  auto cpuid::d () -> uint32_t
+  auto cpuid::d () -> std::uint32_t
   {
     return edx;
   }

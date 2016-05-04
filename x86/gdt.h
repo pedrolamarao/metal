@@ -1,4 +1,4 @@
-// Copyright (C) 2012 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2012,2013,2014,2015,2016 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
@@ -21,16 +21,16 @@ namespace x86
     segment_descriptor () = default ;
 
     constexpr
-    segment_descriptor ( uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity ) ;
+    segment_descriptor ( std::uint32_t base, std::uint32_t limit, std::uint8_t access, std::uint8_t granularity ) ;
 
   private:
 
-    uint16_t _limit_lower;
-    uint16_t _base_lower;
-    uint8_t  _base_middle;
-    uint8_t  _access;
-    uint8_t  _granularity;
-    uint8_t  _base_upper;
+    std::uint16_t _limit_lower;
+    std::uint16_t _base_lower;
+    std::uint8_t  _base_middle;
+    std::uint8_t  _access;
+    std::uint8_t  _granularity;
+    std::uint8_t  _base_upper;
 
   }
   __attribute__(( packed ));
@@ -44,7 +44,7 @@ namespace x86
   //! @param present      true if present in memory
 
   constexpr
-  auto data_segment_access ( bool accessed, bool may_write, bool expand_down, uint8_t privilege, bool present ) -> uint8_t ;
+  auto data_segment_access ( bool accessed, bool may_write, bool expand_down, std::uint8_t privilege, bool present ) -> std::uint8_t ;
 
   //! Computes access field for data segment
   //!
@@ -55,7 +55,7 @@ namespace x86
   //! @post data_segment_access(true, may_write, expand_down, privilege, true)
 
   constexpr
-  auto data_segment_access ( bool may_write, bool expand_down, uint8_t privilege ) -> uint8_t ;
+  auto data_segment_access ( bool may_write, bool expand_down, std::uint8_t privilege ) -> std::uint8_t ;
 
   //! Computes access field for code segments
   //!
@@ -66,7 +66,7 @@ namespace x86
   //! @param present      true if present in memory
 
   constexpr
-  auto code_segment_access ( bool accessed, bool may_read, bool conforming, uint8_t privilege, bool present ) -> uint8_t ;
+  auto code_segment_access ( bool accessed, bool may_read, bool conforming, std::uint8_t privilege, bool present ) -> std::uint8_t ;
 
   //! Computes access field for code segments
   //!
@@ -77,7 +77,7 @@ namespace x86
   //! @post code_segment_access(true, may_read, conforming, privilege, true)
 
   constexpr
-  auto code_segment_access ( bool may_read, bool conforming, uint8_t privilege ) -> uint8_t ;
+  auto code_segment_access ( bool may_read, bool conforming, std::uint8_t privilege ) -> std::uint8_t ;
 
   //! Computes granularity field for code or data segments
   //!
@@ -88,7 +88,7 @@ namespace x86
   //! @param is_4kb       true if limit unit is 4kb
 
   constexpr
-  auto segment_granularity ( uint8_t limit_upper, bool free, bool is_long, bool is_32bit, bool is_4kb ) -> uint8_t ;
+  auto segment_granularity ( std::uint8_t limit_upper, bool free, bool is_long, bool is_32bit, bool is_4kb ) -> std::uint8_t ;
 
   //! Computes granularity field for code or data segments
   //!
@@ -99,14 +99,14 @@ namespace x86
   //! @post segment_granularity(0, false, is_long, is_32bit, is_4kb)
 
   constexpr
-  auto segment_granularity ( bool is_long, bool is_32bit, bool is_4kb ) -> uint8_t ;
+  auto segment_granularity ( bool is_long, bool is_32bit, bool is_4kb ) -> std::uint8_t ;
 
   //! Loads the global descriptor table register
   //!
   //! @param table  array of descriptors
   //! @param count  count of descriptors in array
 
-  void load_global_descriptor_table ( segment_descriptor * table, uint16_t count );
+  void load_global_descriptor_table ( segment_descriptor * table, std::uint16_t count );
 
   //! Loads segment registers with new selectors
   //!
@@ -115,7 +115,7 @@ namespace x86
   //!
   //! @post load code in CD then data in DS, ES, FS, GS and SS
 
-  void reload_segment_registers ( uint16_t code, uint16_t data );
+  void reload_segment_registers ( std::uint16_t code, std::uint16_t data );
 
 }
 
@@ -128,15 +128,15 @@ namespace x86
   {
 
     extern "C"
-    void __load_global_descriptor_table ( void * base, uint32_t limit ) __attribute__(( fastcall )) ;
+    void __load_global_descriptor_table ( void * base, std::uint32_t limit ) __attribute__(( fastcall )) ;
 
     extern "C"
-    void __reload_segment_registers ( uint32_t code, uint32_t data ) __attribute__(( fastcall )) ;
+    void __reload_segment_registers ( std::uint32_t code, std::uint32_t data ) __attribute__(( fastcall )) ;
 
   }
 
   inline constexpr
-  segment_descriptor::segment_descriptor ( uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity ) :
+  segment_descriptor::segment_descriptor ( std::uint32_t base, std::uint32_t limit, std::uint8_t access, std::uint8_t granularity ) :
     _limit_lower(limit & 0xFFFF),
     _base_lower(base & 0xFFFF),
     _base_middle((base >> 16) & 0xFF),
@@ -148,7 +148,7 @@ namespace x86
   }
 
   inline constexpr
-  auto data_segment_access ( bool accessed, bool may_write, bool expand_down, uint8_t privilege, bool present ) -> uint8_t
+  auto data_segment_access ( bool accessed, bool may_write, bool expand_down, std::uint8_t privilege, bool present ) -> std::uint8_t
   {
     return (present ? 0x01 : 0x00) << 7
          | (privilege & 0x03) << 5
@@ -161,7 +161,7 @@ namespace x86
   }
 
   inline constexpr
-  auto data_segment_access ( bool may_write, bool expand_down, uint8_t privilege ) -> uint8_t
+  auto data_segment_access ( bool may_write, bool expand_down, std::uint8_t privilege ) -> std::uint8_t
   {
     return (1 << 7)
          | (privilege & 0x03) << 5
@@ -174,7 +174,7 @@ namespace x86
   }
 
   inline constexpr
-  auto code_segment_access ( bool accessed, bool may_read, bool conforming, uint8_t privilege, bool present ) -> uint8_t
+  auto code_segment_access ( bool accessed, bool may_read, bool conforming, std::uint8_t privilege, bool present ) -> std::uint8_t
   {
     return (present ? 0x01 : 0x00) << 7
          | (privilege & 0x03) << 5
@@ -187,7 +187,7 @@ namespace x86
   }
 
   inline constexpr
-  auto code_segment_access ( bool may_read, bool conforming, uint8_t privilege ) -> uint8_t
+  auto code_segment_access ( bool may_read, bool conforming, std::uint8_t privilege ) -> std::uint8_t
   {
     return (1 << 7)
          | (privilege & 0x03) << 5
@@ -200,7 +200,7 @@ namespace x86
   }
 
   inline constexpr
-  auto segment_granularity ( uint8_t limit_upper, bool free, bool is_long, bool is_32bit, bool is_4kb ) -> uint8_t
+  auto segment_granularity ( std::uint8_t limit_upper, bool free, bool is_long, bool is_32bit, bool is_4kb ) -> std::uint8_t
   {
     return (is_4kb ? 0x01 : 0x00) << 7
          | (is_32bit ? 0x01 : 0x00) << 6
@@ -211,7 +211,7 @@ namespace x86
   }
 
   inline constexpr
-  auto segment_granularity ( bool is_long, bool is_32bit, bool is_4kb ) -> uint8_t
+  auto segment_granularity ( bool is_long, bool is_32bit, bool is_4kb ) -> std::uint8_t
   {
     return (is_4kb ? 0x01 : 0x00) << 7
          | (is_32bit ? 0x01 : 0x00) << 6
@@ -221,13 +221,13 @@ namespace x86
   }
 
   inline
-  void load_global_descriptor_table ( segment_descriptor * table, uint16_t count )
+  void load_global_descriptor_table ( segment_descriptor * table, std::uint16_t count )
   {
     internal::__load_global_descriptor_table(table, ((count * sizeof(segment_descriptor)) - 1));
   }
 
   inline
-  void reload_segment_registers ( uint16_t code, uint16_t data )
+  void reload_segment_registers ( std::uint16_t code, std::uint16_t data )
   {
     internal::__reload_segment_registers((code * 8), (data * 8));
   }
