@@ -32,7 +32,7 @@ namespace
 //! @see start.S
 
 extern "C"
-void multiboot2_entry ( std::uint32_t magic, multiboot2::information_list & mbi )
+void __attribute__((fastcall)) multiboot2_entry ( std::uint32_t magic, multiboot2::information_list & mbi )
 {
   using namespace multiboot2;
 

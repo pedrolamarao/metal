@@ -6,10 +6,15 @@
 
 .comm stack , STACK_SIZE
 
+// extern "C"
+// void __attribute__((fastcall)) multiboot2_entry ( std::uint32_t magic, multiboot2::information_list & mbi )
+
+.extern multiboot2_entry
+
 //! Multiboot2 client entry point
 //!
-//! @param %eax  value of Multiboot information magic number
-//! @param %ebx  address of Multiboot2 information object
+//! @param %eax  Multiboot2 information magic number
+//! @param %ebx  Multiboot2 information list address
 
 .global _start
 
@@ -20,8 +25,8 @@ _start:
     push $0
     popf
 
-    push %ebx
-    push %eax
+    mov %eax,%ecx
+    mov %ebx,%edx
     call multiboot2_entry
 
 loop:
