@@ -1,0 +1,5 @@
+dir .
+file xxx--multiboot2-x86--minimal.bin/aasgard
+hbreak _start
+target remote localhost:1234
+continue
