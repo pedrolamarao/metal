@@ -17,22 +17,14 @@ namespace x86
   {
   public:
 
-    interrupt_gate_descriptor () = default ;
+    constexpr
+    interrupt_gate_descriptor ();
 
     constexpr
     interrupt_gate_descriptor ( std::uint16_t segment, std::uint32_t address, std::uint8_t access );
 
     constexpr
-    interrupt_gate_descriptor ( std::uint16_t segment, void * address, std::uint8_t access );
-
-    constexpr
     interrupt_gate_descriptor ( std::uint16_t segment, void (* address) (), std::uint8_t access );
-
-    void set ( std::uint16_t segment, std::uint32_t address, std::uint8_t access );
-
-    void set ( std::uint16_t segment, void * address, std::uint8_t access );
-
-    void set ( std::uint16_t segment, void (* address) (), std::uint8_t access );
 
   private:
 
@@ -43,7 +35,7 @@ namespace x86
     std::uint16_t _offset_upper;
 
   }
-  __attribute(( packed ));
+  __attribute((aligned(8)));
 
   //! Computes access field for interrupt gate descriptors
 
@@ -58,6 +50,9 @@ namespace x86
   //! Loads the interrupt descriptor table register
 
   void load_interrupt_descriptor_table ( interrupt_gate_descriptor * table, std::uint32_t count );
+
+  template <unsigned N>
+  void load_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] );
 
   //! Enable interrupts on this processor
 
@@ -78,7 +73,7 @@ namespace x86
   {
 
     extern "C"
-    void __load_interrupt_descriptor_table ( void * base, std::uint32_t limit ) __attribute__(( fastcall )) ;
+    void __load_interrupt_descriptor_table ( std::uint32_t base, std::uint16_t limit ) __attribute__(( fastcall )) ;
 
     extern "C"
     void __enable_interrupts () __attribute__(( fastcall )) ;
@@ -89,23 +84,21 @@ namespace x86
   }
 
   inline constexpr
+  interrupt_gate_descriptor::interrupt_gate_descriptor () :
+    _offset_lower(0),
+    _segment(0),
+    _unused(0),
+    _type(0),
+    _offset_upper(0)
+  { }
+
+  inline constexpr
   interrupt_gate_descriptor::interrupt_gate_descriptor ( std::uint16_t segment, std::uint32_t address, std::uint8_t access ) :
     _offset_lower(address & 0xFFFF),
     _segment(segment),
     _unused(0),
     _type(access),
     _offset_upper(address >> 16)
-  {
-
-  }
-
-  inline constexpr
-  interrupt_gate_descriptor::interrupt_gate_descriptor ( std::uint16_t segment, void * address, std::uint8_t access ) :
-    _offset_lower((std::uint32_t)(address) & 0xFFFF),
-    _segment(segment),
-    _unused(0),
-    _type(access),
-    _offset_upper((std::uint32_t)(address) >> 16)
   {
 
   }
@@ -121,27 +114,6 @@ namespace x86
 
   }
 
-  inline
-  void interrupt_gate_descriptor::set ( std::uint16_t segment, std::uint32_t address, std::uint8_t access )
-  {
-    _offset_lower = address & 0xFFFF;
-    _segment = segment;
-    _type = access;
-    _offset_upper = address >> 16;
-  }
-
-  inline
-  void interrupt_gate_descriptor::set ( std::uint16_t segment, void * address, std::uint8_t access )
-  {
-    set(segment, (std::uint32_t)(address), access);
-  }
-
-  inline
-  void interrupt_gate_descriptor::set ( std::uint16_t segment, void (* address) (), std::uint8_t access )
-  {
-    set(segment, (std::uint32_t)(address), access);
-  }
-
   inline constexpr
   auto interrupt_gate_access ( bool is_32bit, std::uint8_t privilege, bool is_present ) -> std::uint8_t
   {
@@ -149,7 +121,7 @@ namespace x86
          | (privilege << 5)
          | ((is_32bit ? 1 : 0) << 3)
          | (1 << 2)
-         | (1 << 1)
+         | (1)
          ;
   }
 
@@ -160,14 +132,21 @@ namespace x86
          | (privilege << 5)
          | ((is_32bit ? 1 : 0) << 3)
          | (1 << 2)
-         | (1 << 1)
+         | (1)
          ;
   }
 
   inline
-  void load_interrupt_descriptor_table ( interrupt_gate_descriptor * table, std::uint32_t count )
+  void load_interrupt_descriptor_table ( interrupt_gate_descriptor const * table, std::uint32_t count )
   {
-    internal::__load_interrupt_descriptor_table(table, ((count * sizeof(interrupt_gate_descriptor)) - 1));
+    internal::__load_interrupt_descriptor_table(std::uint32_t(table), count * sizeof(interrupt_gate_descriptor));
+  }
+
+  template <unsigned N>
+  inline
+  void load_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] )
+  {
+    internal::__load_interrupt_descriptor_table(std::uint32_t(table), N * sizeof(interrupt_gate_descriptor));
   }
 
   inline
