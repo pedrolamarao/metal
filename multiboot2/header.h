@@ -23,7 +23,7 @@ namespace multiboot2
 
   //! @brief Multiboot2 request architecture
 
-  enum class architecture_type : uint32_t
+  enum class architecture_type : std::uint32_t
   {
     x86    = 0,
     mips32 = 4,
@@ -32,7 +32,7 @@ namespace multiboot2
 
   //! @brief Multiboot2 header tag type
 
-  enum class tag_type : uint16_t
+  enum class tag_type : std::uint16_t
   {
     end         = 0,
     information = 1,
@@ -48,7 +48,7 @@ namespace multiboot2
   //!
   //! Multiboot2 headers have a prologue and a list of tags.
 
-  struct header_prologue
+  struct alignas(header_alignment) header_prologue
   {
     std::uint32_t      magic;
     architecture_type  architecture;
@@ -57,22 +57,20 @@ namespace multiboot2
 
     constexpr
     header_prologue (architecture_type architecture, std::uint32_t size);
-  }
-  __attribute__((aligned(header_alignment)));
+  };
 
   //! @brief Multiboot2 tag list end
 
-  struct end_request
+  struct alignas(tag_alignment) end_request
   {
     tag_type      type  = tag_type::end;
     std::uint16_t flags = 0;
     std::uint32_t size  = 8;
-  }
-  __attribute__((aligned(tag_alignment)));
+  };
 
   //! @brief Multiboot2 request for loading a.out
 
-  struct address_request
+  struct alignas(tag_alignment) address_request
   {
     tag_type      type;
     std::uint16_t flags;
@@ -82,24 +80,22 @@ namespace multiboot2
     std::uint32_t load_addr;
     std::uint32_t load_end_addr;
     std::uint32_t bss_end_addr;
-  }
-  __attribute__((aligned(tag_alignment)));
+  };
 
   //! @brief Multiboot2 request for loading ELF
 
-  struct entry_address_request
+  struct alignas(tag_alignment) entry_address_request
   {
     tag_type      type;
     std::uint16_t flags;
     std::uint32_t size;
 
     std::uint32_t entry_addr;
-  }
-  __attribute__((aligned(tag_alignment)));
+  };
 
   //! @brief Multiboot2 request for console support
 
-  struct console_request
+  struct alignas(tag_alignment) console_request
   {
     tag_type      type;
     std::uint16_t flags;
@@ -112,12 +108,11 @@ namespace multiboot2
 
     constexpr explicit
     console_request (std::uint32_t console_flags);
-  }
-  __attribute__((aligned(tag_alignment)));
+  };
 
   //! @brief Multiboot2 request for framebuffer support
 
-  struct framebuffer_request
+  struct alignas(tag_alignment) framebuffer_request
   {
     tag_type      type;
     std::uint16_t flags;
@@ -132,12 +127,11 @@ namespace multiboot2
 
     constexpr
     framebuffer_request (std::uint32_t width, std::uint32_t height, std::uint32_t depth);
-  }
-  __attribute__((aligned(tag_alignment)));
+  };
 
   //! @brief Multiboot2 request for module alignment
 
-  struct module_alignment_request
+  struct alignas(tag_alignment) module_alignment_request
   {
     tag_type      type;
     std::uint16_t flags;
@@ -150,8 +144,7 @@ namespace multiboot2
 
     constexpr
     module_alignment_request ();
-  }
-  __attribute__((aligned(tag_alignment)));
+  };
 
 }
 

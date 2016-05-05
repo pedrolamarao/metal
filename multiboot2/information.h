@@ -19,12 +19,11 @@ namespace multiboot2
 
   //! @brief Multiboot2 information list
 
-  struct information_list
+  struct alignas(information_alignment) information_list
   {
     std::uint32_t size;
     std::uint32_t reserved;
-  }
-  __attribute__((aligned(information_alignment)));
+  };
 
   //! @brief Multiboot2 information item type
 
