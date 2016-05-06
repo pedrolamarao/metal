@@ -3,20 +3,23 @@
 .text
 
 .set STACK_SIZE , 0x4000
-
 .comm stack , STACK_SIZE
+
+//! @brief C++ entry point
 
 // extern "C"
 // void __attribute__((fastcall)) main ( std::uint32_t magic, multiboot2::information_list & mbi )
 
 .extern main
 
-//! Multiboot2 client entry point
+//! @brief ELF default entry point
 //!
 //! @param %eax  Multiboot2 information magic number
 //! @param %ebx  Multiboot2 information list address
 
 .global _start
+.type   _start, STT_FUNC
+.func   _start, _start
 
 _start:
 
@@ -32,3 +35,5 @@ _start:
 loop:
     hlt
     jmp loop
+
+.endfunc
