@@ -32,8 +32,8 @@ _start:
     mov %ebx,%edx
     call main
 
-loop:
+.Lloop:
     hlt
-    jmp loop
+    jmp .Lloop
 
 .endfunc
