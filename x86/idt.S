@@ -2,8 +2,6 @@
 
 .att_syntax
 
-.type idtr, STT_OBJECT
-
 idtr:
 	.short 0
 	.long 0
@@ -18,6 +16,20 @@ __load_interrupt_descriptor_table:
 	mov %ecx, idtr + 2
 	mov %dx, idtr
 	lidt idtr
+	ret
+
+.endfunc
+
+
+// x86::internal::__store_interrupt_descriptor_table [ fastcall ] : ( idt : ptr(qword) ) -> ()
+
+.global __store_interrupt_descriptor_table
+.type   __store_interrupt_descriptor_table, STT_FUNC
+.func   __store_interrupt_descriptor_table
+
+__store_interrupt_descriptor_table:
+	movl 4(%esp), %eax
+	sidt (%eax)
 	ret
 
 .endfunc

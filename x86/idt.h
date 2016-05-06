@@ -37,6 +37,8 @@ namespace x86
   }
   __attribute((aligned(8)));
 
+  static_assert(sizeof(interrupt_gate_descriptor) == 8, "unexpected size of interrupt_gate_descriptor");
+
   //! Computes access field for interrupt gate descriptors
 
   constexpr
@@ -49,7 +51,7 @@ namespace x86
 
   //! Loads the interrupt descriptor table register
 
-  void load_interrupt_descriptor_table ( interrupt_gate_descriptor * table, std::uint32_t count );
+  void load_interrupt_descriptor_table ( interrupt_gate_descriptor const * table, std::uint32_t count );
 
   template <unsigned N>
   void load_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] );
@@ -74,6 +76,9 @@ namespace x86
 
     extern "C"
     void __load_interrupt_descriptor_table ( std::uint32_t base, std::uint16_t limit ) __attribute__(( fastcall )) ;
+
+    extern "C"
+    void __store_interrupt_descriptor_table ( std::uint64_t & gdtr );
 
     extern "C"
     void __enable_interrupts () __attribute__(( fastcall )) ;

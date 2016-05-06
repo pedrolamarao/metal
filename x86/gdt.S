@@ -4,27 +4,38 @@
 
 // TODO: this should be placed in the .recycle section
 
-.type gdtr, STT_OBJECT
-
-gdtr:
+.Lgdtr:
 	.short 0
     .long 0
 
-// x86::internal::__load_global_descriptor_table [ fastcall ] : ( base : address , limit : size ) -> ()
+// x86::internal::__load_global_descriptor_table [ fastcall ] : ( base : dword , limit : word ) -> ()
 
 .global __load_global_descriptor_table
 .type   __load_global_descriptor_table, STT_FUNC
 .func   __load_global_descriptor_table
 
 __load_global_descriptor_table:
-	mov %ecx, gdtr + 2
-	mov %dx, gdtr
-	lgdt gdtr
+	mov %ecx, .Lgdtr + 2
+	mov %dx, .Lgdtr
+	lgdt .Lgdtr
 	ret
 
 .endfunc
 
-// x86::internal::__reload_segment_registers [ fastcall ] : ( code : size , data : size ) -> ()
+// x86::internal::__store_global_descriptor_table [ fastcall ] : ( base : ptr<dword> , limit : ptr<word> ) -> ()
+
+.global __store_global_descriptor_table
+.type   __store_global_descriptor_table, STT_FUNC
+.func   __store_global_descriptor_table
+
+__store_global_descriptor_table:
+	movl 4(%esp), %eax
+	sgdt (%eax)
+	ret
+
+.endfunc
+
+// x86::internal::__reload_segment_registers [ fastcall ] : ( code : word , data : word ) -> ()
 
 .global __reload_segment_registers
 .type   __reload_segment_registers, STT_FUNC

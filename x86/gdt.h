@@ -149,6 +149,9 @@ namespace x86
     void __load_global_descriptor_table ( std::uint32_t base, std::uint16_t size ) __attribute__(( fastcall )) ;
 
     extern "C"
+    void __store_global_descriptor_table ( std::uint64_t & gdtr );
+
+    extern "C"
     void __reload_segment_registers ( std::uint32_t code, std::uint32_t data ) __attribute__(( fastcall )) ;
 
   }
