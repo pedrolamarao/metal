@@ -1,6 +1,6 @@
-# Aasgard &mdash; boot on x86-pc-elf with a Multiboot2 loader
+# Aasgard &mdash; boot on i686-pc-elf with a Multiboot2 loader
 
-This program demonstrates booting a program on x86 with a Multiboot2 loader.
+This program demonstrates booting a program on i686-pc-elf with a Multiboot2 loader.
 
 ## Build
 
@@ -11,9 +11,11 @@ SRC="x86/gdt.S x86/idt.S xxx--multiboot2-x86--minimal/start.S xxx--multiboot2-x8
 BIN="xxx--multiboot2-x86--minimal.bin/aasgard" \
 CPPFLAGS="-nostdinc -Ic++-x86 -I." \
 CXXFLAGS="-std=c++14 -ffreestanding -O0 -g" \
-LDFLAGS="-m32 -nostdlib" \
-i386-elf-g++ ${CPPFLAGS} ${CXXFLAGS} ${LDFLAGS} -o ${BIN} ${SRC}
+LDFLAGS="-m32 -nostdlib -Ttext 0x1000" \
+i686-pc-elf-g++ ${CPPFLAGS} ${CXXFLAGS} ${LDFLAGS} -o ${BIN} ${SRC}
 ```
+
+We link the `.text` section at 0x1000 to ease the burden on emulators &mdash; a small amount of RAM will be enough.
 
 ## Structure
 
