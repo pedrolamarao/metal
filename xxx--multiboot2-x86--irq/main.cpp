@@ -1,6 +1,7 @@
 // Copyright (C) 2016 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
+#include <cstddef>
 #include <cstdint>
 
 #include <multiboot2/header.h>
@@ -8,6 +9,8 @@
 
 #include <x86/gdt.h>
 #include <x86/idt.h>
+
+#include <pic/pic.h>
 
 
 namespace
@@ -72,28 +75,26 @@ namespace
   }
 }
 
-extern "C" void __interrupt_service_routine ();
-
-extern "C" void __interrupt ();
-
 namespace
 {
   using namespace x86;
 
-  constexpr segment_descriptor global_descriptor_table [5] __attribute__((section(".gdt"))) =
+  constexpr segment_descriptor global_descriptor_table [5] __attribute__((aligned(8), section(".gdt"))) =
   {
     { },
-    { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, false) },
-    { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), segment_granularity(false, true, false) },
-    { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), segment_granularity(false, true, false) },
-    { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), segment_granularity(false, true, false) },
+    { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, true) },
+    { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), segment_granularity(false, true, true) },
+    { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), segment_granularity(false, true, true) },
+    { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), segment_granularity(false, true, true) },
   };
 
   using gate_descriptor = x86::interrupt_gate_descriptor;
 
-  gate_descriptor interrupt_descriptor_table [256] __attribute__((section(".idt"))) =
+  gate_descriptor interrupt_descriptor_table [256] __attribute__((aligned(8), section(".idt"))) =
   { };
 
+  extern "C"
+  void __interrupt_service_routine ();
 }
 
 //! Multiboot2 client entry
@@ -105,9 +106,15 @@ void __attribute__((fastcall)) main ( std::uint32_t magic, multiboot2::informati
 {
   if (magic != multiboot2::information_magic) return;
 
-  load_global_descriptor_table(global_descriptor_table);
+  x86::load_global_descriptor_table(global_descriptor_table);
 
-  reload_segment_registers(segment_selector(1, false, 0), segment_selector(2, false, 0));
+  x86::reload_segment_registers(x86::segment_selector(1, false, 0), x86::segment_selector(2, false, 0));
+
+  std::uint64_t gdt { 0xFFFFFFFFFFFFFFFF };
+  x86::internal::__store_global_descriptor_table(gdt);
+
+  if (((5 * sizeof(segment_descriptor)) - 1) != (gdt & 0xFFFF)) return;
+  if (std::uint32_t(& global_descriptor_table) != ((gdt >> 16) & 0xFFFFFFFF)) return;
 
   parse_multiboot2_information(mbi);
 
@@ -116,11 +123,17 @@ void __attribute__((fastcall)) main ( std::uint32_t magic, multiboot2::informati
     interrupt_descriptor_table[i] = { 0x8, __interrupt_service_routine, interrupt_gate_access(true, 0) };
   }
 
-  // __interrupt();
+  x86::load_interrupt_descriptor_table(interrupt_descriptor_table, 256);
 
-  load_interrupt_descriptor_table(interrupt_descriptor_table);
+  std::uint64_t idt { 0xFFFFFFFFFFFFFFFF };
+  x86::internal::__store_interrupt_descriptor_table(idt);
 
-  __interrupt();
+  if ((256 * sizeof(interrupt_gate_descriptor)) != (idt & 0xFFFF)) return;
+  if (std::uint32_t(& interrupt_descriptor_table) != ((idt >> 16) & 0xFFFFFFFF)) return;
+
+  asm volatile ( "int $0x80" );
+
+  asm volatile ( "outb %%al, $0x80" : : "a"(0) );
 
   return;
 }

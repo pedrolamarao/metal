@@ -22,18 +22,6 @@ __interrupt_service_routine:
 
 .endfunc
 
-//! helper for testing soft interrupts
-
-.global __interrupt
-.type   __interrupt, STT_FUNC
-.func   __interrupt
-
-__interrupt:
-	int $0x80
-	ret
-
-.endfunc
-
 //! Multiboot2 client entry point
 //!
 //! @param %eax  Multiboot2 information magic number
