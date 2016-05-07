@@ -10,8 +10,6 @@
 #include <x86/gdt.h>
 #include <x86/idt.h>
 
-#include <pic/pic.h>
-
 
 namespace
 {
