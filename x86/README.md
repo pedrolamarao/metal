@@ -1,4 +1,4 @@
-# aasgard &mdash; Intel x86 Library
+# aasgard &mdash; x86 Library
 
 ## Example
 
@@ -13,7 +13,7 @@ using namespace x86;
 
 namespace
 {
-  constexpr segment_descriptor global_descriptor_table [5] __attribute__(( used, aligned(8), section(".gdt") )) =
+  constexpr segment_descriptor global_descriptor_table [5] __attribute__(( used, section(".gdt") )) =
   {
     segment_descriptor { },
     segment_descriptor { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, true) },
@@ -36,7 +36,8 @@ All components are declared in `namespace x86`.
   * `segment_selector` 
   * `segment_descriptor`
   * `load_global_descriptor_table`
-
+* `idt.h`
+* `port.h`
 
 ## References
 
