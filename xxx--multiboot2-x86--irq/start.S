@@ -28,7 +28,6 @@ __interrupt_service_routine:
 //! @param %ebx  Multiboot2 information list address
 
 .global _start
-
 _start:
 
     movl $(stack + STACK_SIZE), %esp
@@ -40,6 +39,6 @@ _start:
     mov %ebx,%edx
     call main
 
-loop:
+.Lloop:
     hlt
-    jmp loop
+    jmp .Lloop

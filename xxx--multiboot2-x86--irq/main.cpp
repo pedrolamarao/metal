@@ -129,9 +129,7 @@ void __attribute__((fastcall)) main ( std::uint32_t magic, multiboot2::informati
   if ((256 * sizeof(interrupt_gate_descriptor)) != (idt & 0xFFFF)) return;
   if (std::uint32_t(& interrupt_descriptor_table) != ((idt >> 16) & 0xFFFFFFFF)) return;
 
-  asm volatile ( "int $0x80" );
-
-  asm volatile ( "outb %%al, $0x80" : : "a"(0) );
+  asm volatile ( "sti" );
 
   return;
 }
