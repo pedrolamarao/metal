@@ -44,12 +44,12 @@ namespace x86
 {
   namespace internal
   {
-    void __port_read (std::uint16_t port, std::uint8_t & value) { asm ("inb %1, %0" : "=a"(value) : "Nd"(port) ); }
-    void __port_read (std::uint16_t port, std::uint16_t & value) { asm ("inw %1, %0" : "=a"(value) : "Nd"(port) ); }
-    void __port_read (std::uint16_t port, std::uint32_t & value) { asm ("inl %1, %0" : "=a"(value) : "Nd"(port) ); }
-    inline void __port_write (std::uint16_t port, std::uint8_t value) { asm ("outb %0, %1" : : "a"(value), "Nd"(port) ); }
-    inline void __port_write (std::uint16_t port, std::uint16_t value) { asm ("outw %0, %1" : : "a"(value), "Nd"(port) ); }
-    inline void __port_write (std::uint16_t port, std::uint32_t value) { asm ("outl %0, %1" : : "a"(value), "Nd"(port) ); }
+    inline void __port_read (std::uint16_t port, std::uint8_t & value) { asm volatile ("inb %1, %0" : "=a"(value) : "Nd"(port) ); }
+    inline void __port_read (std::uint16_t port, std::uint16_t & value) { asm volatile ("inw %1, %0" : "=a"(value) : "Nd"(port) ); }
+    inline void __port_read (std::uint16_t port, std::uint32_t & value) { asm volatile ("inl %1, %0" : "=a"(value) : "Nd"(port) ); }
+    inline void __port_write (std::uint16_t port, std::uint8_t value) { asm volatile ("outb %0, %1" : : "a"(value), "Nd"(port) ); }
+    inline void __port_write (std::uint16_t port, std::uint16_t value) { asm volatile ("outw %0, %1" : : "a"(value), "Nd"(port) ); }
+    inline void __port_write (std::uint16_t port, std::uint32_t value) { asm volatile ("outl %0, %1" : : "a"(value), "Nd"(port) ); }
   }
 
 
