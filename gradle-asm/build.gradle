@@ -1,0 +1,19 @@
+plugins 
+{
+    id 'java-gradle-plugin'
+}
+
+group 'aasgard'
+version '0.1.0-SNAPSHOT'
+
+gradlePlugin 
+{
+    plugins 
+    {
+        asm 
+        {
+            id = 'aasgard.asm'
+            implementationClass = 'aasgard.gradle.asm.GradleAsmPlugin'
+        }
+    }
+}

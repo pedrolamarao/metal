@@ -2,6 +2,7 @@
 
 plugins
 {
+	id 'aasgard.asm' version '0.1.0-SNAPSHOT'
     id 'cpp-library'
 }
 
@@ -26,22 +27,5 @@ library
     binaries.whenElementFinalized {
     	def compiler = compileTask.get()
     	compiler.compilerArgs.addAll '-std=c++17', '-ffreestanding'
-    }
-    
-    // XXX: Gradle 6.1 does not know how to compile asm sourceSets
-    binaries.whenElementFinalized { binary ->
-        def compileAsm = tasks.register("compileAsm${binary.name.capitalize()}", Assemble) {
-            targetPlatform = binary.compileTask.get().targetPlatform
-            toolChain = binary.toolChain
-            source.from fileTree(dir: 'src/main/asm', includes: ['**/*.s'])
-            includes.from file('src/main/public')
-            includes.from file('src/main/headers')
-            assemblerArgs = []
-            it.objectFileDir = layout.buildDirectory.dir("asm/${binary.name}").get().asFile
-        }
-        binary.createTask.get().configure {
-            dependsOn compileAsm
-            source.from compileAsm.map({ return fileTree(dir: it.objectFileDir, includes: ['**/*.s', '**/*.obj']) })
-        }
     }
 }
