@@ -1,23 +1,14 @@
-# Aasgard &mdash; boot on i686-pc-elf with a Multiboot2 loader
+Date: 2020-02-01
 
-This program demonstrates booting a program on i686-pc-elf with a Multiboot2 loader.
+# summary
 
-## Build
+This program demonstrates booting a program with a Multiboot2 loader.
 
-To build this program from the root directory:
+# build
 
-```sh
-SRC="x86/gdt.S x86/idt.S xxx--multiboot2-x86--minimal/start.S xxx--multiboot2-x86--minimal/main.cpp" \
-BIN="xxx--multiboot2-x86--minimal.bin/aasgard" \
-CPPFLAGS="-nostdinc -Ic++-x86 -I." \
-CXXFLAGS="-std=c++14 -ffreestanding -O0 -g" \
-LDFLAGS="-m32 -nostdlib -Ttext 0x1000" \
-i686-pc-elf-g++ ${CPPFLAGS} ${CXXFLAGS} ${LDFLAGS} -o ${BIN} ${SRC}
-```
+We link the `.text` section at `0x1000` to ease the burden on emulators — a small amount of RAM will be enough.
 
-We link the `.text` section at 0x1000 to ease the burden on emulators &mdash; a small amount of RAM will be enough.
-
-## Structure
+# architecture
 
 This program must satisfy Multiboot2's requirements for a boot request.
 
@@ -26,7 +17,7 @@ This program must satisfy Multiboot2's requirements for a boot request.
 
 Requirement (1) is easily satisfied in such a small example, since the program image itself is smaller than 32kb.
 
-The Multiboot2 header is computed in C++ using the Aasgard's multiboot2 library. The object is defined in namespace scope with static storage duration in [`main.cpp`](main.cpp). It is constant initialized by a `constexpr` constructor. Therefore, the object shall be placed value initialized, not zero initialized, in the program image.
+The Multiboot2 header is computed in C++ using the `multiboot2` component. The object is defined in namespace scope with static storage duration in [`main.cpp`](main.cpp). It is constant initialized by a `constexpr` constructor. Therefore, the object shall be placed value initialized, not default initialized, in the program image.
 
 Requirement (2) is satisfied by the ELF image. The default ELF entry point, `_start`, is provided. The Multiboot2 loader shall parse the ELF image to locate the entry point.
 

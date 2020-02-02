@@ -1,8 +1,14 @@
-# aasgard &mdash; x86 Library
+Date: 2020-02-01
 
-## Example
+# summary
 
-### GDT
+The `x86` component supports programming the IA32 processor architecture.
+
+In the future, support for AMD64 shall be added here.
+
+# use
+
+## GDT
 
 In the following example, we define a minimal GDT for x86 protected mode flat memory model. It contains the required null segment descriptor, two segment descriptors (code and data) for ring 0 and two segment descriptors (code and data) for ring 3.
 
@@ -24,9 +30,9 @@ namespace
 }
 ```
 
-## Components
+# architecture
 
-All components are declared in `namespace x86`.
+All names are declared in `namespace x86`.
 
 * `cpuid.h`
   * `cpuid`
@@ -39,7 +45,8 @@ All components are declared in `namespace x86`.
 * `idt.h`
 * `port.h`
 
-## References
+## references
 
-* [Intel] &mdash; "Intel 64 and IA-32 Architectures Software Developer's Manual", [:link:](http://www.intel.com/products/processor/manuals/)
-* [AMD] &mdash; "AMD64 Architecture Programmer's Manual", [:link:](http://developer.amd.com/resources/documentation-articles/developer-guides-manuals/)
+* AMD, "AMD64 Architecture Programmer�s Manual Volume 1: Application Programming" [link](http://support.amd.com/TechDocs/24592.pdf)
+* AMD, "AMD64 Architecture Programmer�s Manual Volume 2: System Programming" [link](http://support.amd.com/TechDocs/24593.pdf)
+* Intel "Intel� 64 and IA-32 architectures software developer's manual volume 1: Basic architecture" [link](https://software.intel.com/en-us/download/intel-64-and-ia-32-architectures-software-developers-manual-volume-1-basic-architecture)

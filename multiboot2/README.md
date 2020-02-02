@@ -1,14 +1,16 @@
-# aasgard &mdash; Multiboot 2
+Date: 2020-02-01
 
-The Multiboot2 library offers components for programming the Multiboot2 specification.
+# summary
 
-It enables easy definition of Multiboot2 headers and parsing Multiboot2 information structures.
+The `multiboot2` component supports programming for the Multiboot specification version 2.
 
-## Examples
+It enables easy definition of Multiboot2 headers and parsing Multiboot information structures.
 
-### Minimal Multiboot2 header
+# use
 
-Objective: define a minimal Multiboot2 header for the x86 architecture placed in a special ELF section.
+## minimal multiboot header
+
+Objective: define a minimal Multiboot header for the x86 architecture placed in a special ELF section.
 
 The minimal header contains a prologue followed by the end tag.
 
@@ -34,9 +36,9 @@ namespace
 }
 ```
 
-### Multiboot2 header requests framebuffer support
+## multiboot header requests framebuffer support
 
-Objective: define a Multiboot2 header that requests framebuffer support.
+Objective: define a Multiboot header that requests framebuffer support.
 
 This header must contain the framebuffer tag with useful values for width, heigth and depth. In this example we request a 1024x768 framebuffer with 32 bits color depth.
 
@@ -63,10 +65,9 @@ namespace
 }
 ```
 
+## traverse multiboot information
 
-### Inspect Multiboot2 information list
-
-Objective: iterate the Multiboot2 information list and inspect each item.
+Objective: iterate the Multiboot information list and inspect each item.
 
 We assume the program has done whatever is necessary to jump into procedures defined in C++.
 
@@ -130,8 +131,7 @@ void multiboot2_information_iterate ( multiboot2::information_header & mbi )
 }
 ```
 
-
-## Components
+# architecture
 
 All components are declared in `namespace multiboot2`.
 
@@ -160,6 +160,6 @@ All components are declared in `namespace multiboot2`.
   * `acpi_information`
   * `network_information`
 
-## References
+# references
 
-* [Multiboot2] &mdash; "The Multiboot Specification", version 1.6, [:link:](http://download-mirror.savannah.gnu.org/releases/grub/phcoder/multiboot.pdf)
+* "The Multiboot Specification", version 2.0, [link](https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html)

@@ -1,3 +1,2 @@
-xxx-multiboot2-x86--minimal.bin
-xxx-multiboot2-x86--irq.bin
-xxx-multiboot2-x86--io.bin
+.gradle
+build

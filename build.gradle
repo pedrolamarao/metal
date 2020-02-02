@@ -1,0 +1,36 @@
+// settings
+
+plugins
+{
+    id 'base'
+}
+
+// project
+
+subprojects {
+    model {
+        toolChains {
+            // XXX: force Gradle 6.1 to use cross tools
+            gnu_i686_pc_elf(Gcc) {
+                path 'C:\\prodist\\msys64\\opt\\gnu-i686-pc-elf\\bin'
+                eachPlatform {
+                    assembler.executable 'i686-pc-elf-gcc'
+                    cCompiler.executable 'i686-pc-elf-gcc'
+                    cppCompiler.executable 'i686-pc-elf-g++'
+                    linker.executable 'i686-pc-elf-gcc'
+                    staticLibArchiver.executable 'i686-pc-elf-ar'
+                }
+            }
+        }
+    }
+}
+
+// tasks
+
+assemble.dependsOn gradle.includedBuilds *.(':assemble')
+
+build.dependsOn gradle.includedBuilds *.(':build')
+
+check.dependsOn gradle.includedBuilds *.(':check')
+
+clean.dependsOn gradle.includedBuilds *.(':clean')
