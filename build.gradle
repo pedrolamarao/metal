@@ -27,10 +27,10 @@ subprojects {
 
 // tasks
 
-assemble.dependsOn gradle.includedBuilds *.(':assemble')
+assemble.dependsOn gradle.includedBuilds *.task(':assemble')
 
-build.dependsOn gradle.includedBuilds *.(':build')
+build.dependsOn gradle.includedBuilds *.task(':build')
 
-check.dependsOn gradle.includedBuilds *.(':check')
+check.dependsOn gradle.includedBuilds *.task(':check')
 
-clean.dependsOn gradle.includedBuilds *.(':clean')
+clean.dependsOn gradle.includedBuilds *.task(':clean')
