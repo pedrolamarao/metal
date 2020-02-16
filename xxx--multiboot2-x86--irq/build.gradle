@@ -39,7 +39,8 @@ application
                         '-O', 'i386-pc',
                         '-o', out.get().file('image'),
                         '--install-modules=normal', '--themes=', '--locales=', '--fonts=',
-                        project.layout.projectDirectory.dir('src/main/grub')
+                        project.layout.projectDirectory.dir('src/main/grub'),
+                        linker.linkedFile.get()
                 }
             }
         }
@@ -52,7 +53,8 @@ application
                     commandLine '/opt/i686-pc-elf/bin/grub-mkstandalone',
                         '-O', 'i386-qemu',
                         '-o', out.get().file('image'),
-                        project.layout.projectDirectory.dir('src/main/grub')
+                        project.layout.projectDirectory.dir('src/main/grub'),
+                        linker.linkedFile.get()
                 }
             }
         }
@@ -64,7 +66,8 @@ application
                 project.exec {
                     commandLine '/opt/i686-pc-elf/bin/grub-mkrescue',
                         '-o', out.get().file('image'),
-                        project.layout.projectDirectory.dir('src/main/grub')
+                        project.layout.projectDirectory.dir('src/main/grub'),
+                        linker.linkedFile.get()
                 }
             }
         }

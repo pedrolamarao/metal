@@ -31,6 +31,7 @@ application
     	linker.linkerArgs.addAll '-nostdlib', '-Ttext', '0x1000'
     	
     	def grubPc = tasks.register("grubPc_${binary.name}") {
+            dependsOn linker
             doLast {
                 def out = project.layout.buildDirectory.dir("grub/${binary.name}/pc")
                 project.mkdir out
@@ -39,12 +40,14 @@ application
                         '-O', 'i386-pc',
                         '-o', out.get().file('image'),
                         '--install-modules=normal', '--themes=', '--locales=', '--fonts=',
-                        project.layout.projectDirectory.dir('src/main/grub')
+                        project.layout.projectDirectory.dir('src/main/grub'),
+                        linker.linkedFile.get()
                 }
             }
     	}
 
         def grubQemu = tasks.register("grubQemu_${binary.name}") {
+            dependsOn linker
             doLast {
                 def out = project.layout.buildDirectory.dir("grub/${binary.name}/qemu")
                 project.mkdir out
@@ -52,19 +55,22 @@ application
                     commandLine '/opt/i686-pc-elf/bin/grub-mkstandalone',
                         '-O', 'i386-qemu',
                         '-o', out.get().file('image'),
-                        project.layout.projectDirectory.dir('src/main/grub')
+                        project.layout.projectDirectory.dir('src/main/grub'),
+                        linker.linkedFile.get()
                 }
             }
         }
 
         def grubRescue = tasks.register("grubRescue_${binary.name}") {
+            dependsOn linker
             doLast {
                 def out = project.layout.buildDirectory.dir("grub/${binary.name}/rescue")
                 project.mkdir out
                 project.exec {
                     commandLine '/opt/i686-pc-elf/bin/grub-mkrescue',
                         '-o', out.get().file('image'),
-                        project.layout.projectDirectory.dir('src/main/grub')
+                        project.layout.projectDirectory.dir('src/main/grub'),
+                        linker.linkedFile.get()
                 }
             }
         }
