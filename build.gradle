@@ -12,7 +12,6 @@ subprojects {
         toolChains {
             // XXX: force Gradle 6.1 to use cross tools
             gnu_i686_pc_elf(Gcc) {
-                path 'C:\\prodist\\msys64\\opt\\gnu-i686-pc-elf\\bin'
                 eachPlatform {
                     assembler.executable 'i686-pc-elf-gcc'
                     cCompiler.executable 'i686-pc-elf-gcc'
