@@ -47,13 +47,14 @@ public class GradleAsmPlugin implements Plugin<Project>
     	logger.info("aasgard.asm: apply: {}", binary.getName());
     	
         var compileAsm = create(project, binary);
-
-        var obj = project.fileTree(compileAsm.get().getObjectFileDir());
-    	obj.include("**/*.obj");
         
         var link = binary.getCreateTask().get();
         link.dependsOn(compileAsm);
-        link.source(obj);
+        link.source(compileAsm.map(asm -> {
+        	return project.fileTree(asm.getObjectFileDir(), f -> {
+        		f.include("**/*.o", "**/*.obj");
+        	});
+        }));
     }
     
     public void apply (Project project, CppExecutable binary)
@@ -61,20 +62,22 @@ public class GradleAsmPlugin implements Plugin<Project>
     	logger.info("aasgard.asm: apply: {}", binary.getName());
     	
         var compileAsm = create(project, binary);
-
-        var obj = project.fileTree(compileAsm.get().getObjectFileDir());
-    	obj.include("**/*.obj");
         
         var link = binary.getLinkTask().get();
         link.dependsOn(compileAsm);
-        link.source(obj);
+        link.source(compileAsm.map(asm -> {
+        	return project.fileTree(asm.getObjectFileDir(), f -> {
+        		f.include("**/*.o", "**/*.obj");
+        	});
+        }));
     }
     
     public TaskProvider<Assemble> create (Project project, CppBinary binary)
     {
-    	var name = String.format("compileAsm%s", binary.getName());
+    	var name = String.format("compileAsm_%s", binary.getName());
         return project.getTasks().register(name, Assemble.class, asm -> 
         {    		
+        	logger.info("aasgard.asm: {}", asm.getName());
     		asm.getTargetPlatform().set(binary.getCompileTask().get().getTargetPlatform());
             asm.getToolChain().set(binary.getToolChain());
             asm.getIncludes().from(project.file("src/main/public"));
