@@ -11,17 +11,65 @@ plugins
 group 'aasgard'
 version '0.1.0-SNAPSHOT'
 
+tasks.register('grub') {
+    group 'build'
+    description 'Generates GRUB images'
+}
+
 application
 {
     // XXX: Gradle 6.1 refuses to cross compile
     // XXX: convince Gradle 6.1 to configure compiler to 32 bits for now
     targetMachines = [ machines.linux.x86 ]
 
-    binaries.whenElementFinalized {
-    	def compiler = compileTask.get()
-    	compiler.compilerArgs.addAll '-std=c++17', '-ffreestanding'
-    	def linker = linkTask.get()
-    	linker.linkerArgs.addAll '-nostdlib', '-m32', '-Ttext', '0x1000'
+    binaries.whenElementFinalized { binary ->
+    
+        def compiler = compileTask.get()
+        compiler.compilerArgs.addAll '-std=c++17', '-ffreestanding'
+        
+        def linker = linkTask.get()
+        linker.linkerArgs.addAll '-nostdlib', '-Ttext', '0x1000'
+        
+        def grubPc = tasks.register("grubPc_${binary.name}") {
+            doLast {
+                def out = project.layout.buildDirectory.dir("grub/${binary.name}/pc")
+                project.mkdir out
+                project.exec {
+                    commandLine '/opt/i686-pc-elf/bin/grub-mkstandalone',
+                        '-O', 'i386-pc',
+                        '-o', out.get().file('image'),
+                        '--install-modules=normal', '--themes=', '--locales=', '--fonts=',
+                        project.layout.projectDirectory.dir('src/main/grub')
+                }
+            }
+        }
+
+        def grubQemu = tasks.register("grubQemu_${binary.name}") {
+            doLast {
+                def out = project.layout.buildDirectory.dir("grub/${binary.name}/qemu")
+                project.mkdir out
+                project.exec {
+                    commandLine '/opt/i686-pc-elf/bin/grub-mkstandalone',
+                        '-O', 'i386-qemu',
+                        '-o', out.get().file('image'),
+                        project.layout.projectDirectory.dir('src/main/grub')
+                }
+            }
+        }
+
+        def grubRescue = tasks.register("grubRescue_${binary.name}") {
+            doLast {
+                def out = project.layout.buildDirectory.dir("grub/${binary.name}/rescue")
+                project.mkdir out
+                project.exec {
+                    commandLine '/opt/i686-pc-elf/bin/grub-mkrescue',
+                        '-o', out.get().file('image'),
+                        project.layout.projectDirectory.dir('src/main/grub')
+                }
+            }
+        }
+        
+        grub.dependsOn grubPc, grubQemu, grubRescue
     }
 }
 
@@ -31,3 +79,8 @@ dependencies
 	implementation project(':pc')
 	implementation project(':x86')
 }
+
+// tasks
+
+assemble.dependsOn grub
+
