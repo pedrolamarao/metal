@@ -14,7 +14,7 @@ library
 {
     // XXX: Gradle 6.1 refuses to cross compile
     // XXX: convince Gradle 6.1 to configure compiler to 32 bits for now
-    targetMachines = [ machines.windows.x86 ]
+    targetMachines = [ machines.linux.x86 ]
     
     linkage = [ Linkage.STATIC ]
     
