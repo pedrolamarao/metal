@@ -8,7 +8,7 @@ Aasgard is a collection of components for programming the bare metal.
 
 It is designed for integration with state of the art tools.
 
-Try: `./gradlew build`
+Try: `./gradlew assemble`
 
 # index
 
@@ -19,47 +19,28 @@ Try: `./gradlew build`
 4. architecture
 5. references
 
-# assemble
+# build
+
+To assemble development artifacts: `./gradlew assemble`
+
+To clean all generated artifacts: `./gradlew clean`
+
+## tools
 
 These are the required tools.
 
-- GNU `binutils` version 2.33.1 target (see below)
-- GNU `gcc` version 9.2 target (see below)
+- GNU Binutils version 2.34 target (see below)
+- GNU GCC version 9.2 target (see below)
+- GNU GDB version 7.1 target (see below)
+- GNU GRUB version 2.04 target (see below)
 - OpenJDK version 11 host
 
-OpenJDK is required to run Gradle.
-We suggest AdoptOpenJDK builds.
+OpenJDK is required to run Gradle: we suggest AdoptOpenJDK builds.
 
-Currently, the only useful target for Aasgard is `i686-pc-elf`.
-Meaningful support for `x86_64-pc-elf` is coming.
+Binutils, GCC and GDB are required for target `i686-pc-elf`.
 
-The following instructions for building the required tools works with MSYS2.
-
-## binutils 2.33.1
-
-```sh
-../binutils-2.33.1/configure --target=i686-pc-elf --with-sysroot --disable-nls --prefix=/opt/gnu-i686-pc-elf
-make
-make -j2 install
-```
-
-## gcc 9.2
-
-*TODO*: consider the "red zone" problem for libgcc for x86_64.
-
-```sh
-PATH=/opt/gnu-i686-pc-elf:$PATH ../gcc-9.2.0/configure --target=i686-pc-elf --enable-languages=c,c++ --without-headers --disable-nls --prefix=/opt/gnu-i686-pc-elf
-make -j2 all-gcc all-target-libgcc
-make -j2 install-gcc install-target-libgcc
-```
-
-## grub 2.04
-
-```sh
-.../grub-2.04/configure --prefix=/opt/gnu-i686-pc-elf --disable-werror
-make -j2
-make install
-```
+GRUB is required for platforms `i386-qemu`, `i386-pc` and `i386-efi`.
+For more information on GRUB, see [README.grub.md].
 
 ## issues
 
@@ -84,13 +65,11 @@ These are the currently supported targets:
 
 ## gradle
 
-Aasgard is currently set up for Gradle multi-project builds.
+Componets are Gradle projects meant for multi-project configurations.
 
-Gradle 6.1 is capable of full dependency management for Aasgard components.
+To reuse one of the components, simply add a dependency on it:
 
-To reuse one of the components, you must add a dependency on it, like below:
-
-```
+```gradle
 dependencies {
     implementation project(':multiboot2')
 }
