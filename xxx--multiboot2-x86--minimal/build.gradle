@@ -3,6 +3,7 @@
 plugins
 {
     id 'aasgard.asm' version '0.1.0-SNAPSHOT'
+    id 'aasgard.grub' version '0.1.0-SNAPSHOT'
     id 'cpp-application'
 }
 
@@ -30,49 +31,22 @@ application
     	def linker = linkTask.get()
     	linker.linkerArgs.addAll '-nostdlib', '-Ttext', '0x1000'
     	
-    	def grubPc = tasks.register("grubPc_${binary.name}") {
-            dependsOn linker
-            doLast {
-                def out = project.layout.buildDirectory.dir("grub/${binary.name}/pc")
-                project.mkdir out
-                project.exec {
-                    commandLine '/opt/i686-pc-elf/bin/grub-mkstandalone',
-                        '-O', 'i386-pc',
-                        '-o', out.get().file('image'),
-                        '--install-modules=normal', '--themes=', '--locales=', '--fonts=',
-                        project.layout.projectDirectory.dir('src/main/grub'),
-                        linker.linkedFile.get()
-                }
-            }
+    	def grubPc = tasks.register("grubPc_${binary.name}", aasgard.gradle.grub.GrubStandaloneCompile) {
+            binaryName binary.name
+            format 'i386-pc'
+            install 'normal', 'at_keyboard'
+            sources 'src/main/grub', linker
     	}
 
-        def grubQemu = tasks.register("grubQemu_${binary.name}") {
-            dependsOn linker
-            doLast {
-                def out = project.layout.buildDirectory.dir("grub/${binary.name}/qemu")
-                project.mkdir out
-                project.exec {
-                    commandLine '/opt/i686-pc-elf/bin/grub-mkstandalone',
-                        '-O', 'i386-qemu',
-                        '-o', out.get().file('image'),
-                        project.layout.projectDirectory.dir('src/main/grub'),
-                        linker.linkedFile.get()
-                }
-            }
+        def grubQemu = tasks.register("grubQemu_${binary.name}", aasgard.gradle.grub.GrubStandaloneCompile) {
+            binaryName binary.name
+            format 'i386-qemu'
+            sources 'src/main/grub', linker
         }
 
-        def grubRescue = tasks.register("grubRescue_${binary.name}") {
-            dependsOn linker
-            doLast {
-                def out = project.layout.buildDirectory.dir("grub/${binary.name}/rescue")
-                project.mkdir out
-                project.exec {
-                    commandLine '/opt/i686-pc-elf/bin/grub-mkrescue',
-                        '-o', out.get().file('image'),
-                        project.layout.projectDirectory.dir('src/main/grub'),
-                        linker.linkedFile.get()
-                }
-            }
+        def grubRescue = tasks.register("grubRescue_${binary.name}", aasgard.gradle.grub.GrubRescueCompile) {
+            binaryName binary.name
+            sources 'src/main/grub', linker
         }
     	
     	grub.dependsOn grubPc, grubQemu, grubRescue
