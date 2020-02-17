@@ -2,8 +2,6 @@
 
 ## Do
 
-* Update GRUB + QEMU test instructions
-
 * Complete I/O demonstration program
 * Consider moving all apps to `apps`
 * Reconsider role and design of `c++-x86`
@@ -18,6 +16,8 @@
 ## Doing
 
 ## Done
+
+* Update GRUB + QEMU test instructions
 
 - demonstrate multiboot elf application
 - demonstrate pc pic
