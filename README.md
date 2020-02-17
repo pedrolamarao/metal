@@ -42,6 +42,8 @@ Binutils, GCC and GDB are required for target `i686-pc-elf`.
 GRUB is required for platforms `i386-qemu`, `i386-pc` and `i386-efi`.
 For more information on GRUB, see [README.grub.md].
 
+There are useful scripts for building tools in [tools].
+
 ## issues
 
 - Gradle: [Assembler language support](https://github.com/gradle/gradle-native/issues/172)
