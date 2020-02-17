@@ -4,7 +4,7 @@ Date: 2020-02-08
 
 This is a collection of tips for using GRUB 2.
 
-They assume you have the necessary toolset as per [README.md].
+They assume you have the necessary toolset as per [README.md](README.md).
 
 # index
 
@@ -68,4 +68,4 @@ qemu-system-i386 -cdrom image
 
 # references
 
-- (GRUB Manual)[https://www.gnu.org/software/grub/manual/grub/grub.html]
+- [GRUB Manual](https://www.gnu.org/software/grub/manual/grub/grub.html)

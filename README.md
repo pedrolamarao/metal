@@ -40,9 +40,9 @@ OpenJDK is required to run Gradle: we suggest AdoptOpenJDK builds.
 Binutils, GCC and GDB are required for target `i686-pc-elf`.
 
 GRUB is required for platforms `i386-qemu`, `i386-pc` and `i386-efi`.
-For more information on GRUB, see [README.grub.md].
+For more information on GRUB, see [README.grub.md](README.grub.md).
 
-There are useful scripts for building tools in [tools].
+There are useful scripts for building tools in [tools](tools).
 
 ## issues
 
