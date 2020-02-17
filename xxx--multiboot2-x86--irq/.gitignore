@@ -1,5 +1,6 @@
-/makefile
-/objects.mk
-/sources.mk
-/x86/
-/xxx--multiboot2-x86--minimal/
+.classpath
+.project
+.gradle
+.settings
+bin
+build
