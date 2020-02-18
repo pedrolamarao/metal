@@ -74,7 +74,8 @@ public abstract class GrubStandaloneCompile extends DefaultTask
 		final var project = getProject();
 		project.mkdir(getTarget().get().getAsFile().getParentFile());
 		project.exec(e -> {
-			e.executable("/opt/i686-pc-elf/bin/grub-mkstandalone");
+			e.executable("env"); // XXX: I have no idea why my setup fails without this.
+			e.args("grub-mkstandalone");
 			e.args("-O", getFormat().get());
             e.args("-o", getTarget().get());
             if (! getInstall().get().isEmpty()) { e.args("--install-modules=" + String.join(" ", getInstall().get())); }

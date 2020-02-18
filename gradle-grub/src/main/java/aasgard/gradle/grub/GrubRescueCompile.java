@@ -3,6 +3,7 @@ package aasgard.gradle.grub;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -71,7 +72,9 @@ public abstract class GrubRescueCompile extends DefaultTask
 		var project = getProject();
 		project.mkdir(getTarget().get().getAsFile().getParentFile());
 		project.exec(e -> {
-			e.executable("/opt/i686-pc-elf/bin/grub-mkrescue");
+			Logging.getLogger(GrubRescueCompile.class).info("{}", e.getEnvironment());
+			e.executable("env"); // XXX: I have no idea why my setup fails without this.
+			e.args("grub-mkrescue");
             e.args("-o", getTarget().get());
             e.args("--fonts=" + String.join(" ", getFonts().get()));
             if (! getInstall().get().isEmpty()) { e.args("--install-modules=" + String.join(" ", getInstall().get())); }
