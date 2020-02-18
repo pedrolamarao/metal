@@ -4,8 +4,11 @@ plugins
 {
     id 'aasgard.asm' version '0.1.0-SNAPSHOT'
     id 'aasgard.grub' version '0.1.0-SNAPSHOT'
+    id 'aasgard.qemu' version '0.1.0-SNAPSHOT'
     id 'cpp-application'
 }
+
+def QemuExec = aasgard.gradle.qemu.QemuExec
 
 // project
 
@@ -31,22 +34,37 @@ application
     	def linker = linkTask.get()
     	linker.linkerArgs.addAll '-nostdlib', '-Ttext', '0x1000'
     	
-    	def grubPc = tasks.register("grubPc_${binary.name}", aasgard.gradle.grub.GrubStandaloneCompile) {
-            binaryName binary.name
+    	def grubPc = tasks.register("grubPc${binary.name.capitalize()}", aasgard.gradle.grub.GrubStandaloneCompile) {
+            binaryName binary.name.capitalize()
             format 'i386-pc'
             install 'normal', 'at_keyboard'
             sources 'src/main/grub', linker
     	}
 
-        def grubQemu = tasks.register("grubQemu_${binary.name}", aasgard.gradle.grub.GrubStandaloneCompile) {
-            binaryName binary.name
+        def grubQemu = tasks.register("grubQemu${binary.name.capitalize()}", aasgard.gradle.grub.GrubStandaloneCompile) {
+            binaryName binary.name.capitalize()
             format 'i386-qemu'
             sources 'src/main/grub', linker
         }
 
-        def grubRescue = tasks.register("grubRescue_${binary.name}", aasgard.gradle.grub.GrubRescueCompile) {
-            binaryName binary.name
+        def grubRescue = tasks.register("grubRescue${binary.name.capitalize()}", aasgard.gradle.grub.GrubRescueCompile) {
+            binaryName binary.name.capitalize()
             sources 'src/main/grub', linker
+        }
+        
+        tasks.register("qemuBios${binary.name.capitalize()}", QemuExec) {
+            system 'i386'
+            bios grubQemu.get().target
+        }
+        
+        tasks.register("qemuPc${binary.name.capitalize()}", QemuExec) {
+            system 'i386'
+            kernel grubPc.get().target
+        }
+        
+        tasks.register("qemuRescue${binary.name.capitalize()}", QemuExec) {
+            system 'i386'
+            cdrom grubRescue.get().target
         }
     	
     	grub.dependsOn grubPc, grubQemu, grubRescue
@@ -62,3 +80,7 @@ dependencies
 // tasks
 
 assemble.dependsOn grub
+
+task environment(type: Exec) {
+    commandLine 'env'
+}

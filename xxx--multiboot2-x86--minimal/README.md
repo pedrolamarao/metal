@@ -16,22 +16,22 @@ We link the `.text` section at `0x1000` to ease the burden on emulators — a sm
 
 # launch
 
-QEMU with `pc` image:
+QEMU `-bios` loading `qemu` image:
 
 ```sh
-qemu-system-i386 -kernel build/grub/mainDebugLinux/pc/image
+../gradlew qemuQemuMainDebug
 ```
 
-QEMU with `qemu` image:
+QEMU `-kernel` loading `pc` image:
 
 ```sh
-qemu-system-i386 -kernel build/grub/mainDebugLinux/qemu/image
+../gradlew qemuPcMainDebug
 ```
 
-QEMU with `rescue` image:
+QEMU `-cdrom` loading `rescue` image:
 
 ```sh
-qemu-system-i386 -cdrom build/grub/mainDebugLinux/rescue/image
+../gradlew qemuRescueMainDebug
 ```
 
 # architecture

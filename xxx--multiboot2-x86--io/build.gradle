@@ -4,8 +4,11 @@ plugins
 {
     id 'aasgard.asm' version '0.1.0-SNAPSHOT'
     id 'aasgard.grub' version '0.1.0-SNAPSHOT'
+    id 'aasgard.qemu' version '0.1.0-SNAPSHOT'
     id 'cpp-application'
 }
+
+def QemuExec = aasgard.gradle.qemu.QemuExec
 
 // project
 
@@ -48,6 +51,21 @@ application
             binaryName binary.name
             sources 'src/main/grub', linker
         }
+                
+        tasks.register("qemuBios${binary.name.capitalize()}", QemuExec) {
+            system 'i386'
+            bios grubQemu.get().target
+        }
+        
+        tasks.register("qemuPc${binary.name.capitalize()}", QemuExec) {
+            system 'i386'
+            kernel grubPc.get().target
+        }
+        
+        tasks.register("qemuRescue${binary.name.capitalize()}", QemuExec) {
+            system 'i386'
+            cdrom grubRescue.get().target
+        }
         
         grub.dependsOn grubPc, grubQemu, grubRescue
     }
@@ -63,4 +81,3 @@ dependencies
 // tasks
 
 assemble.dependsOn grub
-
