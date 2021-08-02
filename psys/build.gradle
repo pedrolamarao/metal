@@ -12,7 +12,8 @@ version '0.1.0-SNAPSHOT'
 
 library
 {
-    targetMachines = [ machines.linux.x86 ]
+    // #XXX: gradle can't cross compile to system "any"
+    targetMachines = [ machines.linux.x86, machines.windows.x86 ]
 
     linkage = [ Linkage.STATIC ]
     

@@ -17,8 +17,8 @@ subprojects
     
     application
     {
-        // #XXX: Gradle can't cross compile to system "none"
-        targetMachines = [ machines.linux.x86 ]
+        // #XXX: gradle can't cross compile to system "any"
+        targetMachines = [ machines.linux.x86, machines.windows.x86 ]
         
         dependencies
         {

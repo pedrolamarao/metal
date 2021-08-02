@@ -11,6 +11,8 @@ plugins
 
 // project
 
+ext.tools = new Properties().tap { it.load( file('tools.properties').newReader() ) }
+
 ext.toolsDir = "${projectDir}/tools"
 
 subprojects 
@@ -19,16 +21,19 @@ subprojects
     {
         toolChains 
         {
-            gcc_x86_32(Gcc)
+            i386_elf(Clang)
             {
+                path tools['br.dev.pedrolamarao.psys.llvm.path']
                 eachPlatform {
-                    path "${toolsDir}/usr/bin", "${toolsDir}/usr/i686-pc-elf/bin"
-                    assembler.executable 'i686-pc-elf-gcc'
-                    cCompiler.executable 'i686-pc-elf-gcc'
-                    cppCompiler.executable 'i686-pc-elf-g++'
-                    linker.executable 'i686-pc-elf-gcc'
-                    // linker.withArguments { args -> args << '-v' }
-                    staticLibArchiver.executable 'i686-pc-elf-ar'
+                    assembler.executable 'clang'
+                    assembler.withArguments { addAll '-target', 'i386-elf' }
+                    cCompiler.executable 'clang'
+                    cCompiler.withArguments { addAll '-target', 'i386-elf', '-nostdinc', '-ffreestanding' }
+                    cppCompiler.executable 'clang++'
+                    cppCompiler.withArguments { addAll '-target', 'i386-elf', '-nostdinc', '-ffreestanding' }
+                    linker.executable 'clang'
+                    linker.withArguments { addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-nostdlib' }
+                    staticLibArchiver.executable 'llvm-ar'
                 }
             }
         }
