@@ -1,12 +1,12 @@
-Date: 2020-07-24
+Date: 2021-08-02
 
 # summary
 
-Welcome to the Aasgard project!
+Welcome to the Psys project!
 
-Aasgard is a collection of components for programming the bare metal.
+Psys is a collection of components for programming the bare metal.
 
-It is designed for integration with state of the art tools.
+It is designed for integration with state-of-the-art tools and techniques.
 
 # index
 
@@ -20,57 +20,48 @@ It is designed for integration with state of the art tools.
 
 # prepare
 
-Aasgard is currently built using custom cross tools installed to prefix `${projectDir}/tools`.
-The build system is wired to use the tools at this prefix.
+Psys is built by an LLVM based toolset.
+These tools are required:
 
-To acquire the necessary sources, run `tools/src.sh`.
-This script requires `wget`.
+- LLVM (clang, lld, llvm-ar)
+- GNU mtools
+- GNU grub
+- GNU gdb
 
-Next, you must install tool dependencies.
-For Fedora 32, run `tools/fedora.sh`.
-For Debian, run `tools/debian.sh`.
-These scripts we written based on experience.
-If the next step fails, maybe something is missing.
+The toolset is described in the `tools.properties` file.
+This file is required by the build tool.
+Configuration properties are documented in `tools.properties.default`.
+Property keys named `path` work as-if the environment `PATH` variable.
+Currently, all keys must be defined.
 
-To build the tools, run `tools/build.sh`.
+# build
 
-- GNU Binutils target `i386-pc-elf`
-- GNU Binutils target `x86_64-pc-elf`
-- GNU GCC languages C, C++ target `i386-pc-elf`
-- GNU GCC languages C, C++ target `x86_64-pc-elf`
-- GNU GDB target `i386-pc-elf`
-- GNU GDB target `x86_64-pc-elf`
-- GNU GRUB target `i386-pc`
-- GNU GRUB target ...
-- QEMU
-
-# assemble
-
-Aasgard's build system is based on Gradle exended with custom plugins.
+Aasgard's build system is based on Gradle, Nokee and custom plugins.
 This system requires a JDK version 11.
-JRE is not enough to compile the custom plugins.
 
-To assemble development artifacts, do `./gradlew assemble`
+To build: `./gradlew build`
 
-To clean all generated artifacts, do `./gradlew clean`
+To clean: `./gradlew clean`
 
-# check
+# verify
 
-Aasgard is verified by a technique orchestrating QEMU and GDB to watch for "asserts".
+Psys is verified by a technique orchestrating QEMU and GDB to watch for "asserts".
+In short, the image stores into a known symbol which the test driver "watches" by driving GDB.
+We are in the middle of improving this by publishing Gradle plugins for each tool.
 
-To check development artifacts, do `./gradlew check`
+To check: `./gradlew check`
 
 # use
 
-Aasgard is reusable as Gradle subprojects.
+Psys is reusable as a set of Gradle projects.
+Each project describes a single module.
+Gradle should compute the required variants from the build configuration.
 
-Each component is a maven-like module.
-
-To reuse one of the components, simply add a dependency on it:
+To reuse a modules, add a dependency on it:
 
 ```gradle
 dependencies {
-    implementation project(':multiboot2')
+    implementation project(':uefi')
 }
 ```
 
@@ -81,6 +72,7 @@ The collection includes the following components:
 * [acpi](acpi/README.md)
 * [multiboot2](multiboot2/README.md)
 * [pc](pc/README.md)
+* uefi
 * [x86](x86/README.md)
 
 # references
