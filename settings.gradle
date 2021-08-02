@@ -34,7 +34,6 @@ rootProject.name = 'aasgard'
 
 // plugins
 
-includeBuild 'gradle-asm'
 includeBuild 'gradle-gdb'
 includeBuild 'gradle-grub'
 

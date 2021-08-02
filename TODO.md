@@ -2,6 +2,7 @@
 
 ## Do
 
+* AsmLanguage: Detect native source sets instead of hard-coding `src/main`
 * Complete I/O demonstration program
 * Consider moving all apps to `apps`
 * Reconsider role and design of `c++-x86`

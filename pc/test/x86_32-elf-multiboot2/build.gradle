@@ -7,7 +7,7 @@ subprojects
 {
     // settings
 
-    apply plugin: 'aasgard.asm'
+    apply plugin: AsmLanguage
     apply plugin: 'aasgard.gdb'
     apply plugin: 'aasgard.grub'
     apply plugin: 'cpp-application'

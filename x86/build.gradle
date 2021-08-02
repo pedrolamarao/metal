@@ -2,9 +2,10 @@
 
 plugins
 {
-    id 'aasgard.asm'
     id 'cpp-library'
 }
+
+apply plugin: AsmLanguage
 
 // project
 
