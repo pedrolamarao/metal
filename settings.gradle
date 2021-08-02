@@ -3,7 +3,30 @@ pluginManagement
     repositories
     {
         mavenLocal()
+        maven {
+            name = "Nokee Release Repository"
+            url = uri("https://repo.nokee.dev/release")
+            mavenContent {
+                includeGroupByRegex("dev\\.nokee.*")
+                includeGroupByRegex("dev\\.gradleplugins.*")
+            }
+        }
+        maven {
+            name = "Nokee Snapshot Repository"
+            url = uri("https://repo.nokee.dev/snapshot")
+            mavenContent {
+                includeGroupByRegex("dev\\.nokee.*")
+                includeGroupByRegex("dev\\.gradleplugins.*")
+            }
+        }
         gradlePluginPortal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id.startsWith("dev.nokee.")) {
+                useModule("${requested.id.id}:${requested.id.id}.gradle.plugin:0.4.0-202107292006.929de9ac")
+            }
+        }
     }
 }
 
@@ -31,6 +54,9 @@ include 'pc:test:x86_32-elf-multiboot2:cmos'
 include 'pc:test:x86_32-elf-multiboot2:pic'
 
 include 'psys'
+
+include 'uefi'
+include 'uefi:test:hello'
 
 include 'x86'
 include 'x86:test:x86_32-elf-multiboot2:cpuid'

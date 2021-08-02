@@ -1,0 +1,11 @@
+plugins
+{
+    id 'dev.nokee.cpp-library'
+}
+
+library
+{
+    targetLinkages = [ linkages.static ]
+
+    targetMachines = [ machines.windows.architecture('-uefi-amd64') ]
+}

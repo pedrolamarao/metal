@@ -1,1 +1,4 @@
 br.dev.pedrolamarao.psys.llvm.path =
+br.dev.pedrolamarao.psys.mtools.path =
+br.dev.pedrolamarao.psys.ovmf.path =
+br.dev.pedrolamarao.psys.qemu.path =

@@ -1,0 +1,29 @@
+plugins
+{
+    id 'dev.nokee.cpp-application'
+}
+
+application
+{
+    targetMachines = [ machines.windows.architecture('-uefi-amd64') ]
+
+    dependencies
+    {
+        implementation project(':uefi')
+    }
+}
+
+final createUefi = project.tasks.register("createUefi", CreateUefi)
+{
+    group = 'psys'
+    description = 'Create a UEFI image containing the current (?) executable binary'
+    inputFile = providers.provider { application.binaries.map { it.linkTask.get().linkedFile.get() }.get().get(0)  }
+    outputFile = file("${buildDir}/uefi/${project.name}.img")
+}
+
+project.tasks.register("runUefi", RunUefi)
+{
+    group = 'psys'
+    description = 'Run the current (?) UEFI image in the system emulator'
+    imageFile = createUefi.get().outputFile
+}
