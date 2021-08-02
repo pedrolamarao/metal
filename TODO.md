@@ -11,17 +11,15 @@
 - demonstrate ia32 protected mode
 - demonstrate ia32 local apic
 - demonstrate amd64 long mode
-- demonstrate uefi application
 
 ## Doing
 
 ## Done
 
+- demonstrate uefi application
 * Update GRUB + QEMU test instructions
-
 - demonstrate multiboot elf application
 - demonstrate pc pic
-
 * Encapsulate asm convention in Gradle plugin
 * Modularity with Gradle
 * Initial study of modularity without build tools
