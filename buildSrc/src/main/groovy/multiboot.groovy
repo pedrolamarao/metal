@@ -32,7 +32,7 @@ abstract class CreateMultibootRescue extends DefaultTask
 
         mkrescue.convention "${grubPath}/grub-mkrescue"
 
-        outputFile.convention = inputFile.flatMap { layout.buildDirectory.dir("grub/bin/${it.asFile.name}/rescue/image") }
+        outputFile.convention = inputFile.flatMap { layout.buildDirectory.file("grub/bin/${it.asFile.name}/rescue/image") }
     }
 
     private static final String cdrom_cfg =
