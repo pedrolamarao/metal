@@ -35,35 +35,41 @@ subprojects
     
             def suffix = binary.name.capitalize()
 
-            final grubRescue = project.tasks.register("grubRescue${suffix}", CreateMultibootRescue) {
+            final createRescue = project.tasks.register("createRescue${suffix}", CreateMultibootRescue) {
                 inputFile = binary.executableFile
             }
             
-            def qemuRescue = qemu.registerSystem("qemuRescue${suffix}") {
+            qemu.registerSystem("runRescue${suffix}") {
+                final qemuPath = tools['br.dev.pedrolamarao.psys.qemu.path']
                 architecture = 'i386'
-                cdrom = grubRescue.get().outputFile
+                cdrom = createRescue.get().outputFile
                 gdb = 'tcp::12345'
                 start = false
-                tool = "${toolsDir}/usr/bin/qemu-system-i386"
+                tool = "${qemuPath}/qemu-system-i386"
             }
             
-            def gdbTest = gdb.testListener('_test_result')
+            final gdbTest = gdb.testListener('_test_result')
             
-            def gdbRescue = gdb.register("gdbRescue${suffix}") {
-                dependsOn grubRescue
-                tool = "${toolsDir}/usr/bin/i686-pc-elf-gdb"
+            final testRescue = gdb.register("testRescue${suffix}") {
+                final gdbPath = tools['br.dev.pedrolamarao.psys.gdb.path']
+                dependsOn createRescue
+                tool = "${gdbPath}/gdb"
                 listeners.add gdbTest
-                listeners.add gdb.logListener(file("build/tmp/gdbRescue${suffix}/mi.txt"))
+                listeners.add gdb.logListener(file("build/tmp/testRescue${suffix}/mi.txt"))
                 target = binary.executableFile
                 script {
-                    def qp = qemu.runSystem {
+                    final qp = qemu.runSystem {
+                        final qemuPath = tools['br.dev.pedrolamarao.psys.qemu.path']
                         architecture = 'i386'
-                        cdrom = grubRescue.get().outputFile
+                        cdrom = createRescue.get().outputFile
                         gdb = 'tcp:localhost:12345'
                         display = 'none'
                         start = false
-                        tool = "${toolsDir}/usr/bin/qemu-system-i386"
+                        tool = "${qemuPath}/qemu-system-i386"
                     }
+                    push 'set confirm off'
+                    push 'set mi-async off'
+                    push 'set osabi none'
                     push 'set output-radix 16'
                     push 'target remote localhost:12345'
                     push 'thbreak _start'
@@ -79,7 +85,7 @@ subprojects
             }
             
             // #XXX: add "debug" variant to qemuSystemTest
-            if (! binary.optimized) { qemuSystemTest.dependsOn gdbRescue }
+            if (! binary.optimized) { qemuSystemTest.dependsOn testRescue }
         }
     }
 }
