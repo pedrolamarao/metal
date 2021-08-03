@@ -35,8 +35,6 @@ rootProject.name = 'aasgard'
 // plugins
 
 includeBuild 'gradle-gdb'
-includeBuild 'gradle-grub'
-
 includeBuild 'gradle-qemu'
 
 // components
