@@ -1,4 +1,4 @@
-// Copyright (C) 2012,2013,2014,2015,2016 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2012, 2013, 2014, 2015, 2016, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
@@ -23,14 +23,14 @@ namespace x86
     cpuid () ;
 
     //! @pre has_cpuid()
-    //! @pre id <= cpuid(0).a()
+    //! @pre feature <= cpuid(0).a()
 
-    cpuid (ps::size4 id, ps::size4 extra) ;
+    cpuid ( ps::size4 feature, ps::size4 variant ) ;
 
     //! @pre has_cpuid()
-    //! @pre id <= cpuid(0).a()
+    //! @pre feature <= cpuid(0).a()
 
-    cpuid (ps::size4 id) ;
+    cpuid ( ps::size4 feature ) ;
 
     constexpr
     auto a () const -> ps::size4 ;
@@ -82,24 +82,21 @@ namespace x86
 
 namespace x86
 {
-
   namespace internal
   {
+      extern "C"
+      [[gnu::fastcall]]
+      ps::size4 _x86_cpu_age ();
 
-    extern "C"
-	[[gnu::fastcall]]
-    bool __has_cpuid ();
-
-    extern "C"
-	[[gnu::fastcall]]
-    void __read_cpuid (ps::size4 leaf, ps::size4 extra, cpuid & out);
-
+      extern "C"
+      [[gnu::fastcall]]
+      void _x86_cpuid (ps::size4 leaf, ps::size4 extra, cpuid * id);
   }
 
   inline
   auto has_cpuid () -> bool
   {
-    return internal::__has_cpuid();
+    return internal::_x86_cpu_age() >= 4;
   }
 
   inline constexpr
@@ -109,9 +106,9 @@ namespace x86
   }
 
   inline
-  cpuid::cpuid (ps::size4 id, ps::size4 extra) : eax(0), ebx(0), ecx(0), edx(0)
+  cpuid::cpuid (ps::size4 feature, ps::size4 variant) : eax(0), ebx(0), ecx(0), edx(0)
   {
-    internal::__read_cpuid(id, extra, (* this));
+    internal::_x86_cpuid(feature, variant, this);
   }
 
   inline
@@ -145,7 +142,7 @@ namespace x86
   }
 
   inline
-  cpuid_1::cpuid_1 () : _cpuid { 1 } { }
+  cpuid_1::cpuid_1 () : _cpuid { 1, 0 } { }
 
   inline
   auto cpuid_1::has_local_apic () const -> bool
