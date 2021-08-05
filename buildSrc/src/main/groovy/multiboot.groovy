@@ -50,10 +50,12 @@ abstract class CreateMultibootRescue extends DefaultTask
 
     @TaskAction void action ()
     {
-        final configurationFile = new File(temporaryDir, "grub.cfg").tap {
+        final configurationFile = new File(temporaryDir, 'grub.cfg').tap {
             createNewFile()
             withReader { write(CreateMultibootRescue.cdrom_cfg) }
         }
+        final stderrFile = new File(temporaryDir, 'err.txt').tap { createNewFile() }
+        final stdoutFile = new File(temporaryDir, 'out.txt').tap { createNewFile() }
         final inputFile = this.inputFile.get().asFile
         final outputFile = this.outputFile.get().asFile
 
@@ -69,7 +71,11 @@ abstract class CreateMultibootRescue extends DefaultTask
         command.add "/boot/grub/grub.cfg=" + toUnixString(configurationPath)
         command.add "/program=" + toUnixString(inputPath)
 
-        project.exec { commandLine command }
+        project.exec {
+            commandLine command
+            errorOutput = new File(temporaryDir, 'err.txt').tap{createNewFile()}.newOutputStream()
+            standardOutput = new File(temporaryDir, 'out.txt').tap{createNewFile()}.newOutputStream()
+        }
     }
 
     static String toUnixString(Path path)
