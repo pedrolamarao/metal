@@ -1,0 +1,3 @@
+[submodule "gdb"]
+	path = gdb
+	url = https://github.com/pedrolamarao/gdb-jvm.git
