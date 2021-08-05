@@ -1,7 +1,10 @@
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+
+import javax.inject.Inject
 
 abstract class QemuDriveWriter
 {
@@ -31,6 +34,22 @@ abstract class QemuDriveWriter
     }
 }
 
+abstract class QemuRtcWriter
+{
+    abstract Property<String> getBase ()
+
+    @Override String toString ()
+    {
+        final list = []
+        ifPresent base, { list.add "base=${it}" }
+        return String.join(',', list)
+    }
+    static <T> void ifPresent (Property<T> property, Action<? super T> action)
+    {
+        if (property.isPresent()) { action.execute(property.get()) }
+    }
+}
+
 abstract class QemuCommandBuilder
 {
     abstract RegularFileProperty getBios ()
@@ -45,11 +64,29 @@ abstract class QemuCommandBuilder
 
     abstract Property<String> getMachine ()
 
+    abstract Property<String> getRtc ()
+
     abstract Property<Boolean> getStop ()
+
+    @Inject abstract ObjectFactory getObjects ()
 
     QemuCommandBuilder ()
     {
         stop.convention false
+    }
+
+    void drive ( Action<? super QemuDriveWriter> configure )
+    {
+        final writer = objects.newInstance(QemuDriveWriter)
+        configure.execute(writer)
+        getDrives().add( writer.toString() )
+    }
+
+    void rtc ( Action<? super QemuRtcWriter> configure )
+    {
+        final writer = objects.newInstance(QemuRtcWriter)
+        configure.execute(writer)
+        getRtc().set( writer.toString() )
     }
 
     String[] build ()
@@ -61,6 +98,7 @@ abstract class QemuCommandBuilder
         drives.get().forEach { list.addAll '-drive', it }
         ifPresent gdb, { list.addAll '-gdb', it }
         ifPresent machine, { list.addAll '-machine', it }
+        ifPresent rtc, { list.addAll '-rtc', it }
         ifPresent stop, { if (it) list.add '-S' }
         return list
     }

@@ -158,17 +158,20 @@ abstract class TestMultibootRescue extends DefaultTask
             timeLimit = Duration.ofSeconds(10)
         }
 
-        final imageQemuDrive = project.objects.newInstance(QemuDriveWriter)
-        imageQemuDrive.media = 'cdrom'
-        imageQemuDrive.file = imageFile
-
-        final qemuCommand = project.objects.newInstance(QemuCommandBuilder)
-        qemuCommand.command = qemuExecutable
-        qemuCommand.display = 'none'
-        qemuCommand.drives.add "${imageQemuDrive}"
-        qemuCommand.gdb = 'tcp:localhost:12345'
-        qemuCommand.machine = 'q35'
-        qemuCommand.stop = true
+        final qemuCommand = project.objects.newInstance(QemuCommandBuilder).tap {
+            command = qemuExecutable
+            display = 'none'
+            drive {
+                media = 'cdrom'
+                file = imageFile
+            }
+            it.gdb = 'tcp:localhost:12345'
+            machine = 'q35'
+            rtc {
+                base = '2020-07-24T22:46:00'
+            }
+            stop = true
+        }
 
         final qemu = new ProcessBuilder()
             .command( qemuCommand.build() )
