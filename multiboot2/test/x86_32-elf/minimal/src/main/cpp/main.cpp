@@ -25,9 +25,9 @@ namespace
     };
 }
 
-//! Test result
+//! Psys test protocol
 
 extern "C"
 {
-	unsigned char _test_result = 0xFF;
+	[[gnu::used]] unsigned volatile _test_control {};
 }

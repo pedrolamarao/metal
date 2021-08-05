@@ -1,8 +1,8 @@
 // Copyright (C) 2020 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-//! Test result
+//! Psys test protocol
 
 extern "C"
 {
-	unsigned char _test_result = 0xFF;
+	[[gnu::used]] unsigned volatile _test_control {};
 }

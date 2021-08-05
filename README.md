@@ -1,4 +1,4 @@
-Date: 2021-08-02
+Date: 2021-08-05
 
 # summary
 
@@ -23,10 +23,10 @@ It is designed for integration with state-of-the-art tools and techniques.
 Psys is built by an LLVM based toolset.
 These tools are required:
 
-- LLVM (clang, lld, llvm-ar)
-- GNU mtools
 - GNU grub
 - GNU gdb
+- GNU mtools
+- LLVM (clang, lld, llvm-ar)
 
 The toolset is described in the `tools.properties` file.
 This file is required by the build tool.
@@ -36,7 +36,7 @@ Currently, all keys must be defined.
 
 # build
 
-Aasgard's build system is based on Gradle, Nokee and custom plugins.
+Psys' build system is based on Gradle, Nokee and custom plugins.
 This system requires a JDK version 11.
 
 To build: `./gradlew build`
@@ -45,11 +45,28 @@ To clean: `./gradlew clean`
 
 # verify
 
-Psys is verified by a technique orchestrating QEMU and GDB to watch for "asserts".
-In short, the image stores into a known symbol which the test driver "watches" by driving GDB.
-We are in the middle of improving this by publishing Gradle plugins for each tool.
+Psys is verified by a technique described below.
 
 To check: `./gradlew check`
+
+## Psys Test Protocol
+
+Psys tests start when control reaches `_test_start` and finish when control reaches `_test_finish`.
+During test execution, Psys tests progress when the value stored into `_test_control` changes.
+
+When `_test_control` changes, let `old` be the old value and `new` be the new value.
+If `old` is zero then test has entered stage `new`.
+Else, if `new` is zero then test stage `old` has failed.
+Else, test stage `old` has succeeded.
+
+## Psys Test Driver
+
+This project implements Psys test protocol orchestrating QEMU and GDB.
+While QEMU executes the program, GDB watches for `_test_start`, `_test_finish` and `_test_control`.
+The test driver controls GDB via MI to react appropriately.
+
+This technique is implemented as Gradle tasks with Groovy source in `buildSrc`.
+For Multiboot programs, see `TestMultibootRescue` in `multiboot.groovy`.
 
 # use
 

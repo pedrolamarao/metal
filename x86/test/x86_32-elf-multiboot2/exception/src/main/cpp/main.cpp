@@ -52,6 +52,9 @@ namespace
     { };
 
     extern "C"
+    [[gnu::used]] unsigned volatile interrupted {};
+
+    extern "C"
     void __interrupt_service_routine ();
 }
 
@@ -59,8 +62,7 @@ namespace
 
 extern "C"
 {
-    [[gnu::used]]
-    unsigned char _test_result = 0xFF;
+    [[gnu::used]] unsigned volatile _test_control {};
 }
 
 //! Multiboot2 entry point
@@ -68,8 +70,15 @@ extern "C"
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
+    _test_control = 1;
+
     x86::set_global_descriptor_table(global_descriptor_table);
+
+    _test_control = 2;
+
     x86::reload_segment_registers(x86::segment_selector(1, false, 0), x86::segment_selector(2, false, 0));
+
+    _test_control = 3;
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
         interrupt_descriptor_table[i] = { 0x8, __interrupt_service_routine, x86::interrupt_gate_access(true, 0) };
@@ -77,8 +86,17 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     x86::set_interrupt_descriptor_table(interrupt_descriptor_table, 256);
 
+    _test_control = 4;
+
     asm volatile ("mov %cr1, %eax");
 
-    _test_result = 20;
+    _test_control = 5;
+
+    if (interrupted == 0) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = -1;
     return;
 }

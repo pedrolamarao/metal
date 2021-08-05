@@ -1,6 +1,7 @@
 plugins
 {
     id 'cpp'
+    id 'br.dev.pedrolamarao.gdb.gradle' apply false
 }
 
 subprojects 
@@ -8,9 +9,8 @@ subprojects
     // settings
 
     apply plugin: AsmLanguage
-    apply plugin: 'aasgard.gdb'
+    apply plugin: 'br.dev.pedrolamarao.gdb.gradle'
     apply plugin: 'cpp-application'
-    apply plugin: 'pl.gradle-qemu'
     
     // project
     
@@ -36,54 +36,21 @@ subprojects
             def suffix = binary.name.capitalize()
 
             final createRescue = project.tasks.register("createRescue${suffix}", CreateMultibootRescue) {
+                group = 'psys'
                 inputFile = binary.executableFile
             }
-            
-            qemu.registerSystem("runRescue${suffix}") {
-                final qemuPath = tools['br.dev.pedrolamarao.psys.qemu.path']
-                architecture = 'i386'
-                cdrom = createRescue.get().outputFile
-                gdb = 'tcp::12345'
-                start = false
-                tool = "${qemuPath}/qemu-system-i386"
+
+            project.tasks.register("runRescue${suffix}", RunMultibootRescue) {
+                group = 'psys'
+                imageFile = createRescue.get().outputFile
             }
-            
-            final gdbTest = gdb.testListener('_test_result')
-            
-            final testRescue = gdb.register("testRescue${suffix}") {
-                final gdbPath = tools['br.dev.pedrolamarao.psys.gdb.path']
-                dependsOn createRescue
-                tool = "${gdbPath}/gdb"
-                listeners.add gdbTest
-                listeners.add gdb.logListener(file("build/tmp/testRescue${suffix}/mi.txt"))
-                target = binary.executableFile
-                script {
-                    final qp = qemu.runSystem {
-                        final qemuPath = tools['br.dev.pedrolamarao.psys.qemu.path']
-                        architecture = 'i386'
-                        cdrom = createRescue.get().outputFile
-                        gdb = 'tcp:localhost:12345'
-                        display = 'none'
-                        start = false
-                        tool = "${qemuPath}/qemu-system-i386"
-                    }
-                    push 'set confirm off'
-                    push 'set mi-async off'
-                    push 'set osabi none'
-                    push 'set output-radix 16'
-                    push 'target remote localhost:12345'
-                    push 'thbreak _start'
-                    push 'continue'
-                    push 'watch _test_result'
-                    push 'continue'
-                    synchronized (gdbTest) { gdbTest.wait(5000); }
-                    logger.lifecycle '_test_result = ' + gdbTest.value
-                    qp.destroy()
-                    push 'quit'
-                    waitFor 5000
-                }
+
+            def testRescue = project.tasks.register("testRescue${suffix}", TestMultibootRescue) {
+                group = 'psys'
+                executableFile = binary.executableFile
+                imageFile = createRescue.get().outputFile
             }
-            
+
             // #XXX: add "debug" variant to qemuSystemTest
             if (! binary.optimized) { qemuSystemTest.dependsOn testRescue }
         }

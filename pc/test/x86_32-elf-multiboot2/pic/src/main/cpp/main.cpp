@@ -57,6 +57,9 @@ namespace
     { };
 
     extern "C"
+    [[gnu::used]] unsigned volatile interrupted {};
+
+    extern "C"
     void __interrupt_service_routine ();
 }
 
@@ -64,8 +67,7 @@ namespace
 
 extern "C"
 {
-    [[gnu::used]]
-    unsigned char _test_result = 1;
+    [[gnu::used]] unsigned volatile _test_control {};
 }
 
 //! Multiboot2 entry point
@@ -77,10 +79,14 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     // gdt
 
+    _test_control = 10;
+
     x86::set_global_descriptor_table(global_descriptor_table);
     x86::reload_segment_registers(x86::segment_selector(1, false, 0), x86::segment_selector(2, false, 0));
 
     // idt
+
+    _test_control = 20;
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
         interrupt_descriptor_table[i] = { 0x8, __interrupt_service_routine, x86::interrupt_gate_access(true, 0) };
@@ -88,6 +94,8 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     x86::set_interrupt_descriptor_table(interrupt_descriptor_table, 256);
 
     // pic
+
+    _test_control = 30;
 
     auto master = pc::pic<x86::port>::master();
     auto slave  = pc::pic<x86::port>::slave();
@@ -103,9 +111,21 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     master._data.write(0);
     slave._data.write(0);
 
+    // enable interrupts
+
+    _test_control = 40;
+
     asm volatile ("sti");
 
-    // Assumes hardware is noisy
+    // assumes PIC is noisy and will interrupt immediately
 
+    _test_control = 50;
+
+    if (interrupted == 0) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = -1;
     return;
 }

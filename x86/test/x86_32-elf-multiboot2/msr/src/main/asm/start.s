@@ -13,6 +13,11 @@ _start:
         popf
         pushl   %ebx
         pushl   %eax
+.global _test_start
+_test_start:
         call    main
+.global _test_finish
+_test_finish:
+        nop
 loop:   hlt
         jmp     loop

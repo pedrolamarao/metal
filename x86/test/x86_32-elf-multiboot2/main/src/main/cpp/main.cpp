@@ -31,8 +31,7 @@ namespace
 
 extern "C"
 {
-    [[gnu::used]]
-    unsigned char _test_result = 0xFF;
+    [[gnu::used]] unsigned volatile _test_control {};
 }
 
 //! Multiboot2 entry point
@@ -40,21 +39,27 @@ extern "C"
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list * response )
 {
+    _test_control = 1;
+
     if (magic == 0) {
-        _test_result = 10;
+        _test_control = 0;
         return;
     }
-    
+
+    _test_control = 2;
+
     if (response == 0) {
-        _test_result = 20;
+        _test_control = 0;
         return;
     }
+
+    _test_control = 3;
 
     if (magic != multiboot2::information_magic) {
-        _test_result = 30;
+        _test_control = 0;
         return;
     }
 
-    _test_result = 0;
+    _test_control = -1;
     return;
 }

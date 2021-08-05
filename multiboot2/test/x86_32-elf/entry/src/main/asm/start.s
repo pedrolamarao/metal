@@ -13,6 +13,13 @@ _start:
         popf
         pushl   %ebx
         pushl   %eax
-        movb    $0, _test_result
+.global _test_start
+_test_start:
+        movb    $1, _test_control
+        movb    $2, _test_control
+        movb    $3, _test_control
+.global _test_finish
+_test_finish:
+        nop
 loop:   hlt
         jmp     loop

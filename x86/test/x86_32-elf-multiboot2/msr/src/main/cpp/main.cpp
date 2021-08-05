@@ -34,8 +34,7 @@ namespace
 
 extern "C"
 {
-    [[gnu::used]]
-    unsigned char _test_result = 0xFF;
+    [[gnu::used]] unsigned volatile _test_control {};
 }
 
 //! Multiboot2 entry point
@@ -45,38 +44,48 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
     // multiboot2
 
+    _test_control = 1;
+
     if (magic != multiboot2::information_magic) {
-        _test_result = 10;
+        _test_control = 0;
         return;
     }
 
     // cpuid
 
+    _test_control = 2;
+
     if (! x86::has_cpuid()) {
-        _test_result = 20;
+        _test_control = 0;
         return;
     }
-
-    x86::cpuid_1 cpuid_1;
 
     // msr
 
+    _test_control = 3;
+
+    x86::cpuid_1 cpuid_1;
+
     if (! cpuid_1.has_msr()) {
-        _test_result = 30;
+        _test_control = 0;
         return;
     }
 
+    _test_control = 4;
+
     if (! cpuid_1.has_local_apic()) {
-        _test_result = 40;
+        _test_control = 0;
         return;
     }
+
+    _test_control = 5;
 
     auto value = x86::read_msr(0x1B);
     if ((value & 0xFFFFFFFFFFFF0000) != 0x00000000FEE00000) {
-        _test_result = 50;
+        _test_control = 0;
         return;
     }
 
-    _test_result = 0;
+    _test_control = -1;
     return;
 }

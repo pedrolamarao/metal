@@ -29,12 +29,11 @@ namespace
     };
 }
 
-//! Test result
+//! Psys test protocol
 
 extern "C"
 {
-    [[gnu::used]]
-    unsigned char _test_result = 1;
+    [[gnu::used]] unsigned volatile _test_control {};
 }
 
 //! Multiboot2 entry point
@@ -45,63 +44,79 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     pc::cmos<x86::port> cmos;
     
     // Note: CMOS RTC values must be fixed by the system emulator
+
+    _test_control = 10;
     
     auto status_B = cmos.read(0x0B, false);
     
     // CMOS RTC time format
+
+    _test_control = 20;
     
     auto format_24 = (status_B & 0x02) == 0x02;
     
     if (! format_24) {
-    	_test_result = 2;
+    	_test_control = 0;
     	return;
     }
     
     // CMOS RTC date format
+
+    _test_control = 30;
     
     auto format_Binary = (status_B & 0x04) == 0x04;
 
     if (format_Binary) {
-    	_test_result = 3;
+    	_test_control = 0;
     	return;
     }
 
     // CMOS RTC year
 
+    _test_control = 40;
+
     if (cmos.read(0x09, false) != 0x20) {
-    	_test_result = 10;
+    	_test_control = 0;
     	return;
     }
 
     // CMOS RTC month
 
+    _test_control = 50;
+
     if (cmos.read(0x08, false) != 0x07) {
-    	_test_result = 11;
+    	_test_control = 0;
     	return;
     }
 
     // CMOS RTC day of month
 
+    _test_control = 60;
+
     if (cmos.read(0x07, false) != 0x24) {
-    	_test_result = 12;
+    	_test_control = 0;
     	return;
     }
 
     // CMOS RTC hour
 
+    _test_control = 70;
+
     if (cmos.read(0x04, false) != 0x22) {
-    	_test_result = 20;
+    	_test_control = 0;
     	return;
     }
 
     // CMOS RTC minute
 
+    _test_control = 80;
+
     if (cmos.read(0x02, false) != 0x46) {
-    	_test_result = 21;
+    	_test_control = 0;
     	return;
     }
 
-    _test_result = 0;
+    _test_control = -1;
     return;
 }
 

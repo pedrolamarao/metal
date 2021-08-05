@@ -9,6 +9,8 @@ abstract class QemuDriveWriter
 
     abstract Property<String> getFormat ()
 
+    abstract Property<String> getMedia ()
+
     abstract Property<Boolean> getReadOnly ()
 
     abstract Property<String> getType ()
@@ -18,6 +20,7 @@ abstract class QemuDriveWriter
         final list = []
         ifPresent type, { list.add "if=${it}" }
         ifPresent format, { list.add "format=${it}" }
+        ifPresent media, { list.add "media=${it}" }
         ifPresent readOnly, { list.add "readonly=${it}" }
         ifPresent file, { list.add "file=${it}" }
         return String.join(',', list)
@@ -33,6 +36,8 @@ abstract class QemuCommandBuilder
     abstract RegularFileProperty getBios ()
 
     abstract RegularFileProperty getCommand ()
+
+    abstract Property<String> getDisplay ()
 
     abstract ListProperty<String> getDrives ()
 
@@ -52,6 +57,7 @@ abstract class QemuCommandBuilder
         final ArrayList<String> list = []
         list.add command.get()
         ifPresent bios, { list.addAll '-bios', it }
+        ifPresent display, { list.addAll '-display', it }
         drives.get().forEach { list.addAll '-drive', it }
         ifPresent gdb, { list.addAll '-gdb', it }
         ifPresent machine, { list.addAll '-machine', it }

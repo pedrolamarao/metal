@@ -2,16 +2,12 @@
 
 plugins
 {
-    id 'aasgard.gdb' version '0.1.0-SNAPSHOT' apply false
-    id 'pl.gradle-qemu' version '0.2.0-SNAPSHOT' apply false
     id 'base'
 }
 
 // project
 
 ext.tools = new Properties().tap { it.load( file('tools.properties').newReader() ) }
-
-ext.toolsDir = "${projectDir}/tools"
 
 subprojects 
 {

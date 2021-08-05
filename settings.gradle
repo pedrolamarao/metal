@@ -1,5 +1,7 @@
 pluginManagement
 {
+    includeBuild 'gdb'
+
     repositories
     {
         mavenLocal()
@@ -21,6 +23,7 @@ pluginManagement
         }
         gradlePluginPortal()
     }
+
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("dev.nokee.")) {
@@ -31,11 +34,6 @@ pluginManagement
 }
 
 rootProject.name = 'aasgard'
-
-// plugins
-
-includeBuild 'gradle-gdb'
-includeBuild 'gradle-qemu'
 
 // components
 

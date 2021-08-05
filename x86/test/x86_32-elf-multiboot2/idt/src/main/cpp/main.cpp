@@ -55,15 +55,17 @@ namespace
     { };
 
     extern "C"
+    [[gnu::used]] unsigned volatile interrupted {};
+
+    extern "C"
     void __interrupt_service_routine ();
 }
 
-//! Test result
+//! Psys test protocol
 
 extern "C"
 {
-    [[gnu::used]]
-    unsigned char _test_result = 0xFF;
+    [[gnu::used]] unsigned volatile _test_control {};
 }
 
 //! Multiboot2 entry point
@@ -71,35 +73,53 @@ extern "C"
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
+    _test_control = 1;
+
     if (magic != multiboot2::information_magic) {
-        _test_result = 10;
+        _test_control = 0;
         return;
     }
 
+    _test_control = 2;
+
     x86::set_global_descriptor_table(global_descriptor_table);
+
+    _test_control = 3;
+
     x86::reload_segment_registers(x86::segment_selector(1, false, 0), x86::segment_selector(2, false, 0));
+
+    _test_control = 4;
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
         interrupt_descriptor_table[i] = { 0x8, __interrupt_service_routine, interrupt_gate_access(true, 0) };
     }
 
     x86::set_interrupt_descriptor_table(interrupt_descriptor_table, 256);
+
+    _test_control = 5;
+
     auto idt = x86::get_interrupt_descriptor_table();
+
+    _test_control = 6;
 
     // #TODO document this assert
     if ((256 * sizeof(interrupt_gate_descriptor)) != (idt & 0xFFFF)) {
-        _test_result = 20;
+        _test_control = 0;
         return;
     }
+
+    _test_control = 7;
 
     // #TODO document this assert
     if (ps::size4(& interrupt_descriptor_table) != ((idt >> 16) & 0xFFFFFFFF)) {
-        _test_result = 30;
+        _test_control = 0;
         return;
     }
 
+    _test_control = 8;
+
     x86::interrupt<0>();
 
-    _test_result = 40;
+    _test_control = -1;
     return;
 }
