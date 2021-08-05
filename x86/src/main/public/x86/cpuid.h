@@ -22,15 +22,20 @@ namespace x86
     constexpr
     cpuid () ;
 
-    //! @pre has_cpuid()
-    //! @pre feature <= cpuid(0).a()
-
-    cpuid ( ps::size4 feature, ps::size4 variant ) ;
+    constexpr
+    cpuid ( ps::size4 a, ps::size4 b, ps::size4 c, ps::size4 d ) ;
 
     //! @pre has_cpuid()
     //! @pre feature <= cpuid(0).a()
 
-    cpuid ( ps::size4 feature ) ;
+    static
+    auto load ( ps::size4 feature, ps::size4 variant ) -> cpuid ;
+
+    //! @pre has_cpuid()
+    //! @pre feature <= cpuid(0).a()
+
+    static
+    auto load ( ps::size4 feature ) -> cpuid ;
 
     constexpr
     auto a () const -> ps::size4 ;
@@ -46,10 +51,10 @@ namespace x86
 
   private:
 
-    ps::size4 eax;
-    ps::size4 ebx;
-    ps::size4 ecx;
-    ps::size4 edx;
+    ps::size4 _a;
+    ps::size4 _b;
+    ps::size4 _c;
+    ps::size4 _d;
 
   };
 
@@ -62,7 +67,10 @@ namespace x86
       //! @brief Object
       //! @{
 
-      cpuid_1 ();
+      cpuid_1 ( x86::cpuid cpuid );
+
+      static
+      auto load () -> cpuid_1 ;
 
       //! @}
 
@@ -100,49 +108,63 @@ namespace x86
   }
 
   inline constexpr
-  cpuid::cpuid () : eax(), ebx(), ecx(), edx()
+  cpuid::cpuid () : _a{}, _b{}, _c{}, _d{}
+  {
+
+  }
+
+  inline constexpr
+  cpuid::cpuid ( ps::size4 a, ps::size4 b, ps::size4 c, ps::size4 d ) : _a{a}, _b{b}, _c{c}, _d{d}
   {
 
   }
 
   inline
-  cpuid::cpuid (ps::size4 feature, ps::size4 variant) : eax(0), ebx(0), ecx(0), edx(0)
+  auto cpuid::load ( ps::size4 feature, ps::size4 variant ) -> cpuid
   {
-    internal::_x86_cpuid(feature, variant, this);
+    cpuid _r;
+    internal::_x86_cpuid(feature, variant, &_r);
+    return _r;
   }
 
   inline
-  cpuid::cpuid (ps::size4 id) : cpuid(id, 0)
+  auto cpuid::load ( ps::size4 feature ) -> cpuid
   {
-
+    return load(feature, 0);
   }
 
   inline constexpr
   auto cpuid::a () const -> ps::size4
   {
-    return eax;
+    return _a;
   }
 
   inline constexpr
   auto cpuid::b () const -> ps::size4
   {
-    return ebx;
+    return _b;
   }
 
   inline constexpr
   auto cpuid::c () const -> ps::size4
   {
-    return ecx;
+    return _c;
   }
 
   inline constexpr
   auto cpuid::d () const -> ps::size4
   {
-    return edx;
+    return _d;
   }
 
   inline
-  cpuid_1::cpuid_1 () : _cpuid { 1, 0 } { }
+  cpuid_1::cpuid_1 ( x86::cpuid cpuid ) : _cpuid{cpuid} { }
+
+  inline
+  auto cpuid_1::load () -> cpuid_1
+  {
+    return cpuid_1( x86::cpuid::load(1, 0) );
+  }
 
   inline
   auto cpuid_1::has_local_apic () const -> bool

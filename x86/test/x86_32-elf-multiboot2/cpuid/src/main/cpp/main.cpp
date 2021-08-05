@@ -50,7 +50,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     _test_control = 2;
 
-    x86::cpuid cpuid_0 { 0, 0 };
+    auto cpuid_0 = x86::cpuid::load(0);
     if (cpuid_0.a() == 0) {
         _test_control = 0;
         return;
@@ -58,8 +58,8 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     _test_control = 3;
 
-    x86::cpuid cpuid_1 { 1, 0 };
-    if (cpuid_0.a() == 0) {
+    auto cpuid_1 = x86::cpuid::load(1);
+    if (cpuid_1.a() == 0) {
         _test_control = 0;
         return;
     }

@@ -64,7 +64,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     _test_control = 3;
 
-    x86::cpuid_1 cpuid_1;
+    auto cpuid_1 = x86::cpuid_1::load();
 
     if (! cpuid_1.has_msr()) {
         _test_control = 0;

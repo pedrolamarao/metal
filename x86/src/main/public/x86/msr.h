@@ -85,7 +85,7 @@ namespace x86
   inline
   auto has_msr () -> bool
   {
-    return has_msr(cpuid(1));
+    return has_msr(cpuid::load(1));
   }
 
   inline
