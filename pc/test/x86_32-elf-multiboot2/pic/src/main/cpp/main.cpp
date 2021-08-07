@@ -37,7 +37,7 @@ namespace
 
 namespace
 {
-    [[gnu::aligned(8)]]
+    [[gnu::section(".gdt")]]
     constexpr x86::segment_descriptor global_descriptor_table [5] =
     {
         { },
@@ -52,22 +52,28 @@ namespace
 
 namespace
 {
-    [[gnu::aligned(8)]]
+    [[gnu::section(".idt")]]
     x86::interrupt_gate_descriptor interrupt_descriptor_table [256] =
     { };
 
-    extern "C"
-    [[gnu::used]] unsigned volatile interrupted {};
+    extern "C" void _x86_exception ();
+    extern "C" [[gnu::used]] unsigned volatile _x86_exception_counter {};
 
-    extern "C"
-    void __interrupt_service_routine ();
+    extern "C" void _x86_interrupt_master ();
+    extern "C" [[gnu::used]] unsigned volatile _x86_interrupt_master_counter {};
+
+    extern "C" void _x86_interrupt_slave ();
+    extern "C" [[gnu::used]] unsigned volatile _x86_interrupt_slave_counter {};
+
+    extern "C" void _x86_interrupt_free ();
+    extern "C" [[gnu::used]] unsigned volatile _x86_interrupt_free_counter {};
 }
 
-//! Test result
+//! Psys test protocol
 
-extern "C"
+namespace
 {
-    [[gnu::used]] unsigned volatile _test_control {};
+    extern "C" [[gnu::used]] unsigned volatile _test_control {};
 }
 
 //! Multiboot2 entry point
@@ -75,27 +81,43 @@ extern "C"
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
-    asm volatile ("cli");
+    _test_control = 1;
 
     // gdt
-
-    _test_control = 10;
 
     x86::set_global_descriptor_table(global_descriptor_table);
     x86::reload_segment_registers(x86::segment_selector(1, false, 0), x86::segment_selector(2, false, 0));
 
     // idt
 
-    _test_control = 20;
-
-    for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table[i] = { 0x8, __interrupt_service_routine, x86::interrupt_gate_access(true, 0) };
+    for (auto i = 0U, j = 32U; i != j; ++i) {
+        interrupt_descriptor_table[i] = { 0x8, _x86_exception, x86::interrupt_gate_access(true, 0) };
+    }
+    for (auto i = 32U, j = 40U; i != j; ++i) {
+        interrupt_descriptor_table[i] = { 0x8, _x86_interrupt_master, x86::interrupt_gate_access(true, 0) };
+    }
+    for (auto i = 40U, j = 48U; i != j; ++i) {
+        interrupt_descriptor_table[i] = { 0x8, _x86_interrupt_slave, x86::interrupt_gate_access(true, 0) };
+    }
+    for (auto i = 48U, j = 256U; i != j; ++i) {
+        interrupt_descriptor_table[i] = { 0x8, _x86_interrupt_free, x86::interrupt_gate_access(true, 0) };
     }
     x86::set_interrupt_descriptor_table(interrupt_descriptor_table, 256);
 
+    // test: software interrupt increments counter
+
+    _test_control = 2;
+
+    x86::interrupt<48>();
+
+    if (_x86_interrupt_free_counter == 0) {
+        _test_control = 0;
+        return;
+    }
+
     // pic
 
-    _test_control = 30;
+    _test_control = 3;
 
     auto master = pc::pic<x86::port>::master();
     auto slave  = pc::pic<x86::port>::slave();
@@ -108,22 +130,21 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     slave._data.write(2);
     master._data.write(1);
     slave._data.write(1);
+
+    // pic: unmask all lines
+
     master._data.write(0);
     slave._data.write(0);
 
-    // enable interrupts
+    // test: hardware interrupt increments counter
+    // assumption: PIT will interrupt line 0
 
-    _test_control = 40;
+    _test_control = 4;
 
     asm volatile ("sti");
 
-    // assumes PIC is noisy and will interrupt immediately
-
-    _test_control = 50;
-
-    if (interrupted == 0) {
-        _test_control = 0;
-        return;
+    while (_x86_interrupt_master_counter == 0) {
+        // wait!
     }
 
     _test_control = -1;
