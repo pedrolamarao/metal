@@ -33,7 +33,7 @@ namespace pc
     template <template <typename Value> typename Port>
     class pic
     {
-    public:
+    protected:
 
         Port<ps::size1> _command;
         Port<ps::size1> _data;
@@ -45,12 +45,6 @@ namespace pc
 
         constexpr
         pic (ps::size2 base) : _command { base }, _data { ps::size1( base + 1 ) } {}
-
-        static constexpr
-        auto master () { return pic{0x20}; }
-
-        static constexpr
-        auto slave () { return pic{0xA0}; }
 
         //! @}
 
@@ -70,21 +64,6 @@ namespace pc
         void icw2 (ps::size1 offset)
         {
             _data.write(offset);
-        }
-
-        //! @brief Initialization command word 3 (ICW3) — slave lines
-
-        void icw3_master (ps::size1 slaves)
-        {
-            _data.write(slaves);
-        }
-
-        //! @brief Initialization command word 3 (ICW3) — slave id
-
-        void icw3_slave (ps::size1 id)
-        {
-            ps::size1 value = (id & 7);
-            _data.write(value);
         }
 
         //! @brief Initialization command word 4 (ICW4) — miscellaneous
@@ -146,5 +125,46 @@ namespace pc
         }
 
         //! @}
+    };
+
+    template <template <typename Value> typename Port>
+    class master_pic : public pic<Port>
+    {
+    public:
+
+        constexpr
+        master_pic (ps::size2 base) : pic<Port> { base } { }
+
+        static constexpr
+        auto create () { return master_pic(0x20); }
+
+        //! @brief Initialization command word 3 (ICW3) — slave lines
+
+        void icw3 (ps::size1 slaves)
+        {
+            pic<Port>::_data.write(slaves);
+        }
+
+    };
+
+    template <template <typename Value> typename Port>
+    class slave_pic : public pic<Port>
+    {
+    public:
+
+        constexpr
+        slave_pic (ps::size2 base) : pic<Port> { base } { }
+
+        static constexpr
+        auto create () { return slave_pic(0xA0); }
+
+        //! @brief Initialization command word 3 (ICW3) — slave id
+
+        void icw3 (ps::size1 id)
+        {
+            ps::size1 value = (id & 7);
+            pic<Port>::_data.write(value);
+        }
+
     };
 }

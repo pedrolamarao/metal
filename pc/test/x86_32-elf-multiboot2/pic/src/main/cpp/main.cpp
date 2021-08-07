@@ -119,22 +119,22 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     _test_control = 3;
 
-    auto master = pc::pic<x86::port>::master();
-    auto slave  = pc::pic<x86::port>::slave();
+    auto master = pc::master_pic<x86::port>::create();
+    auto slave  = pc::slave_pic<x86::port>::create();
 
-    master._command.write(0x11);
-    slave._command.write(0x11);
-    master._data.write(0x20);
-    slave._data.write(0x28);
-    master._data.write(4);
-    slave._data.write(2);
-    master._data.write(1);
-    slave._data.write(1);
+    master.icw1(true, false, true);
+    slave.icw1(true, false, true);
+    master.icw2(0x20);
+    slave.icw2(0x28);
+    master.icw3(4);
+    slave.icw3(2);
+    master.icw4(true, false, pc::pic_buffering::none, false);
+    slave.icw4(true, false, pc::pic_buffering::none, false);
 
     // pic: unmask all lines
 
-    master._data.write(0);
-    slave._data.write(0);
+    master.ocw1(0);
+    slave.ocw1(0);
 
     // test: hardware interrupt increments counter
     // assumption: PIT will interrupt line 0
