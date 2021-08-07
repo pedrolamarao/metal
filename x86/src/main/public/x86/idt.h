@@ -1,4 +1,4 @@
-// Copyright (C) 2012,2013,2014,2015,2016 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2012,2013,2014,2015,2016,2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
@@ -13,7 +13,7 @@ namespace x86
   //!
   //! Element of interrupt descriptor tables.
 
-  class interrupt_gate_descriptor
+  class alignas(8) interrupt_gate_descriptor
   {
   public:
 

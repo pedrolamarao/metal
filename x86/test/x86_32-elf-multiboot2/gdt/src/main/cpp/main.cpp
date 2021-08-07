@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020,2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <psys/integer.h>
@@ -33,7 +33,7 @@ namespace
 {
     using namespace x86;
 
-    [[gnu::aligned(8), gnu::section(".gdt")]]
+    [[gnu::section(".gdt")]]
     constexpr segment_descriptor global_descriptor_table [5] =
     {
         { },
