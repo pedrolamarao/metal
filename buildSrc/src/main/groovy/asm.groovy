@@ -15,14 +15,24 @@ class AsmLanguage implements Plugin<Project>
         logger = Logging.getLogger(AsmLanguage.class);
 
         project.afterEvaluate { p ->
-            find(p, CppLibrary.class).ifPresent { component ->
+            find(p, CppLibrary).ifPresent { component ->
                 component.binaries.whenElementFinalized { binary ->
                     if (binary instanceof CppStaticLibrary) apply(p, binary)
                 }
             }
-            find(p, CppApplication.class).ifPresent { component ->
+            find(p, CppApplication).ifPresent { component ->
                 component.binaries.whenElementFinalized { binary ->
                     if (binary instanceof CppExecutable) apply(p, binary)
+                }
+            }
+            find(p, dev.nokee.platform.cpp.CppApplication).ifPresent { component ->
+                component.binaries.configureEach { binary ->
+                    apply(p, binary)
+                }
+            }
+            find(p, dev.nokee.platform.cpp.CppLibrary).ifPresent { component ->
+                component.binaries.configureEach { binary ->
+                    apply(p, binary)
                 }
             }
         }
@@ -54,6 +64,34 @@ class AsmLanguage implements Plugin<Project>
         }
     }
 
+    void apply (Project project, dev.nokee.platform.nativebase.ExecutableBinary binary)
+    {
+        logger.info("psys.asm-language: apply: ${binary}")
+        final compile = create(project, binary)
+        binary.linkTask.get().with {
+            dependsOn compile
+            source compile.map { asm ->
+                return project.fileTree(asm.objectFileDir, { file ->
+                    file.include("**/*.o", "**/*.obj")
+                })
+            }
+        }
+    }
+
+    void apply (Project project, dev.nokee.platform.nativebase.StaticLibraryBinary binary)
+    {
+        logger.info("psys.asm-language: apply: ${binary}")
+        final compile = create(project, binary)
+        binary.createTask.get().with {
+            dependsOn compile
+            source compile.map { asm ->
+                return project.fileTree(asm.objectFileDir, { file ->
+                    file.include("**/*.o", "**/*.obj")
+                })
+            }
+        }
+    }
+
     TaskProvider<Assemble> create (Project project, CppBinary binary)
     {
         final name = String.format("compileAsm${binary.name}")
@@ -66,6 +104,38 @@ class AsmLanguage implements Plugin<Project>
             task.assemblerArgs = Collections.emptyList()
             task.source.from project.fileTree("src/main/asm", { tree -> tree.include("**/*.s") })
             final tmp = "asm/${binary.name}"
+            task.objectFileDir = project.layout.buildDirectory.dir(tmp).get().getAsFile()
+        })
+    }
+
+    TaskProvider<Assemble> create (Project project, dev.nokee.platform.nativebase.internal.ExecutableBinaryInternal binary)
+    {
+        final name = String.format("compileAsm${binary}")
+        return project.tasks.register(name, Assemble.class, { task ->
+            logger.info("psys.asm-language: ${task.name}")
+            task.targetPlatform = binary.targetPlatform
+            task.toolChain = binary.linkTask.get().getToolChain()
+            task.includes.from project.file("src/main/public")
+            task.includes.from project.file("src/main/headers")
+            task.assemblerArgs = Collections.emptyList()
+            task.source.from project.fileTree("src/main/asm", { tree -> tree.include("**/*.s") })
+            final tmp = "asm/${binary}"
+            task.objectFileDir = project.layout.buildDirectory.dir(tmp).get().getAsFile()
+        })
+    }
+
+    TaskProvider<Assemble> create (Project project, dev.nokee.platform.nativebase.internal.StaticLibraryBinaryInternal binary)
+    {
+        final name = String.format("compileAsm${binary}")
+        return project.tasks.register(name, Assemble.class, { task ->
+            logger.info("psys.asm-language: ${task.name}")
+            task.targetPlatform = binary.targetPlatform
+            task.toolChain = binary.createTask.get().getToolChain()
+            task.includes.from project.file("src/main/public")
+            task.includes.from project.file("src/main/headers")
+            task.assemblerArgs = Collections.emptyList()
+            task.source.from project.fileTree("src/main/asm", { tree -> tree.include("**/*.s") })
+            final tmp = "asm/${binary}"
             task.objectFileDir = project.layout.buildDirectory.dir(tmp).get().getAsFile()
         })
     }

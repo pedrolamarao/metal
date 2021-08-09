@@ -4,55 +4,64 @@ plugins
     id 'br.dev.pedrolamarao.gdb' apply false
 }
 
-subprojects 
+subprojects
 {
     // settings
 
     apply plugin: AsmLanguage
     apply plugin: 'br.dev.pedrolamarao.gdb'
-    apply plugin: 'cpp-application'
-    
+    apply plugin: 'dev.nokee.cpp-application'
+
     // project
-    
+
     application
     {
-        // #XXX: gradle can't cross compile to system "any"
+        // #XXX: Gradle can't cross compile to system "none"
         targetMachines = [ machines.linux.x86, machines.windows.x86 ]
-        
+
         dependencies
         {
             implementation project(':multiboot2')
             implementation project(':x86')
         }
-    
-        binaries.whenElementFinalized { binary ->
-        
-            def compiler = compileTask.get()
-            compiler.compilerArgs.addAll '-std=c++20', '-Werror', '-Wall', '-Wno-unused-private-field'
-            
-            def linker = linkTask.get()
-            linker.linkerArgs.addAll '-std=c++20', '-Wl,-Ttext=0x1000'
-    
-            def suffix = binary.name.capitalize()
 
-            final createRescue = project.tasks.register("createRescue${suffix}", CreateMultibootRescue) {
-                group = 'psys'
-                inputFile = binary.executableFile
+        binaries.configureEach {
+
+            compileTasks.configureEach {
+                compilerArgs.addAll '-std=c++20', '-Wall', '-g'
             }
 
-            project.tasks.register("runRescue${suffix}", RunMultibootRescue) {
-                group = 'psys'
-                imageFile = createRescue.get().outputFile
-            }
+            final linker = it.linkTask.get()
+            linker.linkerArgs.addAll '-std=c++20', '-Wl,-g', '-Wl,-Ttext=0x1000'
 
-            def testRescue = project.tasks.register("testRescue${suffix}", TestMultibootRescue) {
-                group = 'psys'
-                executableFile = binary.executableFile
-                imageFile = createRescue.get().outputFile
-            }
-
-            // #XXX: add "debug" variant to qemuSystemTest
-            if (! binary.optimized) { qemuSystemTest.dependsOn testRescue }
         }
     }
+
+    final createMultibootRescue = tasks.register('createMultibootRescue', CreateMultibootRescue) {
+        group = 'psys'
+        inputFile = providers.provider {
+            application.binaries
+                .filter { it.isBuildable() }
+                .map { it.get(0).linkTask.get().linkedFile.get() }
+                .get()
+        }
+    }
+
+    tasks.register('runMultibootRescueWindows', RunMultibootRescue) {
+        group = 'psys'
+        imageFile = createMultibootRescue.get().outputFile
+    }
+
+    def testRescue = tasks.register('testMultibootRescue', TestMultibootRescue) {
+        group = 'psys'
+        executableFile = providers.provider {
+            application.binaries
+                .filter { it.isBuildable() }
+                .map { it.get(0).linkTask.get().linkedFile.get() }
+                .get()
+        }
+        imageFile = createMultibootRescue.get().outputFile
+    }
+
+    qemuSystemTest.dependsOn testRescue
 }

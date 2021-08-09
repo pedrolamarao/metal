@@ -2,7 +2,7 @@
 
 plugins
 {
-    id 'cpp-library'
+    id 'dev.nokee.cpp-library'
 }
 
 apply plugin: AsmLanguage
@@ -14,16 +14,16 @@ version '0.1.0-SNAPSHOT'
 
 library
 {
-    // #XXX: gradle can't cross compile to system "any"
+    targetLinkages = [ linkages.static ]
+
+    // #XXX: gradle can't cross compile to system "none"
     targetMachines = [ machines.linux.x86, machines.windows.x86 ]
 
-    linkage = [ Linkage.STATIC ]
-    
     dependencies.api project(':psys')
     
-    binaries.whenElementFinalized {
-    	def compiler = compileTask.get()
-    	compiler.compilerArgs.addAll '-std=c++20', '-Werror', '-Wall', '-Wno-unused-private-field'
+    binaries.configureEach {
+    	def compiler = compileTasks.get()
+    	compiler.compilerArgs.addAll '-std=c++20', '-Werror', '-Wall'
     }
 }
 
