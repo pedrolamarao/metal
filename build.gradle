@@ -9,13 +9,10 @@ plugins
 
 ext.tools = new Properties().tap { it.load( file('tools.properties').newReader() ) }
 
-subprojects 
+subprojects
 {
-    apply plugin: ToolchainRules
-
-    tasks.register('qemuUserTest')
-
-    tasks.register('qemuSystemTest')
+    pluginManager.withPlugin('dev.nokee.cpp-application') { apply plugin: ToolchainRules }
+    pluginManager.withPlugin('dev.nokee.cpp-library') { apply plugin: ToolchainRules }
 }
 
 // tasks

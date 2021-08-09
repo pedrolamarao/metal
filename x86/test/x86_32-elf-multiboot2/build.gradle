@@ -63,5 +63,5 @@ subprojects
         imageFile = createMultibootRescue.get().outputFile
     }
 
-    qemuSystemTest.dependsOn testRescue
+    check.dependsOn testRescue
 }
