@@ -44,14 +44,32 @@ namespace x86
     constexpr
     segment_descriptor ( ps::size4 base, ps::size4 limit, ps::size1 access, ps::size1 granularity ) ;
 
+    constexpr
+    auto access () { return _access; }
+
+    constexpr
+    auto base_lower () { return _base_lower; }
+
+    constexpr
+    auto base_middle () { return _base_middle; }
+
+    constexpr
+    auto base_upper () { return _base_upper; }
+
+    constexpr
+    auto granularity () { return _granularity; }
+
+    constexpr
+    auto limit_lower () { return _limit_lower; }
+
   private:
 
     ps::size2 _limit_lower;
     ps::size2 _base_lower;
-    ps::size1  _base_middle;
-    ps::size1  _access;
-    ps::size1  _granularity;
-    ps::size1  _base_upper;
+    ps::size1 _base_middle;
+    ps::size1 _access;
+    ps::size1 _granularity;
+    ps::size1 _base_upper;
 
   };
 
