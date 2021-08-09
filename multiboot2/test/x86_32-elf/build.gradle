@@ -1,7 +1,6 @@
 plugins
 {
-    id 'cpp'
-    id 'br.dev.pedrolamarao.gdb' apply false
+    id 'base'
 }
 
 subprojects 
