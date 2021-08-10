@@ -16,7 +16,10 @@ subprojects
     application
     {
         // #XXX: Gradle can't cross compile to system "none"
-        targetMachines = [ machines.linux.x86, machines.windows.x86 ]
+        targetMachines = [
+            machines.linux.architecture('-multiboot-x86_32'),
+            machines.windows.architecture('-multiboot-x86_32'),
+        ]
         
         dependencies
         {

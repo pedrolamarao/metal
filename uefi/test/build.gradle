@@ -1,4 +1,4 @@
 plugins
 {
-    id 'dev.nokee.cpp-language'
+    id 'base'
 }

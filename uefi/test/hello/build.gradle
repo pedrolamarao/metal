@@ -5,7 +5,10 @@ plugins
 
 application
 {
-    targetMachines = [ machines.windows.architecture('-uefi-amd64') ]
+    targetMachines = [
+        machines.linux.architecture('-uefi-x86_64'),
+        machines.windows.architecture('-uefi-x86_64')
+    ]
 
     dependencies
     {
