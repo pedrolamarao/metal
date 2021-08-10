@@ -115,7 +115,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
         return;
     }
 
-    // pic
+    // pic: initialize
 
     _test_control = 3;
 
@@ -131,17 +131,17 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     master.icw4(true, false, pc::pic_buffering::none, false);
     slave.icw4(true, false, pc::pic_buffering::none, false);
 
-    // pic: unmask all lines
+    // pic: unmask IRQ 0
 
-    master.ocw1(0);
-    slave.ocw1(0);
+    master.ocw1(0xFE);
+    slave.ocw1(0xFF);
 
     // test: hardware interrupt increments counter
-    // assumption: PIT will interrupt line 0
-
-    _test_control = 4;
+    // assumption: hardware shall interrupt IRQ 0
 
     asm volatile ("sti");
+
+    _test_control = 4;
 
     while (_x86_interrupt_master_counter == 0) {
         // wait!
