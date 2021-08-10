@@ -3,9 +3,4 @@ plugins
     id 'base'
 }
 
-check.dependsOn ':x86:test:x86_32-elf-multiboot2:cpuid:check'
-check.dependsOn ':x86:test:x86_32-elf-multiboot2:exception:check'
-check.dependsOn ':x86:test:x86_32-elf-multiboot2:gdt:check'
-check.dependsOn ':x86:test:x86_32-elf-multiboot2:idt:check'
-check.dependsOn ':x86:test:x86_32-elf-multiboot2:main:check'
-check.dependsOn ':x86:test:x86_32-elf-multiboot2:msr:check'
+check.dependsOn ':x86:test:x86_32-elf-multiboot2:check'

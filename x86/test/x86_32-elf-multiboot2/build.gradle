@@ -63,4 +63,6 @@ subprojects
     }
 
     check.dependsOn testRescue
+
+    parent.tasks.named('check') { dependsOn check }
 }

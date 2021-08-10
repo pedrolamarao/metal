@@ -3,5 +3,4 @@ plugins
     id 'base'
 }
 
-check.dependsOn ':pc:test:x86_32-elf-multiboot2:cmos:check'
-check.dependsOn ':pc:test:x86_32-elf-multiboot2:pic:check'
+check.dependsOn ':pc:test:x86_32-elf-multiboot2:check'
