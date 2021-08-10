@@ -37,6 +37,7 @@ subprojects
 
     final createMultibootRescue = tasks.register('createMultibootRescue', CreateMultibootRescue) {
         group = 'psys'
+        dependsOn assemble
         inputFile = providers.provider {
             application.binaries
                 .filter { it.isBuildable() }
