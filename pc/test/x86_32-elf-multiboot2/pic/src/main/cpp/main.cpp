@@ -137,11 +137,26 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     slave.ocw1(0xFF);
 
     // test: hardware interrupt increments counter
-    // assumption: hardware shall interrupt IRQ 0
+    // assumption: PIT shall interrupt IRQ 0
 
     asm volatile ("sti");
 
     _test_control = 4;
+
+    while (_x86_interrupt_master_counter == 0) {
+        // wait!
+    }
+
+    // test: hardware interrupt increments counter
+    // assumption: PIT shall interrupt IRQ 0 again
+
+    asm volatile ("cli");
+
+    _x86_interrupt_master_counter = 0;
+
+    asm volatile ("sti");
+
+    _test_control = 5;
 
     while (_x86_interrupt_master_counter == 0) {
         // wait!

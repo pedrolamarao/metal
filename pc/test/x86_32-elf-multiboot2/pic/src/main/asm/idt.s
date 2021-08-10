@@ -12,7 +12,7 @@ _x86_exception:
 .type   _x86_interrupt_master, STT_FUNC
 _x86_interrupt_master:
     incl _x86_interrupt_master_counter
-    mov $0, %al
+    mov $0x20, %al
     outb %al, $0x20
 	iret
 
@@ -20,7 +20,7 @@ _x86_interrupt_master:
 .type   _x86_interrupt_slave, STT_FUNC
 _x86_interrupt_slave:
     incl _x86_interrupt_slave_counter
-    mov $0, %al
+    mov $0x20, %al
     outb %al, $0xA0
     outb %al, $0x20
 	iret
