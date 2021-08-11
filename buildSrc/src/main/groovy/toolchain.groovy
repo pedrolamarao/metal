@@ -21,49 +21,51 @@ class ToolchainRules implements Plugin<Project>
         @Finalize
         void configure (NativeToolChainRegistry toolChains, ServiceRegistry serviceRegistry)
         {
-            final multiboot_x86_32 = { platform ->
-                platform.assembler.executable = 'clang'
-                platform.assembler.withArguments { addAll '-target', 'i386-elf' }
-                platform.cCompiler.executable = 'clang'
-                platform.cCompiler.withArguments { addAll '-target', 'i386-elf', '-nostdinc', '-ffreestanding' }
-                platform.cppCompiler.executable = 'clang++'
-                platform.cppCompiler.withArguments { addAll '-target', 'i386-elf', '-nostdinc', '-ffreestanding' }
-                platform.linker.executable = 'clang'
-                // #XXX: clang can't link target i386-elf with lld
-                platform.linker.withArguments { addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-nostdlib' }
-                platform.staticLibArchiver.executable = 'llvm-ar'
-            }
             toolChains.create 'multiboot-x86_32', Clang.class, {
                 path(llvmPath)
                 target('windows-multiboot-x86_32', multiboot_x86_32)
                 target('linux-multiboot-x86_32', multiboot_x86_32)
-            }
-            final uefi_x86_64 = { platform ->
-                platform.assembler.executable = 'clang'
-                platform.assembler.withArguments { addAll '-target', 'x86_64-unknown-windows' }
-                platform.cCompiler.executable = 'clang'
-                platform.cCompiler.withArguments {
-                    addAll '-target', 'x86_64-unknown-windows',
-                        '-nostdinc', '-ffreestanding', '-fshort-wchar'
-                }
-                platform.cppCompiler.executable = 'clang++'
-                platform.cppCompiler.withArguments {
-                    addAll '-target', 'x86_64-unknown-windows',
-                        '-nostdinc', '-ffreestanding', '-fshort-wchar'
-                }
-                platform.linker.executable = 'clang'
-                // #XXX: clang can't link target i386-elf with lld
-                platform.linker.withArguments {
-                    addAll '-target', 'x86_64-unknown-windows', '-fuse-ld=lld',
-                            '-nostdlib', '-Wl,-entry:efi_main', '-Wl,-subsystem:efi_application'
-                }
-                platform.staticLibArchiver.executable = 'llvm-ar'
             }
             toolChains.create 'uefi-x86_64', Clang.class, {
                 path(llvmPath)
                 target('linux-uefi-x86_64', uefi_x86_64)
                 target('windows-uefi-x86_64', uefi_x86_64)
             }
+        }
+
+        static final multiboot_x86_32 = { platform ->
+            platform.assembler.executable = 'clang'
+            platform.assembler.withArguments { addAll '-target', 'i386-elf' }
+            platform.cCompiler.executable = 'clang'
+            platform.cCompiler.withArguments { addAll '-target', 'i386-elf', '-ffreestanding', '-nostdinc' }
+            platform.cppCompiler.executable = 'clang++'
+            platform.cppCompiler.withArguments { addAll '-target', 'i386-elf', '-ffreestanding', '-nostdinc' }
+            platform.linker.executable = 'clang'
+            // #XXX: clang can't link target i386-elf with lld
+            platform.linker.withArguments { addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-nostdlib' }
+            platform.staticLibArchiver.executable = 'llvm-ar'
+        }
+
+        static final uefi_x86_64 = { platform ->
+            platform.assembler.executable = 'clang'
+            platform.assembler.withArguments { addAll '-target', 'x86_64-unknown-windows' }
+            platform.cCompiler.executable = 'clang'
+            platform.cCompiler.withArguments {
+                addAll '-target', 'x86_64-unknown-windows',
+                    '-ffreestanding', '-fshort-wchar', '-nostdinc'
+            }
+            platform.cppCompiler.executable = 'clang++'
+            platform.cppCompiler.withArguments {
+                addAll '-target', 'x86_64-unknown-windows',
+                    '-ffreestanding', '-fshort-wchar', '-nostdinc'
+            }
+            platform.linker.executable = 'clang'
+            // #XXX: clang can't link target i386-elf with lld
+            platform.linker.withArguments {
+                addAll '-target', 'x86_64-unknown-windows', '-fuse-ld=lld',
+                        '-nostdlib', '-Wl,-entry:efi_main', '-Wl,-subsystem:efi_application'
+            }
+            platform.staticLibArchiver.executable = 'llvm-ar'
         }
     }
 }
