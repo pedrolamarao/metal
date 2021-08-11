@@ -16,11 +16,9 @@ library
 {
     targetLinkages = [ linkages.static ]
 
-    // #XXX: gradle can't cross compile to system "none"
-    targetMachines = [
-        machines.linux.architecture('-multiboot-x86_32'),
-        machines.windows.architecture('-multiboot-x86_32'),
-    ]
+    // #XXX: Nokee can't cross compile to system "none"
+    final os = org.gradle.internal.os.OperatingSystem.current().getName()
+    targetMachines = [ machines.os(os).architecture('-multiboot-x86_32') ]
 
     dependencies.api project(':psys')
     

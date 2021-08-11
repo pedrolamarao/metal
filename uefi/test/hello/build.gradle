@@ -5,10 +5,9 @@ plugins
 
 application
 {
-    targetMachines = [
-        machines.linux.architecture('-uefi-x86_64'),
-        machines.windows.architecture('-uefi-x86_64')
-    ]
+    // #XXX: Nokee can't cross compile to system "none"
+    final none = org.gradle.internal.os.OperatingSystem.current().getName()
+    targetMachines = [ machines.os(none).architecture('-uefi-x86_64') ]
 
     dependencies
     {
