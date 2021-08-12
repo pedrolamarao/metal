@@ -179,55 +179,15 @@ abstract class TestMultibootRescue extends DefaultTask
 
         // Handle breakpoint-hit on _test_finish
 
-        gdb.handle { message ->
-            // #XXX: appropriately filter on GdbMiRecord!
-            final content = message.content
-            if (content instanceof String) { return }
-            final properties = content.properties();
-            final reason = properties.get('reason', String)
-            if (reason != 'breakpoint-hit') { return }
-            final frame = properties.get('frame', Object)
-            if (frame == null) { return }
-            final func = frame.get('func', String)
-            if (func != '_test_finish') { return }
-            logger.info "${project.path}:${this.name}: [FINISH]"
-            ForkJoinPool.commonPool().submit {
-                gdb.interpreterExec 'mi', 'kill'
-                gdb.gdbExit {}
-            }
-        }
+        gdb.handle { message -> handleTestFinish(gdb, message) }
 
         // Handle watchpoint-trigger on _test_control
 
-        gdb.handle { message ->
-            // #XXX: appropriately filter on GdbMiRecord!
-            final content = message.content
-            if (content instanceof String) { return }
-            final properties = content.properties();
-            final reason = properties.get('reason', String)
-            if (reason != 'watchpoint-trigger') { return }
-            final wpt = properties.get('wpt', Object)
-            if (wpt == null) { return }
-            final exp = wpt.get('exp', String)
-            if (exp != '_test_control') { return }
-            final value = properties.get('value', Object)
-            final _old = value.get('old', String)
-            final _new = value.get('new', String)
-            if (_old == null) { return }
-            if (_new == null) { return }
-            logger.info "${project.path}:${this.name}: [CONTROL]: ${_old} -> ${_new}"
-            if (_old == '0') {
-                logger.info "${project.path}:${this.name}: [ENTER]: ${_new}"
-            }
-            else if (_new == '0') {
-                logger.lifecycle "${project.path}:${this.name}: [FAILURE]: ${_old}"
-            }
-            else {
-                logger.lifecycle "${project.path}:${this.name}: [SUCCESS]: ${_old}"
-                logger.info "${project.path}:${this.name}: [ENTER]: ${_new}"
-            }
-            ForkJoinPool.commonPool().submit { gdb.execContinue {} }
-        }
+        gdb.handle { message -> handleTestControl(gdb, message) }
+
+        // Handle watchpoint-trigger on _test_debug
+
+        gdb.handle { message -> handleTestDebug(gdb, message) }
 
         try
         {
@@ -239,6 +199,7 @@ abstract class TestMultibootRescue extends DefaultTask
             gdb.targetSelectTcp 'localhost', '12345', {}
             gdb.breakInsertAtSymbol '_test_finish', { it.hardware() }
             gdb.breakWatch '_test_control', {}
+            gdb.breakWatch '_test_debug', {}
             gdb.execContinue {}
             final complete = qemu.waitFor 5, TimeUnit.SECONDS
             if (! complete) { logger.lifecycle "${project.path}:${this.name}: [FAILURE]: timeout" }
@@ -251,5 +212,76 @@ abstract class TestMultibootRescue extends DefaultTask
 
         logger.info "${project.path}:${this.name}: QEMU completed with status = ${qemu.exitValue()}"
         logger.info "${project.path}:${this.name}: GDB completed with status = ${gdb.exitValue()}"
+    }
+
+    void handleTestControl (final gdb, final message)
+    {
+        // #XXX: appropriately filter on GdbMiRecord!
+        final content = message.content
+        if (content instanceof String) { return }
+        final properties = content.properties();
+        final reason = properties.get('reason', String)
+        if (reason != 'watchpoint-trigger') { return }
+        final wpt = properties.get('wpt', Object)
+        if (wpt == null) { return }
+        final exp = wpt.get('exp', String)
+        if (exp != '_test_control') { return }
+        final value = properties.get('value', Object)
+        final _old = value.get('old', String)
+        final _new = value.get('new', String)
+        if (_old == null) { return }
+        if (_new == null) { return }
+        logger.info "${project.path}:${this.name}: [CONTROL]: ${_old} -> ${_new}"
+        if (_old == '0') {
+            logger.info "${project.path}:${this.name}: [ENTER]: ${_new}"
+        }
+        else if (_new == '0') {
+            logger.lifecycle "${project.path}:${this.name}: [FAILURE]: ${_old}"
+        }
+        else {
+            logger.lifecycle "${project.path}:${this.name}: [SUCCESS]: ${_old}"
+            logger.info "${project.path}:${this.name}: [ENTER]: ${_new}"
+        }
+        ForkJoinPool.commonPool().submit { gdb.execContinue {} }
+    }
+
+    void handleTestDebug (final gdb, final message)
+    {
+        // #XXX: appropriately filter on GdbMiRecord!
+        final content = message.content
+        if (content instanceof String) { return }
+        final properties = content.properties();
+        final reason = properties.get('reason', String)
+        if (reason != 'watchpoint-trigger') { return }
+        final wpt = properties.get('wpt', Object)
+        if (wpt == null) { return }
+        final exp = wpt.get('exp', String)
+        if (exp != '_test_debug') { return }
+        final value = properties.get('value', Object)
+        final _old = value.get('old', String)
+        final _new = value.get('new', String)
+        if (_old == null) { return }
+        if (_new == null) { return }
+        logger.info "${project.path}:${this.name}: [DEBUG]: ${_old} -> ${_new}"
+        ForkJoinPool.commonPool().submit { gdb.execContinue {} }
+    }
+
+    void handleTestFinish (final gdb, final message)
+    {
+        // #XXX: appropriately filter on GdbMiRecord!
+        final content = message.content
+        if (content instanceof String) { return }
+        final properties = content.properties();
+        final reason = properties.get('reason', String)
+        if (reason != 'breakpoint-hit') { return }
+        final frame = properties.get('frame', Object)
+        if (frame == null) { return }
+        final func = frame.get('func', String)
+        if (func != '_test_finish') { return }
+        logger.info "${project.path}:${this.name}: [FINISH]"
+        ForkJoinPool.commonPool().submit {
+            gdb.interpreterExec 'mi', 'kill'
+            gdb.gdbExit {}
+        }
     }
 }
