@@ -1,8 +1,8 @@
-.classpath
-.project
-.gradle
-.idea
-.settings
-bin
-build
+.classpath/
+.project/
+.gradle/
+.idea/
+.settings/
+**/bin/
+**/build/
 tools.properties
