@@ -31,22 +31,24 @@ namespace pc
 
     //! @brief PIC controller
 
-    template <template <typename Data> typename Port>
-        requires ps::is_port<Port, ps::size1>
+    template <template <unsigned Width> typename Port>
+        requires ps::is_port<Port, 1>
     class pic
     {
     protected:
 
-        Port<ps::size1> _command;
-        Port<ps::size1> _data;
+        Port<1> _command;
+        Port<1> _data;
 
     public:
+
+        using port_address_type = typename Port<1>::address_type;
 
         //! @brief Object
         //! @{
 
         constexpr
-        pic (ps::size2 base) : _command { base }, _data { ps::size1( base + 1 ) } {}
+        pic (port_address_type base) : _command { base }, _data { ps::size1( base + 1 ) } {}
 
         //! @}
 
@@ -129,7 +131,7 @@ namespace pc
         //! @}
     };
 
-    template <template <typename Data> typename Port>
+    template <template <unsigned Width> typename Port>
     class master_pic : public pic<Port>
     {
     public:
@@ -149,7 +151,7 @@ namespace pc
 
     };
 
-    template <template <typename Data> typename Port>
+    template <template <unsigned Width> typename Port>
     class slave_pic : public pic<Port>
     {
     public:

@@ -64,8 +64,8 @@ namespace pc
 
     //! @brief Programmable Interval Timer
 
-    template <template <typename Data> typename Port>
-        requires ps::is_port<Port, ps::size1>
+    template <template <unsigned Width> typename Port>
+        requires ps::is_port<Port, 1>
     class pit
     {
     public:
@@ -126,16 +126,18 @@ namespace pc
 
     protected:
 
-        pit (ps::size1 counter_0, ps::size1 counter_1, ps::size1 counter_2, ps::size1 command) :
+        using _A = typename Port<1>::address_type;
+
+        pit (_A counter_0, _A counter_1, _A counter_2, _A command) :
             _counter_0{counter_0}, _counter_1{counter_1}, _counter_2{counter_2}, _command{command}
         { }
 
     private:
 
-        Port<ps::size1> _counter_0;
-        Port<ps::size1> _counter_1;
-        Port<ps::size1> _counter_2;
-        Port<ps::size1> _command;
+        Port<1> _counter_0;
+        Port<1> _counter_1;
+        Port<1> _counter_2;
+        Port<1> _command;
 
     };
 }

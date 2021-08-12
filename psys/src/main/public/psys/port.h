@@ -4,10 +4,15 @@
 
 namespace ps
 {
-  template <template <typename> typename T, typename I>
-  concept is_port = requires (T<I> x, I y)
+  //! I/O port
+
+  template <template <unsigned> typename P, unsigned S>
+  concept is_port = requires (P<S> x)
   {
-    y = x.read();
-    x.write(y);
+    typename P<S>::address_type;
+    typename P<S>::data_type;
+    P<S> { typename P<S>::address_type {} };
+    typename P<S>::data_type { x.read() };
+    x.write( typename P<S>::data_type {} );
   };
 }

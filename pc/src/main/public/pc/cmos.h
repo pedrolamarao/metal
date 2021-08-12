@@ -105,12 +105,12 @@ namespace pc
 
     //! @brief CMOS controller interface
 
-    template <template <typename Data> typename Port>
-        requires ps::is_port<Port, ps::size1>
+    template <template <unsigned Width> typename Port>
+        requires ps::is_port<Port, 1>
     class cmos
     {
-        Port<ps::size1> _command;
-        Port<ps::size1> _data;
+        Port<1> _command;
+        Port<1> _data;
 
     public:
 
