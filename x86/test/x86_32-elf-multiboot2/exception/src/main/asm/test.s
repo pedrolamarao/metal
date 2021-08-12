@@ -76,3 +76,43 @@ __test_trap_UD_bad:
     nop
     popad
     ret
+
+.global __test_trap_NP
+.type   __test_trap_NP, @function
+__test_trap_NP:
+    pushad
+    # save GS register
+    mov ax, gs
+    # prepare segment selector for non-present data segment
+    mov bx, 0x30
+.global __test_trap_NP_bad
+__test_trap_NP_bad:
+    mov gs, bx
+    nop
+    nop
+    nop
+    nop
+    # restore GS register
+    mov gs, ax
+    popad
+    ret
+
+.global __test_trap_GP
+.type   __test_trap_GP, @function
+__test_trap_GP:
+    pushad
+    # save GS register
+    mov ax, gs
+    # prepare segment selector for execute-only code segment
+    mov bx, 0x38
+.global __test_trap_GP_bad
+__test_trap_GP_bad:
+    mov gs, bx
+    nop
+    nop
+    nop
+    nop
+    # restore GS register
+    mov gs, ax
+    popad
+    ret

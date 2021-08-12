@@ -30,23 +30,30 @@ namespace multiboot2
 
 namespace x86
 {
+    inline namespace details
+    {
+        constexpr auto granularity = segment_granularity(false, true, true);
+    }
+
     [[gnu::section(".gdt")]]
-    constexpr segment_descriptor global_descriptor_table [7] =
+    constexpr segment_descriptor global_descriptor_table [8] =
     {
         // required null segment
         { },
         // atypical null segment!
         { },
         // system flat code segment
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), granularity },
         // system flat data segment
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), granularity },
         // user flat code segment
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), segment_granularity(false, true, true) },
+        { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), granularity },
         // user flat data segment
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), segment_granularity(false, true, true) },
-        // non-present system data segment
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0, false), segment_granularity(false, true, true) },
+        { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), granularity },
+        // test segment: data non-present
+        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0, false), granularity },
+        // test segment: code execute-only
+        { 0, 0xFFFFFFFF, code_segment_access(false, false, 0), granularity },
     };
 
     void set_segment_registers ( segment_selector code, segment_selector data )
@@ -107,6 +114,8 @@ namespace
     extern "C" void __test_trap_OF ();
     extern "C" void __test_trap_BR ();
     extern "C" void __test_trap_UD ();
+    extern "C" void __test_trap_NP ();
+    extern "C" void __test_trap_GP ();
 }
 
 //! Multiboot2 entry point
@@ -151,6 +160,8 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     interrupt_descriptor_table[0x04] = { interrupt_selector, __x86_interrupt_04, interrupt_access };
     interrupt_descriptor_table[0x05] = { interrupt_selector, __x86_interrupt_05, interrupt_access };
     interrupt_descriptor_table[0x06] = { interrupt_selector, __x86_interrupt_06, interrupt_access };
+    interrupt_descriptor_table[0x0B] = { interrupt_selector, __x86_interrupt_0B, interrupt_access };
+    interrupt_descriptor_table[0x0D] = { interrupt_selector, __x86_interrupt_0D, interrupt_access };
 
     set_interrupt_descriptor_table_register(interrupt_descriptor_table);
 
@@ -195,6 +206,24 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     _test_control = 1006;
     __test_trap_UD();
     if (__x86_interrupt_06_counter == 0) {
+        _test_control = 0;
+        return;
+    }
+
+    // test: exception 0B: segment not present
+
+    _test_control = 1000 + 0x0B;
+    __test_trap_NP();
+    if (__x86_interrupt_0B_counter == 0) {
+        _test_control = 0;
+        return;
+    }
+
+    // test: exception 0D: general protection fault
+
+    _test_control = 1000 + 0x0D;
+    __test_trap_GP();
+    if (__x86_interrupt_0D_counter == 0) {
         _test_control = 0;
         return;
     }

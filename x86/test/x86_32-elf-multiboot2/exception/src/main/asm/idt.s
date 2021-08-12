@@ -43,4 +43,6 @@ __x86_trap       03, BP
 __x86_trap       04, OF
 __x86_fault      05, BR
 __x86_fault      06, UD
+__x86_fault_code 0B, NP
+__x86_fault_code 0D, GP
 __x86_trap       FF, FF
