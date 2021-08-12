@@ -4,6 +4,8 @@
 
 #include <psys/integer.h>
 
+#include <x86/common.h>
+
 
 //! Declarations
 
@@ -11,6 +13,8 @@ namespace x86
 {
 
   //! Segment selector
+  //!
+  //! Value of segment selector registers.
 
   class segment_selector
   {
@@ -19,16 +23,19 @@ namespace x86
     constexpr
     segment_selector ( ps::size2 index, bool is_ldt, ps::size1 privilege );
 
+    auto value () const { return _value; }
+
   private:
 
-    friend void reload_segment_registers (segment_selector, segment_selector);
-
-    ps::size2 word;
+    ps::size2 _value;
 
   };
 
   static_assert(sizeof(segment_selector) == 2, "unexpected size of segment_selector");
 
+  //! Set code segment register
+
+  void set_code_segment_register ( segment_selector value );
 
   //! Segment descriptor
   //!
@@ -129,28 +136,18 @@ namespace x86
   constexpr
   auto segment_granularity ( bool is_long, bool is_32bit, bool is_4kb ) -> ps::size1 ;
 
-  //! Loads the global descriptor table register
-  //!
-  //! @param table  array of descriptors
-  //! @param count  count of descriptors in array
+  //! Get the global descriptor table register
 
-  void load_global_descriptor_table ( segment_descriptor * table, ps::size2 count );
+  auto get_global_descriptor_table_register () -> system_table_register ;
 
-  //! Loads the global descriptor table register
-  //!
-  //! @param table  array of descriptors
+  //! Set the global descriptor table register
+
+  void set_global_descriptor_table_register ( system_table_register value );
+
+  //! Set the global descriptor table register
 
   template <unsigned N>
-  void load_global_descriptor_table ( segment_descriptor const (& table) [N] );
-
-  //! Loads segment registers with new selectors
-  //!
-  //! @param code  index of descriptor on global descriptor table
-  //! @param data  index of descriptor on global descriptor table
-  //!
-  //! @post load code in CD then data in DS, ES, FS, GS and SS
-
-  void reload_segment_registers ( ps::size2 code, ps::size2 data );
+  void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] );
 
 }
 
@@ -163,22 +160,33 @@ namespace x86
   {
 
     extern "C"
-	[[gnu::fastcall]]
-    void __load_global_descriptor_table ( ps::size4 base, ps::size2 size );
+    [[gnu::fastcall]]
+    void __x86_get_global_descriptor_table_register ( void * system_table_register );
 
     extern "C"
-    void __store_global_descriptor_table ( ps::size8 & gdtr );
+    [[gnu::fastcall]]
+    void __x86_set_global_descriptor_table_register ( void * system_table_register );
 
     extern "C"
-	[[gnu::fastcall]]
-    void __reload_segment_registers ( ps::size4 code, ps::size4 data );
+    [[gnu::fastcall]]
+    void __x86_set_code_segment_register ( ps::size2 segment_selector );
 
   }
 
+  // Segment selector
+
   inline constexpr
   segment_selector::segment_selector (ps::size2 index, bool is_ldt, ps::size1 privilege) :
-    word((index << 3) | ((is_ldt ? 1 : 0) << 2) | (privilege & 3))
+    _value((index << 3) | ((is_ldt ? 1 : 0) << 2) | (privilege & 3))
   { }
+
+  inline
+  void set_code_segment_register ( segment_selector x )
+  {
+    internal::__x86_set_code_segment_register(x.value());
+  }
+
+  // Segment descriptor
 
   inline constexpr
   segment_descriptor::segment_descriptor ( ) :
@@ -264,31 +272,30 @@ namespace x86
          ;
   }
 
+  // Global descriptor table register
+
   inline
-  ps::size8 get_global_descriptor_table ()
+  system_table_register get_global_descriptor_table_register ()
   {
-      ps::size8 result;
-      internal::__store_global_descriptor_table(result);
-      return result;
+    system_table_register value;
+    internal::__x86_get_global_descriptor_table_register(& value);
+    return value;
   }
 
   inline
-  void set_global_descriptor_table ( segment_descriptor const * table, ps::size2 count )
+  void set_global_descriptor_table_register ( system_table_register value )
   {
-    internal::__load_global_descriptor_table(ps::size4(table), ((count * sizeof(segment_descriptor)) - 1));
+    internal::__x86_set_global_descriptor_table_register(& value);
   }
 
   template <unsigned N>
   inline
-  void set_global_descriptor_table ( segment_descriptor const (& table) [N] )
+  void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] )
   {
-    internal::__load_global_descriptor_table(ps::size4(table), ((N * sizeof(segment_descriptor)) - 1));
+    system_table_register value {
+        ((N * sizeof(segment_descriptor)) - 1),
+        reinterpret_cast<ps::size4>(table)
+    };
+    internal::__x86_set_global_descriptor_table_register(& value);
   }
-
-  inline
-  void reload_segment_registers ( segment_selector code, segment_selector data )
-  {
-    internal::__reload_segment_registers(code.word, data.word);
-  }
-
 }

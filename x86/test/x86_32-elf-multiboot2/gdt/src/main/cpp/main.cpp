@@ -1,4 +1,4 @@
-// Copyright (C) 2020,2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <psys/integer.h>
@@ -9,10 +9,8 @@
 #include <x86/gdt.h>
 
 
-namespace
+namespace multiboot2
 {
-    using namespace multiboot2;
-
     struct request_type
     {
         header_prologue prologue;
@@ -29,17 +27,24 @@ namespace
 
 // IA32 GDT
 
-namespace
+namespace x86
 {
-    using namespace x86;
+    constexpr unsigned global_descriptor_table_size = 6;
 
     [[gnu::section(".gdt")]]
-    constexpr segment_descriptor global_descriptor_table [5] =
+    constexpr segment_descriptor global_descriptor_table [ global_descriptor_table_size ] =
     {
+        // required null descriptor
         { },
+        // unexpected null descriptor!
+        { },
+        // system flat code descriptor
         { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        // system flat data descriptor
         { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        // user flat code descriptor
         { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), segment_granularity(false, true, true) },
+        // user flat data descriptor
         { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), segment_granularity(false, true, true) },
     };
 }
@@ -49,6 +54,8 @@ namespace
 extern "C"
 {
     [[gnu::used]] unsigned volatile _test_control {};
+
+    [[gnu::used]] unsigned volatile _test_debug {};
 }
 
 //! Multiboot2 entry point
@@ -56,30 +63,50 @@ extern "C"
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
-    _test_control = 1;
+    // set GDT register
 
-    x86::set_global_descriptor_table(global_descriptor_table);
+    _test_control = 10;
 
-    // #XXX: verify
+    const x86::system_table_register expected_gdtr {
+        ((x86::global_descriptor_table_size * sizeof(x86::segment_descriptor)) - 1),
+        reinterpret_cast<ps::size4>(x86::global_descriptor_table)
+    };
 
-    _test_control = 2;
+    x86::set_global_descriptor_table_register(x86::global_descriptor_table);
 
-    x86::reload_segment_registers(x86::segment_selector(1, false, 0), x86::segment_selector(2, false, 0));
+    // test: did we successfully update the GDT register?
 
-    // #XXX: verify
+    _test_control = 11;
 
-    _test_control = 3;
+    auto const actual_gdtr = x86::get_global_descriptor_table_register();
 
-    auto gdt = x86::get_global_descriptor_table();
-
-    if (((5 * sizeof(segment_descriptor)) - 1) != (gdt & 0xFFFF)) {
+    if (actual_gdtr != expected_gdtr) {
+        _test_debug = expected_gdtr.size;
+        _test_debug = expected_gdtr.offset;
+        _test_debug = actual_gdtr.size;
+        _test_debug = actual_gdtr.offset;
         _test_control = 0;
         return;
     }
 
-    _test_control = 4;
+    // set CS register
 
-    if (ps::size4(& global_descriptor_table) != ((gdt >> 16) & 0xFFFFFFFF)) {
+    _test_control = 20;
+
+    auto const expected_cs = x86::segment_selector(2, false, 0);
+
+    x86::set_code_segment_register( expected_cs );
+
+    // test: did we successfully update the CS register?
+
+    _test_control = 21;
+
+    ps::size2 actual_cs {};
+    asm("" : "=cs"(actual_cs));
+
+    if (expected_cs.value() != actual_cs) {
+        _test_debug = expected_cs.value();
+        _test_debug = actual_cs;
         _test_control = 0;
         return;
     }

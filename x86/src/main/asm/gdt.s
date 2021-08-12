@@ -1,45 +1,31 @@
-// Copyright (C) 2012 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+# Copyright (C) 2012, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-.att_syntax
+.intel_syntax noprefix
 
-// TODO: this should be placed in the .recycle section
+# fastcall __x86_get_global_descriptor_table_register ( system_table_register : dword ) -> ( )
 
-.Lgdtr:
-	.short 0
-    .long 0
+.global __x86_get_global_descriptor_table_register
+.type   __x86_get_global_descriptor_table_register, @function
+__x86_get_global_descriptor_table_register:
+    sgdt [ecx]
+    ret
 
-// x86::internal::__load_global_descriptor_table [ fastcall ] : ( base : dword , limit : word ) -> ()
+# fastcall __x86_set_global_descriptor_table_register ( system_table_register : dword ) -> ( )
 
-.global __load_global_descriptor_table
-.type   __load_global_descriptor_table, STT_FUNC
-__load_global_descriptor_table:
-	mov %ecx, .Lgdtr + 2
-	mov %dx, .Lgdtr
-	lgdt .Lgdtr
-	ret
+.global __x86_set_global_descriptor_table_register
+.type   __x86_set_global_descriptor_table_register, @function
+__x86_set_global_descriptor_table_register:
+    lgdt [ecx]
+    ret
 
-// x86::internal::__store_global_descriptor_table [ fastcall ] : ( base : ptr<dword> , limit : ptr<word> ) -> ()
+# fastcall __x86_set_code_segment_register ( segment_selector : word ) -> ( )
 
-.global __store_global_descriptor_table
-.type   __store_global_descriptor_table, STT_FUNC
-__store_global_descriptor_table:
-	movl 4(%esp), %eax
-	sgdt (%eax)
-	ret
-
-// x86::internal::__reload_segment_registers [ fastcall ] : ( code : word , data : word ) -> ()
-
-.global __reload_segment_registers
-.type   __reload_segment_registers, STT_FUNC
-__reload_segment_registers:
-	push %ecx
-	mov $reload, %eax
-	push %eax
-	lret
-reload:
-	mov %dx, %ds
-	mov %dx, %es
-	mov %dx, %fs
-	mov %dx, %gs
-	mov %dx, %ss
-	ret
+.global __x86_set_code_segment_register
+.type   __x86_set_code_segment_register, @function
+__x86_set_code_segment_register:
+	push ecx
+	mov eax, offset .Lreload
+	push eax
+	retf
+.Lreload:
+    ret
