@@ -5,4 +5,5 @@
 extern "C"
 {
 	[[gnu::used]] unsigned volatile _test_control {};
+	[[gnu::used]] unsigned volatile _test_debug {};
 }

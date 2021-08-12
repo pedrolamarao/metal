@@ -53,6 +53,7 @@ To check: `./gradlew check`
 
 Psys tests start when control reaches `_test_start` and finish when control reaches `_test_finish`.
 During test execution, Psys tests progress when the value stored into `_test_control` changes.
+Additionally, Psys tests store debugging values into `_test_debug`.
 
 When `_test_control` changes, let `old` be the old value and `new` be the new value.
 If `old` is zero then test has entered stage `new`.
@@ -62,7 +63,7 @@ Else, test stage `old` has succeeded.
 ## Psys Test Driver
 
 This project implements Psys test protocol orchestrating QEMU and GDB.
-While QEMU executes the program, GDB watches for `_test_start`, `_test_finish` and `_test_control`.
+While QEMU executes the program, GDB watches for `_test_start`, `_test_finish`, `_test_control` and `_test_debug`.
 The test driver controls GDB via MI to react appropriately.
 
 This technique is implemented as Gradle tasks with Groovy source in `buildSrc`.
