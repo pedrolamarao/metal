@@ -42,13 +42,13 @@ namespace pc
 
     public:
 
-        using port_address_type = typename Port<1>::address_type;
+        using port_address = typename Port<1>::address_type;
 
         //! @brief Object
         //! @{
 
         constexpr
-        pic (port_address_type base) : _command { base }, _data { ps::size1( base + 1 ) } {}
+        pic (port_address command, port_address data) : _command { command }, _data { data } {}
 
         //! @}
 
@@ -136,11 +136,10 @@ namespace pc
     {
     public:
 
-        constexpr
-        master_pic (ps::size2 base) : pic<Port> { base } { }
+        using port_address = typename pic<Port>::port_address;
 
-        static constexpr
-        auto create () { return master_pic(0x20); }
+        constexpr
+        master_pic (port_address command, port_address data) : pic<Port> { command, data } { }
 
         //! @brief Initialization command word 3 (ICW3) — slave lines
 
@@ -156,11 +155,10 @@ namespace pc
     {
     public:
 
-        constexpr
-        slave_pic (ps::size2 base) : pic<Port> { base } { }
+        using port_address = typename pic<Port>::port_address;
 
-        static constexpr
-        auto create () { return slave_pic(0xA0); }
+        constexpr
+        slave_pic (port_address command, port_address data) : pic<Port> { command, data } { }
 
         //! @brief Initialization command word 3 (ICW3) — slave id
 

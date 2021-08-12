@@ -114,10 +114,12 @@ namespace pc
 
     public:
 
+        using port_address = typename Port<1>::address_type;
+
         //! @brief Object
         //! @{
 
-        cmos () : _command { 0x70 }, _data { 0x71 } { }
+        cmos (port_address command, port_address data) : _command { command }, _data { data } { }
 
         //! @}
 

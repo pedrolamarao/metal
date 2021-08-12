@@ -70,11 +70,11 @@ namespace pc
     {
     public:
 
-        static
-        auto create ()
-        {
-            return pit(0x40, 0x41, 0x42, 0x43);
-        }
+        using port_address = typename Port<1>::address_type;
+
+        pit (port_address counter_0, port_address counter_1, port_address counter_2, port_address command) :
+            _counter_0{counter_0}, _counter_1{counter_1}, _counter_2{counter_2}, _command{command}
+        { }
 
         void configure (pit_counter counter, pit_access access, pit_mode mode, pit_format format)
         {
@@ -123,14 +123,6 @@ namespace pc
         {
             _counter_2.write(value);
         }
-
-    protected:
-
-        using _A = typename Port<1>::address_type;
-
-        pit (_A counter_0, _A counter_1, _A counter_2, _A command) :
-            _counter_0{counter_0}, _counter_1{counter_1}, _counter_2{counter_2}, _command{command}
-        { }
 
     private:
 

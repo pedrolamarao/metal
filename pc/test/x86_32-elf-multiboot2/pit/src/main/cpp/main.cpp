@@ -100,8 +100,8 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     _test_control = 5;
 
-    auto master = pc::master_pic<x86::port>::create();
-    auto slave  = pc::slave_pic<x86::port>::create();
+    auto master = pc::master_pic<x86::port>(0x20, 0x21);
+    auto slave  = pc::slave_pic<x86::port>(0xA0, 0xA1);
 
     master.icw1(true, false, true);
     slave.icw1(true, false, true);
@@ -123,7 +123,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     // pit
 
-    auto pit = pc::pit<x86::port>::create();
+    auto pit = pc::pit<x86::port>(0x40, 0x41, 0x42, 0x43);
 
     // test: 'configure' command builder
 
