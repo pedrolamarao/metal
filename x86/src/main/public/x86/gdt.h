@@ -12,31 +12,6 @@
 namespace x86
 {
 
-  //! Segment selector
-  //!
-  //! Value of segment selector registers.
-
-  class segment_selector
-  {
-  public:
-
-    constexpr
-    segment_selector ( ps::size2 index, bool is_ldt, ps::size1 privilege );
-
-    auto value () const { return _value; }
-
-  private:
-
-    ps::size2 _value;
-
-  };
-
-  static_assert(sizeof(segment_selector) == 2, "unexpected size of segment_selector");
-
-  //! Set code segment register
-
-  void set_code_segment_register ( segment_selector value );
-
   //! Segment descriptor
   //!
   //! Element of global and local descriptor tables.
@@ -149,6 +124,10 @@ namespace x86
   template <unsigned N>
   void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] );
 
+  //! Set code segment register
+
+  void set_code_segment_register ( segment_selector value );
+
 }
 
 //! Inline definitions
@@ -171,19 +150,6 @@ namespace x86
     [[gnu::fastcall]]
     void __x86_set_code_segment_register ( ps::size2 segment_selector );
 
-  }
-
-  // Segment selector
-
-  inline constexpr
-  segment_selector::segment_selector (ps::size2 index, bool is_ldt, ps::size1 privilege) :
-    _value((index << 3) | ((is_ldt ? 1 : 0) << 2) | (privilege & 3))
-  { }
-
-  inline
-  void set_code_segment_register ( segment_selector x )
-  {
-    internal::__x86_set_code_segment_register(x.value());
   }
 
   // Segment descriptor
@@ -297,5 +263,13 @@ namespace x86
         reinterpret_cast<ps::size4>(table)
     };
     internal::__x86_set_global_descriptor_table_register(& value);
+  }
+
+  // Segment selector registers
+
+  inline
+  void set_code_segment_register ( segment_selector x )
+  {
+    internal::__x86_set_code_segment_register(x.value());
   }
 }

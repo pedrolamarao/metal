@@ -9,8 +9,9 @@
 #include <x86/gdt.h>
 #include <x86/idt.h>
 
+// Multiboot2 boot request
 
-namespace
+namespace multiboot2
 {
     using namespace multiboot2;
 
@@ -30,33 +31,49 @@ namespace
 
 // IA32 GDT
 
-namespace
+namespace x86
 {
-    using namespace x86;
-
     [[gnu::section(".gdt")]]
-    constexpr segment_descriptor global_descriptor_table [5] =
+    constexpr segment_descriptor global_descriptor_table [6] =
     {
+        // required null descriptor
         { },
+        // atypical null descriptor!
+        { },
+        // system flat code segment
         { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        // system flat data segment
         { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        // user flat code segment
         { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), segment_granularity(false, true, true) },
+        // user flat data segment
         { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), segment_granularity(false, true, true) },
     };
+
+    void set_segment_registers ( segment_selector code, segment_selector data )
+    {
+        auto const ds = data.value();
+        set_code_segment_register(code);
+        asm volatile ("mov %0, %%ds" : : "r"(ds));
+        asm volatile ("mov %0, %%ss" : : "r"(ds));
+        asm volatile ("mov %0, %%es" : : "r"(ds));
+        asm volatile ("mov %0, %%fs" : : "r"(ds));
+        asm volatile ("mov %0, %%gs" : : "r"(ds));
+    }
 }
 
 // IA32 IDT
 
-namespace
+namespace x86
 {
-    using gate_descriptor = x86::interrupt_gate_descriptor;
+    constexpr unsigned interrupt_descriptor_table_size = 256;
 
     [[gnu::section(".idt")]]
-    gate_descriptor interrupt_descriptor_table [256] =
-    { };
+    interrupt_gate_descriptor interrupt_descriptor_table [ interrupt_descriptor_table_size ];
 
     extern "C"
-    [[gnu::used]] unsigned volatile interrupted {};
+    [[gnu::used]]
+    unsigned volatile interrupted {};
 
     extern "C"
     void __interrupt_service_routine ();
@@ -67,6 +84,8 @@ namespace
 extern "C"
 {
     [[gnu::used]] unsigned volatile _test_control {};
+
+    [[gnu::used]] unsigned volatile _test_debug {};
 }
 
 //! Multiboot2 entry point
@@ -74,6 +93,12 @@ extern "C"
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
+    using namespace multiboot2;
+    using namespace ps;
+    using namespace x86;
+
+    // test: boot sanity
+
     _test_control = 1;
 
     if (magic != multiboot2::information_magic) {
@@ -81,45 +106,74 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
         return;
     }
 
+    // set the GDT register and set segment registers
+
     _test_control = 2;
 
-    x86::set_global_descriptor_table(global_descriptor_table);
+    set_global_descriptor_table_register(global_descriptor_table);
 
-    _test_control = 3;
+    set_segment_registers(segment_selector(2, false, 0), segment_selector(3, false, 0));
 
-    x86::reload_segment_registers(x86::segment_selector(1, false, 0), x86::segment_selector(2, false, 0));
+    // set the IDT register
 
-    _test_control = 4;
+    _test_control = 10;
+
+    auto interrupt_segment = segment_selector(2, false, 0);
+    auto interrupt_access = interrupt_gate_access(true, 0);
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table[i] = { 0x8, __interrupt_service_routine, interrupt_gate_access(true, 0) };
+        interrupt_descriptor_table[i] = { interrupt_segment, __interrupt_service_routine, interrupt_access };
     }
 
-    x86::set_interrupt_descriptor_table(interrupt_descriptor_table, 256);
+    set_interrupt_descriptor_table_register(interrupt_descriptor_table);
+    
+    // test: did we successfully update the IDT register?
 
-    _test_control = 5;
+    _test_control = 11;
 
-    auto idt = x86::get_interrupt_descriptor_table();
+    auto expected_idtr = system_table_register {
+        interrupt_descriptor_table_size * sizeof(interrupt_gate_descriptor),
+        reinterpret_cast<size4>(interrupt_descriptor_table)
+    };
 
-    _test_control = 6;
+    auto actual_idtr = get_interrupt_descriptor_table_register();
 
-    // #TODO document this assert
-    if ((256 * sizeof(interrupt_gate_descriptor)) != (idt & 0xFFFF)) {
+    if (actual_idtr != expected_idtr) {
+        _test_debug = expected_idtr.size;
+        _test_debug = expected_idtr.offset;
+        _test_debug = actual_idtr.size;
+        _test_debug = actual_idtr.offset;
         _test_control = 0;
         return;
     }
 
-    _test_control = 7;
+    // test: handle one software interrupt
 
-    // #TODO document this assert
-    if (ps::size4(& interrupt_descriptor_table) != ((idt >> 16) & 0xFFFFFFFF)) {
+    _test_control = 20;
+
+    interrupt<0x30>();
+
+    if (interrupted != 1) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 8;
+    // test: handle another software interrupt
 
-    x86::interrupt<0>();
+    _test_control = 21;
+
+    interrupt<0x31>();
+
+    if (interrupted != 2) {
+        _test_control = 0;
+        return;
+    }
+
+    // test: enable hardware interrupts
+
+    _test_control = 30;
+
+    enable_interrupts();
 
     _test_control = -1;
     return;

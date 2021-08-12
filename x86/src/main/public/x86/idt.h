@@ -4,6 +4,7 @@
 
 #include <psys/integer.h>
 
+#include <x86/common.h>
 
 //! Declarations
 
@@ -21,9 +22,9 @@ namespace x86
     interrupt_gate_descriptor ();
 
     constexpr
-    interrupt_gate_descriptor ( ps::size2 segment, ps::size4 address, ps::size1 access );
+    interrupt_gate_descriptor ( segment_selector segment, ps::size4 address, ps::size1 access );
 
-    interrupt_gate_descriptor ( ps::size2 segment, void (* address) (), ps::size1 access );
+    interrupt_gate_descriptor ( segment_selector segment, void (* address) (), ps::size1 access );
 
     auto offset_lower () const { return _offset_lower; }
 
@@ -38,7 +39,7 @@ namespace x86
   private:
 
     ps::size2 _offset_lower;
-    ps::size2 _segment;
+    segment_selector _segment;
     ps::size1  _unused;
     ps::size1  _type;
     ps::size2 _offset_upper;
@@ -57,12 +58,18 @@ namespace x86
   constexpr
   auto interrupt_gate_access ( bool is_32bit, ps::size1 privilege ) -> ps::size1 ;
 
-  //! Loads the interrupt descriptor table register
+  //! Get the global descriptor table register
 
-  void load_interrupt_descriptor_table ( interrupt_gate_descriptor const * table, ps::size4 count );
+  auto get_interrupt_descriptor_table_register () -> system_table_register ;
+
+  //! Set the global descriptor table register
+
+  void set_interrupt_descriptor_table_register ( system_table_register value );
+
+  //! Set the global descriptor table register
 
   template <unsigned N>
-  void load_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] );
+  void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] );
 
   //! Enable interrupts on this processor
 
@@ -84,32 +91,33 @@ namespace x86
 
     extern "C"
     [[gnu::fastcall]]
-    void __load_interrupt_descriptor_table ( ps::size4 base, ps::size2 limit );
-
-    extern "C"
-    void __store_interrupt_descriptor_table ( ps::size8 & gdtr );
+    void __x86_get_interrupt_descriptor_table_register ( void * system_table_register );
 
     extern "C"
     [[gnu::fastcall]]
-    void __enable_interrupts ();
+    void __x86_set_interrupt_descriptor_table_register ( void * system_table_register );
 
     extern "C"
     [[gnu::fastcall]]
-    void __disable_interrupts ();
+    void __x86_enable_interrupts ();
+
+    extern "C"
+    [[gnu::fastcall]]
+    void __x86_disable_interrupts ();
 
   }
 
   inline constexpr
   interrupt_gate_descriptor::interrupt_gate_descriptor () :
-    _offset_lower(0),
-    _segment(0),
-    _unused(0),
-    _type(0),
-    _offset_upper(0)
+    _offset_lower(),
+    _segment(),
+    _unused(),
+    _type(),
+    _offset_upper()
   { }
 
   inline constexpr
-  interrupt_gate_descriptor::interrupt_gate_descriptor ( ps::size2 segment, ps::size4 address, ps::size1 access ) :
+  interrupt_gate_descriptor::interrupt_gate_descriptor ( segment_selector segment, ps::size4 address, ps::size1 access ) :
     _offset_lower(address & 0xFFFF),
     _segment(segment),
     _unused(0),
@@ -120,7 +128,7 @@ namespace x86
   }
 
   inline
-  interrupt_gate_descriptor::interrupt_gate_descriptor ( ps::size2 segment, void (* address) (), ps::size1 access ) :
+  interrupt_gate_descriptor::interrupt_gate_descriptor ( segment_selector segment, void (* address) (), ps::size1 access ) :
     _offset_lower((ps::size4)(address) & 0xFFFF),
     _segment(segment),
     _unused(0),
@@ -156,37 +164,40 @@ namespace x86
          ;
   }
 
+  // Interrupt descriptor table register
+
   inline
-  ps::size8 get_interrupt_descriptor_table ()
+  system_table_register get_interrupt_descriptor_table_register ()
   {
-      ps::size8 result;
-      internal::__store_interrupt_descriptor_table(result);
-      return result;
+    system_table_register value;
+    internal::__x86_get_interrupt_descriptor_table_register(& value);
+    return value;
   }
 
   inline
-  void set_interrupt_descriptor_table ( interrupt_gate_descriptor const * table, ps::size4 count )
+  void set_interrupt_descriptor_table_register ( system_table_register value )
   {
-    internal::__load_interrupt_descriptor_table(ps::size4(table), count * sizeof(interrupt_gate_descriptor));
+    internal::__x86_set_interrupt_descriptor_table_register(& value);
   }
 
   template <unsigned N>
   inline
-  void set_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] )
+  void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] )
   {
-    internal::__load_interrupt_descriptor_table(ps::size4(table), N * sizeof(interrupt_gate_descriptor));
+    system_table_register value { N * sizeof(interrupt_gate_descriptor), reinterpret_cast<ps::size4>(table) };
+    internal::__x86_set_interrupt_descriptor_table_register(& value);
   }
 
   inline
   void enable_interrupts ()
   {
-    internal::__enable_interrupts();
+    internal::__x86_enable_interrupts();
   }
 
   inline
   void disable_interrupts ()
   {
-    internal::__disable_interrupts();
+    internal::__x86_disable_interrupts();
   }
 
   template <int N>

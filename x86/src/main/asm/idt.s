@@ -1,42 +1,35 @@
-// Copyright (C) 2012 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+# Copyright (C) 2012, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-.att_syntax
+.intel_syntax noprefix
 
-idtr:
-	.short 0
-	.long 0
+# fastcall __x86_get_interrupt_descriptor_table_register ( system_table_register : dword ) -> ( )
 
-// x86::internal::__load_global_descriptor_table [ fastcall ] : ( base, limit ) -> ()
+.global __x86_get_interrupt_descriptor_table_register
+.type   __x86_get_interrupt_descriptor_table_register, @function
+__x86_get_interrupt_descriptor_table_register:
+    sidt [ecx]
+    ret
 
-.global __load_interrupt_descriptor_table
-.type   __load_interrupt_descriptor_table, STT_FUNC
-__load_interrupt_descriptor_table:
-	mov %ecx, idtr + 2
-	mov %dx, idtr
-	lidt idtr
-	ret
+# fastcall __x86_set_interrupt_descriptor_table_register ( system_table_register : dword ) -> ( )
 
-// x86::internal::__store_interrupt_descriptor_table [ fastcall ] : ( idt : ptr(qword) ) -> ()
+.global __x86_set_interrupt_descriptor_table_register
+.type   __x86_set_interrupt_descriptor_table_register, @function
+__x86_set_interrupt_descriptor_table_register:
+    lidt [ecx]
+    ret
 
-.global __store_interrupt_descriptor_table
-.type   __store_interrupt_descriptor_table, STT_FUNC
-__store_interrupt_descriptor_table:
-	movl 4(%esp), %eax
-	sidt (%eax)
-	ret
+# fastcall __x86_enable_interrupts () -> ()
 
-// x86::internal::__enable_interrupts [ fastcall ] : () -> ()
-
-.global __enable_interrupts
-.type   __enable_interrupts, STT_FUNC
-__enable_interrupts:
+.global __x86_enable_interrupts
+.type   __x86_enable_interrupts, @function
+__x86_enable_interrupts:
 	sti
 	ret
 
-// x86::internal::__disable_interrupts [ fastcall ] : () -> ()
+# fastcall __x86_disable_interrupts () -> ()
 
-.global __disable_interrupts
-.type   __disable_interrupts, STT_FUNC
-__disable_interrupts:
+.global __x86_disable_interrupts
+.type   __x86_disable_interrupts, @function
+__x86_disable_interrupts:
 	cli
 	ret
