@@ -3,6 +3,7 @@
 #pragma once
 
 #include <psys/integer.h>
+#include <psys/port.h>
 
 
 namespace pc
@@ -30,7 +31,8 @@ namespace pc
 
     //! @brief PIC controller
 
-    template <template <typename Value> typename Port>
+    template <template <typename Data> typename Port>
+        requires ps::is_port<Port, ps::size1>
     class pic
     {
     protected:
@@ -127,7 +129,7 @@ namespace pc
         //! @}
     };
 
-    template <template <typename Value> typename Port>
+    template <template <typename Data> typename Port>
     class master_pic : public pic<Port>
     {
     public:
@@ -147,7 +149,7 @@ namespace pc
 
     };
 
-    template <template <typename Value> typename Port>
+    template <template <typename Data> typename Port>
     class slave_pic : public pic<Port>
     {
     public:

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <psys/integer.h>
+#include <psys/port.h>
 
 
 namespace pc
@@ -63,7 +64,8 @@ namespace pc
 
     //! @brief Programmable Interval Timer
 
-    template <template <typename Value> typename Port>
+    template <template <typename Data> typename Port>
+        requires ps::is_port<Port, ps::size1>
     class pit
     {
     public:
