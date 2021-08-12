@@ -84,8 +84,6 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     set_interrupt_descriptor_table_register();
 
-    enable_interrupts();
-
     // test: handle software interrupt
 
     _test_control = 4;
@@ -113,12 +111,14 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     master.icw4(true, false, pc::pic_buffering::none, false);
     slave.icw4(true, false, pc::pic_buffering::none, false);
 
-    // pic: unmask IRQ 0
+    // unmask PIC IRQ 0 and enable hardware interrupts
 
     _test_control = 12;
 
     master.ocw1(0xFE);
     slave.ocw1(0xFF);
+
+    enable_interrupts();
 
     // test: hardware interrupt increments counter
     // assumption: PIT shall interrupt IRQ 0
