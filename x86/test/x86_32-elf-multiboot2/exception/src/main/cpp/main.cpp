@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <psys/integer.h>
@@ -10,10 +10,8 @@
 #include <x86/idt.h>
 
 
-namespace
+namespace multiboot2
 {
-    using namespace multiboot2;
-
     struct request_type
     {
         header_prologue prologue;
@@ -30,48 +28,70 @@ namespace
 
 // IA32 GDT
 
-namespace
+namespace x86
 {
-    using namespace x86;
-
     [[gnu::section(".gdt")]]
-    constexpr segment_descriptor global_descriptor_table [5] =
+    constexpr segment_descriptor global_descriptor_table [7] =
     {
+        // required null segment
         { },
+        // atypical null segment!
+        { },
+        // system flat code segment
         { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        // system flat data segment
         { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        // user flat code segment
         { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), segment_granularity(false, true, true) },
+        // user flat data segment
         { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), segment_granularity(false, true, true) },
+        // non-present system data segment
+        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0, false), segment_granularity(false, true, true) },
     };
+
+    void set_segment_registers ( segment_selector code, segment_selector data )
+    {
+        auto const ds = data.value();
+        set_code_segment_register(code);
+        asm volatile ("mov %0, %%ds" : : "r"(ds));
+        asm volatile ("mov %0, %%ss" : : "r"(ds));
+        asm volatile ("mov %0, %%es" : : "r"(ds));
+        asm volatile ("mov %0, %%fs" : : "r"(ds));
+        asm volatile ("mov %0, %%gs" : : "r"(ds));
+    }
 }
 
 // IA32 IDT
 
-namespace
+namespace x86
 {
-    using gate_descriptor = x86::interrupt_gate_descriptor;
-
     [[gnu::section(".idt")]]
-    gate_descriptor interrupt_descriptor_table [256] =
+    interrupt_gate_descriptor interrupt_descriptor_table [256] =
     { };
 
-    extern "C" [[gnu::used]] unsigned volatile _x86_interrupt_00_counter {};
-    extern "C" void _x86_interrupt_00 ();
+    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_00_counter {};
+    extern "C" void __x86_interrupt_00 ();
 
-    extern "C" [[gnu::used]] unsigned volatile _x86_interrupt_03_counter {};
-    extern "C" void _x86_interrupt_03 ();
+    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_03_counter {};
+    extern "C" void __x86_interrupt_03 ();
 
-    extern "C" [[gnu::used]] unsigned volatile _x86_interrupt_04_counter {};
-    extern "C" void _x86_interrupt_04 ();
+    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_04_counter {};
+    extern "C" void __x86_interrupt_04 ();
 
-    extern "C" [[gnu::used]] unsigned volatile _x86_interrupt_05_counter {};
-    extern "C" void _x86_interrupt_05 ();
+    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_05_counter {};
+    extern "C" void __x86_interrupt_05 ();
 
-    extern "C" [[gnu::used]] unsigned volatile _x86_interrupt_06_counter {};
-    extern "C" void _x86_interrupt_06 ();
+    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_06_counter {};
+    extern "C" void __x86_interrupt_06 ();
 
-    extern "C" [[gnu::used]] unsigned volatile _x86_interrupt_FF_counter {};
-    extern "C" void _x86_interrupt_FF ();
+    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_0B_counter {};
+    extern "C" void __x86_interrupt_0B ();
+
+    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_0D_counter {};
+    extern "C" void __x86_interrupt_0D ();
+
+    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_FF_counter {};
+    extern "C" void __x86_interrupt_FF ();
 }
 
 //! Psys test protocol
@@ -80,11 +100,13 @@ namespace
 {
     extern "C" [[gnu::used]] unsigned volatile _test_control {};
 
-    extern "C" void _test_trap_DE ();
-    extern "C" void _test_trap_BP ();
-    extern "C" void _test_trap_OF ();
-    extern "C" void _test_trap_BR ();
-    extern "C" void _test_trap_UD ();
+    extern "C" [[gnu::used]] unsigned volatile _test_debug {};
+
+    extern "C" void __test_trap_DE ();
+    extern "C" void __test_trap_BP ();
+    extern "C" void __test_trap_OF ();
+    extern "C" void __test_trap_BR ();
+    extern "C" void __test_trap_UD ();
 }
 
 //! Multiboot2 entry point
@@ -92,62 +114,87 @@ namespace
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
-    x86::set_global_descriptor_table(global_descriptor_table);
+    using namespace multiboot2;
+    using namespace ps;
+    using namespace x86;
 
-    x86::reload_segment_registers(x86::segment_selector(1, false, 0), x86::segment_selector(2, false, 0));
+    // verify boot sanity
+
+    _test_control = 1;
+
+    if (magic != multiboot2::information_magic) {
+        _test_control = 0;
+        return;
+    }
+
+    // set the GDT register and set segment registers
+
+    _test_control = 2;
+
+    set_global_descriptor_table_register(global_descriptor_table);
+
+    set_segment_registers(segment_selector(2, false, 0), segment_selector(3, false, 0));
+
+    // set the IDT register
+
+    _test_control = 3;
+
+    auto interrupt_selector = segment_selector(2, false, 0);
+    auto interrupt_access = interrupt_gate_access(true, 0);
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table[i] = { 0x8, _x86_interrupt_FF, interrupt_gate_access(true, 0) };
+        interrupt_descriptor_table[i] = { interrupt_selector, __x86_interrupt_FF, interrupt_access };
     }
-    interrupt_descriptor_table[0] = { 0x8, _x86_interrupt_00, interrupt_gate_access(true, 0) };
-    interrupt_descriptor_table[3] = { 0x8, _x86_interrupt_03, interrupt_gate_access(true, 0) };
-    interrupt_descriptor_table[4] = { 0x8, _x86_interrupt_04, interrupt_gate_access(true, 0) };
-    interrupt_descriptor_table[5] = { 0x8, _x86_interrupt_05, interrupt_gate_access(true, 0) };
-    interrupt_descriptor_table[6] = { 0x8, _x86_interrupt_06, interrupt_gate_access(true, 0) };
 
-    x86::set_interrupt_descriptor_table(interrupt_descriptor_table, 256);
+    interrupt_descriptor_table[0x00] = { interrupt_selector, __x86_interrupt_00, interrupt_access };
+    interrupt_descriptor_table[0x03] = { interrupt_selector, __x86_interrupt_03, interrupt_access };
+    interrupt_descriptor_table[0x04] = { interrupt_selector, __x86_interrupt_04, interrupt_access };
+    interrupt_descriptor_table[0x05] = { interrupt_selector, __x86_interrupt_05, interrupt_access };
+    interrupt_descriptor_table[0x06] = { interrupt_selector, __x86_interrupt_06, interrupt_access };
 
-    // test exception 00 : division error
+    set_interrupt_descriptor_table_register(interrupt_descriptor_table);
+
+    // test: exception 00: division error
 
     _test_control = 1000;
-    _test_trap_DE();
-    if (_x86_interrupt_00_counter == 0) {
+    __test_trap_DE();
+    if (__x86_interrupt_00_counter == 0) {
         _test_control = 0;
         return;
     }
 
-    // test exception 03 : breakpoint
+    // test: exception 03: breakpoint
 
     _test_control = 1003;
-    _test_trap_BP();
-    if (_x86_interrupt_03_counter == 0) {
+    __test_trap_BP();
+    if (__x86_interrupt_03_counter == 0) {
         _test_control = 0;
         return;
     }
 
-    // test exception 04 : integer overflow
+    // test: exception 04: integer overflow
 
     _test_control = 1004;
-    _test_trap_OF();
-    if (_x86_interrupt_04_counter == 0) {
+    __test_trap_OF();
+    if (__x86_interrupt_04_counter == 0) {
         _test_control = 0;
         return;
     }
 
-    // test exception 05 : bound range exceeded
+    // test: exception 05: bound range exceeded
 
     _test_control = 1005;
-    _test_trap_BR();
-    if (_x86_interrupt_05_counter == 0) {
+    __test_trap_BR();
+    if (__x86_interrupt_05_counter == 0) {
         _test_control = 0;
         return;
     }
 
-    // test exception 06 : undefined instruction
+    // test: exception 06: undefined instruction
 
     _test_control = 1006;
-    _test_trap_UD();
-    if (_x86_interrupt_06_counter == 0) {
+    __test_trap_UD();
+    if (__x86_interrupt_06_counter == 0) {
         _test_control = 0;
         return;
     }
