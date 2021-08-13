@@ -28,11 +28,11 @@ subprojects
         binaries.configureEach {
 
             compileTasks.configureEach {
-                compilerArgs.addAll '-std=c++20', '-Wall', '-g'
+                compilerArgs.addAll '-std=c++20', '-flto', '-ggdb', '-Werror', '-Wall'
             }
 
             final linker = it.linkTask.get()
-            linker.linkerArgs.addAll '-std=c++20', '-Wl,-g', '-Wl,-Ttext=0x1000'
+            linker.linkerArgs.addAll '-std=c++20', '-flto', '-Wl,-Ttext=0x1000'
 
         }
     }
