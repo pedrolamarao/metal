@@ -1,0 +1,53 @@
+Date: 2021-08-13
+
+# goal
+
+The project's primary goal is to investigate the impact of state-of-the-art tools and practices in
+crafting software for the "bare metal".
+
+The "bare metal" is perceived to be a very difficult tool to master. From our experience programming
+the "bare system" with native tools emerged the following intuition: that a significant part of this
+difficulty derives from poor tools and practices inducing a high cost to important engineering
+techniques such as modularization and refactoring.
+
+One of this project's goals is to enable such techniques. According to our intuition, the use of
+appropriate tools and practices leads to low cost in the application of such techniques, therefore
+enabling their use in practice. On the other hand, the use of inappropriate tools and practices
+lead to a high cost in the application of such techniques, discouraging their use in practice.
+
+The first technique we aim to enable is that of architecture rearrangement and refactoring. Since
+time immemorial, native tools have been capable of producing reusable components, such as "objects"
+and "libraries". However, in the configuration of a user component, native tools have generally
+required the manual configuration of every dependant component on such things as "include paths".
+The cost of doing this escalates in the presence of transitive dependencies. We believe that this
+cost has induced the high rejection of modularity, which manifests in a "no dependencies" philosophy. 
+
+Our aim is therefore to obtain an architecture where, in practice, to add or remove a dependency
+relation requires modifying a single line of configuration, such as `B dependsOn A`. The tools
+must resolve all that is necessary to configure everything accordingly.
+
+We expect that easy architecture rearrangement and refactoring will lead to more architecture
+experimentation, which in turn will lead to better components.
+
+The second technique we aim to enable is that of automated testing. Currently, there are appropriate
+frameworks for automated testing of native programs in most development environments. However,
+in the particular case of the "bare metal", this is not the case. Observing program execution
+in the "bare metal" is very difficult and requires specialized hardware. Even with system
+emulators, observing program execution is not particularly easy. We believe this difficulty
+induces a high rejection to automated testing in favor of `printf` testing over data ports.
+
+Our aim is therefore to obtain a technique complementary to unit testing capable of automated
+testing of "bare metal" test programs. The tools must observe program execution and make accurate
+reports on test success or failure. The technique is allowed to require specialized debugger
+support in hardware or system emulator.
+
+For more information on Psys test protocol, see [TEST](TEST.md).
+
+The third technique we aim to enable is that of cross development. Since time immemorial, there
+have been native tools capable of producing programs for "cross targets". However, to this day,
+actually obtaining these tools has been difficult, even in the case of free software tools. We
+believe this difficulty induces projects to reuse whatever tool is available at the moment with
+no consideration to appropriateness, usability or other factors.
+
+Our aim is therefore to obtain a technique capable of easy "cross development", such that users
+may work on highly usable environments producing programs for whatevever appropriate targets.

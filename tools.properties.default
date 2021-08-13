@@ -1,6 +1,17 @@
-br.dev.pedrolamarao.psys.gdb.path =
-br.dev.pedrolamarao.psys.grub.path =
-br.dev.pedrolamarao.psys.grub.prologue =
-br.dev.pedrolamarao.psys.mtools.path =
-br.dev.pedrolamarao.psys.ovmf.path =
-br.dev.pedrolamarao.psys.qemu.path =
+# GDB search path (required)
+br.dev.pedrolamarao.psys.gdb.path = /usr/bin
+
+# GRUB 2 search path (required)
+br.dev.pedrolamarao.psys.grub.path = /usr/bin
+
+# GRUB 2 command line prologue (optional)
+br.dev.pedrolamarao.psys.grub.prologue = /usr/bin
+
+# GNU mtools search path (required))
+br.dev.pedrolamarao.psys.mtools.path = /usr/bin
+
+# OVMF search path (required)
+br.dev.pedrolamarao.psys.ovmf.path = /usr/share/ovmf
+
+# QEMU search path (required))
+br.dev.pedrolamarao.psys.qemu.path = /usr/bin

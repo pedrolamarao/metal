@@ -4,9 +4,9 @@ Date: 2021-08-05
 
 Welcome to the Psys project!
 
-Psys is a collection of components for programming the bare metal.
+Psys is a research project on "bare metal" software engineering.
 
-It is designed for integration with state-of-the-art tools and techniques.
+For more information, see [GOAL](doc/GOAL.md).
 
 # index
 
@@ -20,24 +20,21 @@ It is designed for integration with state-of-the-art tools and techniques.
 
 # prepare
 
-Psys is built by an LLVM based toolset.
+Psys is built with an LLVM based toolset.
+
+You must configure the toolset by defining file `tools.properties`
+based on `tools.properties.default`.
+
 These tools are required:
 
-- GNU grub
+- GNU grub version 2
 - GNU gdb
 - GNU mtools
-- LLVM (clang, lld, llvm-ar)
-
-The toolset is described in the `tools.properties` file.
-This file is required by the build tool.
-Configuration properties are documented in `tools.properties.default`.
-Property keys named `path` work as-if the environment `PATH` variable.
-Currently, all keys must be defined.
+- LLVM (clang, lld, llvm-ar) version 13
 
 # build
 
-Psys' build system is based on Gradle, Nokee and custom plugins.
-This system requires a JDK version 11.
+Psys is built using Gradle, Nokee and a JDK version 11.
 
 To build: `./gradlew build`
 
@@ -45,29 +42,11 @@ To clean: `./gradlew clean`
 
 # verify
 
-Psys is verified by a technique described below.
+Psys is verified by automated tests.
 
-To check: `./gradlew check`
+For more information, see [TEST](doc/TEST.md).
 
-## Psys Test Protocol
-
-Psys tests start when control reaches `_test_start` and finish when control reaches `_test_finish`.
-During test execution, Psys tests progress when the value stored into `_test_control` changes.
-Additionally, Psys tests store debugging values into `_test_debug`.
-
-When `_test_control` changes, let `old` be the old value and `new` be the new value.
-If `old` is zero then test has entered stage `new`.
-Else, if `new` is zero then test stage `old` has failed.
-Else, test stage `old` has succeeded.
-
-## Psys Test Driver
-
-This project implements Psys test protocol orchestrating QEMU and GDB.
-While QEMU executes the program, GDB watches for `_test_start`, `_test_finish`, `_test_control` and `_test_debug`.
-The test driver controls GDB via MI to react appropriately.
-
-This technique is implemented as Gradle tasks with Groovy source in `buildSrc`.
-For Multiboot programs, see `TestMultibootRescue` in `multiboot.groovy`.
+To check: `./gradlew --no-parallel check`
 
 # use
 
