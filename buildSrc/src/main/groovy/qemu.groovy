@@ -6,7 +6,30 @@ import org.gradle.api.provider.Property
 
 import javax.inject.Inject
 
-abstract class QemuDriveWriter
+abstract class QemuBase
+{
+    protected <T> void ifPresent (Property<T> property, Action<? super T> action)
+    {
+        if (property.isPresent()) { action.execute(property.get()) }
+    }
+}
+
+abstract class QemuAcceleratorWriter extends QemuBase
+{
+    abstract Property<String> getKernelIrqchip ()
+
+    abstract Property<String> getName ()
+
+    @Override String toString ()
+    {
+        final list = []
+        ifPresent name, { list.add "${it}" }
+        ifPresent kernelIrqchip, { list.add "kernel-irqchip=${it}" }
+        return String.join(',', list)
+    }
+}
+
+abstract class QemuDriveWriter extends QemuBase
 {
     abstract RegularFileProperty getFile ()
 
@@ -28,13 +51,21 @@ abstract class QemuDriveWriter
         ifPresent file, { list.add "file=${it}" }
         return String.join(',', list)
     }
-    static <T> void ifPresent (Property<T> property, Action<? super T> action)
+}
+
+abstract class QemuMachineWriter extends QemuBase
+{
+    abstract Property<String> getType ()
+
+    @Override String toString ()
     {
-        if (property.isPresent()) { action.execute(property.get()) }
+        final list = []
+        ifPresent type, { list.add "${it}" }
+        return String.join(',', list)
     }
 }
 
-abstract class QemuRtcWriter
+abstract class QemuRtcWriter extends QemuBase
 {
     abstract Property<String> getBase ()
 
@@ -44,17 +75,21 @@ abstract class QemuRtcWriter
         ifPresent base, { list.add "base=${it}" }
         return String.join(',', list)
     }
-    static <T> void ifPresent (Property<T> property, Action<? super T> action)
-    {
-        if (property.isPresent()) { action.execute(property.get()) }
-    }
 }
 
-abstract class QemuCommandBuilder
+abstract class QemuCommandBuilder extends QemuBase
 {
+    abstract ListProperty<String> getAccelerators ()
+
     abstract RegularFileProperty getBios ()
 
     abstract RegularFileProperty getCommand ()
+
+    abstract Property<String> getCpu ()
+
+    abstract Property<String> getDebug ()
+
+    abstract RegularFileProperty getDebugFile ()
 
     abstract Property<String> getDisplay ()
 
@@ -75,11 +110,26 @@ abstract class QemuCommandBuilder
         stop.convention false
     }
 
+    void accelerator ( String name, Action<? super QemuAcceleratorWriter> configure )
+    {
+        final writer = objects.newInstance(QemuAcceleratorWriter)
+        writer.name = name;
+        configure.execute(writer)
+        accelerators.add( writer.toString() )
+    }
+
     void drive ( Action<? super QemuDriveWriter> configure )
     {
         final writer = objects.newInstance(QemuDriveWriter)
         configure.execute(writer)
-        getDrives().add( writer.toString() )
+        drives.add( writer.toString() )
+    }
+
+    void machine ( Action<? super QemuMachineWriter> configure )
+    {
+        final writer = objects.newInstance(QemuMachineWriter)
+        configure.execute(writer)
+        getMachine().set( writer.toString() )
     }
 
     void rtc ( Action<? super QemuRtcWriter> configure )
@@ -93,18 +143,20 @@ abstract class QemuCommandBuilder
     {
         final ArrayList<String> list = []
         list.add command.get()
+        // machine
+        ifPresent machine, { list.addAll '-machine', it }
+        ifPresent cpu, { list.addAll '-cpu', it }
+        accelerators.get().forEach { list.addAll '-accel', it }
+        // devices
         ifPresent bios, { list.addAll '-bios', it }
         ifPresent display, { list.addAll '-display', it }
         drives.get().forEach { list.addAll '-drive', it }
-        ifPresent gdb, { list.addAll '-gdb', it }
-        ifPresent machine, { list.addAll '-machine', it }
         ifPresent rtc, { list.addAll '-rtc', it }
+        // support
+        ifPresent debug, { list.addAll '-d', it }
+        ifPresent debugFile, { list.addAll '-D', it }
+        ifPresent gdb, { list.addAll '-gdb', it }
         ifPresent stop, { if (it) list.add '-S' }
         return list
-    }
-
-    static <T> void ifPresent (Property<T> property, Action<? super T> action)
-    {
-        if (property.isPresent()) { action.execute(property.get()) }
     }
 }
