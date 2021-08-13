@@ -31,6 +31,7 @@ These tools are required:
 - GNU gdb
 - GNU mtools
 - LLVM (clang, lld, llvm-ar) version 13
+- QEMU
 
 # build
 
