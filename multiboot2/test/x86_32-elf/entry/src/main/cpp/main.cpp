@@ -5,19 +5,10 @@
 #include <multiboot2/information.h>
 
 
-//! _start symbol
-
-extern "C"
-{
-    extern ps::size4 _start;
-}
-
 //! Multiboot 2 request
 
-namespace
+namespace multiboot2
 {
-    using namespace multiboot2;
-
     struct request_type
     {
         header_prologue        prologue;
@@ -25,11 +16,14 @@ namespace
         end_request            end;
     };
 
-    [[gnu::used, gnu::section(".text")]]
-    constexpr request_type request =
+    // Assumption: the .text section begins with _start at address 0x1000
+
+    [[gnu::used, gnu::section(".multiboot2")]]
+    constexpr
+    request_type request =
     {
         { architecture_type::x86, sizeof(request), },
-        { tag_type::entry, 0, sizeof(entry_address_request), 0x1000 + sizeof(request) },
+        { tag_type::entry, 0, sizeof(entry_address_request), 0x1000 },
         { },
     };
 }
