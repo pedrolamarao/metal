@@ -33,6 +33,8 @@ These tools are required:
 - LLVM (clang, lld, llvm-ar) version 13
 - QEMU
 
+For more information, see [TOOLS](doc/TOOLS.md).
+
 # build
 
 Psys is built using Gradle, Nokee and a JDK version 11.
