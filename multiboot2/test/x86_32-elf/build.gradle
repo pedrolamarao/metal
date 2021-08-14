@@ -36,7 +36,7 @@ subprojects
         }
     }
 
-    final createMultibootRescue = tasks.register('createMultibootRescue', CreateMultibootRescue) {
+    final createImage = tasks.register('createImage', CreateMultibootImage) {
         group = 'psys'
         dependsOn assemble
         inputFile = providers.provider {
@@ -47,12 +47,12 @@ subprojects
         }
     }
 
-    tasks.register('runMultibootRescueWindows', RunMultibootRescue) {
+    tasks.register('runImage', RunMultibootImage) {
         group = 'psys'
-        imageFile = createMultibootRescue.get().outputFile
+        imageFile = createImage.get().outputFile
     }
 
-    def testRescue = tasks.register('testMultibootRescue', TestMultibootRescue) {
+    def testImage = tasks.register('testImage', TestMultibootImage) {
         group = 'psys'
         executableFile = providers.provider {
             application.binaries
@@ -60,10 +60,10 @@ subprojects
                 .map { it.get(0).linkTask.get().linkedFile.get() }
                 .get()
         }
-        imageFile = createMultibootRescue.get().outputFile
+        imageFile = createImage.get().outputFile
     }
 
-    check.dependsOn testRescue
+    check.dependsOn testImage
 
     parent.tasks.named('check') { dependsOn check }
 }

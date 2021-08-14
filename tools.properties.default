@@ -1,11 +1,8 @@
 # GDB search path (required)
 br.dev.pedrolamarao.psys.gdb.path = /usr/bin
 
-# GRUB 2 search path (required)
+# GRUB search path (required)
 br.dev.pedrolamarao.psys.grub.path = /usr/bin
-
-# GRUB 2 command line prologue (optional)
-br.dev.pedrolamarao.psys.grub.prologue =
 
 # GNU mtools search path (required))
 br.dev.pedrolamarao.psys.mtools.path = /usr/bin

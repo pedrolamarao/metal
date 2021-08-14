@@ -1,7 +1,5 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
@@ -9,108 +7,86 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
-import java.nio.file.Path
 import java.time.Duration
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.TimeUnit
 
-abstract class CreateMultibootRescue extends DefaultTask
+abstract class CreateMultibootImage extends DefaultTask
 {
     @InputFile abstract RegularFileProperty getInputFile ()
 
-    @Input abstract Property<String> getMkrescue ()
+    @Input abstract RegularFileProperty getCommand ()
 
     @OutputFile abstract RegularFileProperty getOutputFile ()
 
-    @Input abstract ListProperty<String> getPrologue ()
-
-    CreateMultibootRescue()
+    CreateMultibootImage ()
     {
         final layout = project.layout
         final providers = project.providers
         final tools = project.rootProject.ext.tools
 
-        final grubPrologue = tools['br.dev.pedrolamarao.psys.grub.prologue']
         final grubPath = tools['br.dev.pedrolamarao.psys.grub.path']
 
-        prologue.convention "${grubPrologue}".split(' ').collect()
+        command.convention = providers.provider { new File("${grubPath}/grub-mkstandalone") }
 
-        mkrescue.convention "${grubPath}/grub-mkrescue"
-
-        outputFile.convention = inputFile.flatMap { layout.buildDirectory.file("grub/bin/${it.asFile.name}/rescue/image") }
+        outputFile.convention = inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${it.asFile.name}/image") }
     }
 
-    private static final String cdrom_cfg =
+    private static final String grub_cfg =
         "default=0\r\n" +
         "timeout=0\r\n" +
         "\r\n" +
         "menuentry psys {\r\n" +
-        "   multiboot2 (cd)/program\r\n" +
+        "   multiboot2 (memdisk)/program\r\n" +
         "}\r\n"
 
     @TaskAction void action ()
     {
         final configurationFile = new File(temporaryDir, 'grub.cfg').tap {
             createNewFile()
-            withReader { write(CreateMultibootRescue.cdrom_cfg) }
+            withReader { write(CreateMultibootImage.grub_cfg) }
         }
         final stderrFile = new File(temporaryDir, 'err.txt').tap { createNewFile() }
         final stdoutFile = new File(temporaryDir, 'out.txt').tap { createNewFile() }
-        final inputFile = this.inputFile.get().asFile
-        final outputFile = this.outputFile.get().asFile
 
-        final projectPath = project.projectDir.toPath()
-        final configurationPath = projectPath.relativize( configurationFile.toPath() )
-        final inputPath = projectPath.relativize( inputFile.toPath() )
-        final outputPath = projectPath.relativize( outputFile.toPath() )
-
-        final command = []
-        command.addAll prologue.get()
-        command.add mkrescue.get()
-        command.addAll '-o', toUnixString(outputPath)
-        command.add "/boot/grub/grub.cfg=" + toUnixString(configurationPath)
-        command.add "/program=" + toUnixString(inputPath)
+        final builder = project.objects.newInstance(GrubMakeImageBuilder)
+        builder.command = command
+        builder.platform = 'i386-pc'
+        builder.imageFile = outputFile
+        builder.installModules = [ 'configfile', 'memdisk', 'multiboot2', 'normal' ]
+        builder.source '/boot/grub/grub.cfg', configurationFile
+        builder.source '/program', inputFile
 
         project.exec {
-            commandLine command
+            commandLine builder.build()
             errorOutput = new File(temporaryDir, 'err.txt').tap{createNewFile()}.newOutputStream()
             standardOutput = new File(temporaryDir, 'out.txt').tap{createNewFile()}.newOutputStream()
         }
     }
-
-    static String toUnixString(Path path)
-    {
-        return path.toString().replace('\\', '/');
-    }
 }
 
-abstract class RunMultibootRescue extends DefaultTask
+abstract class RunMultibootImage extends DefaultTask
 {
+    @Input abstract RegularFileProperty getCommand ()
+
     @InputFile abstract RegularFileProperty getImageFile ()
 
-    @Input abstract RegularFileProperty getQemuExecutable ()
-
-    RunMultibootRescue ()
+    RunMultibootImage ()
     {
         final layout = project.layout
         final providers = project.providers
 
         final qemu = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.qemu.path']
 
-        qemuExecutable.convention = providers.provider { qemu + '/qemu-system-i386' }
-            .map { project.file(it) }
-            .tap { layout.file(it) }
+        command.convention = providers.provider { new File("${qemu}/qemu-system-i386") }
     }
 
     @TaskAction void action ()
     {
-        final imageQemuDrive = project.objects.newInstance(QemuDriveWriter)
-        imageQemuDrive.media = 'cdrom'
-        imageQemuDrive.file = imageFile
-
         final qemuCommand = project.objects.newInstance(QemuCommandBuilder)
-        qemuCommand.command = qemuExecutable
-        qemuCommand.drives.add "${imageQemuDrive}"
+        qemuCommand.command = command
+        qemuCommand.debugFile = new File(temporaryDir, 'qemu.debug.txt')
+        qemuCommand.kernel = imageFile
         qemuCommand.gdb = 'tcp:localhost:12345'
         qemuCommand.machine = 'q35'
         qemuCommand.stop = true
@@ -119,7 +95,7 @@ abstract class RunMultibootRescue extends DefaultTask
     }
 }
 
-abstract class TestMultibootRescue extends DefaultTask
+abstract class TestMultibootImage extends DefaultTask
 {
     @InputFile abstract RegularFileProperty getExecutableFile ()
 
@@ -131,7 +107,7 @@ abstract class TestMultibootRescue extends DefaultTask
 
     @Inject abstract WorkerExecutor getWorkers ()
 
-    TestMultibootRescue ()
+    TestMultibootImage ()
     {
         final layout = project.layout
         final providers = project.providers
@@ -139,13 +115,8 @@ abstract class TestMultibootRescue extends DefaultTask
         final gdbPath = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.gdb.path']
         final qemuPath = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.qemu.path']
 
-        gdbExecutable.convention = providers.provider { gdbPath + '/gdb' }
-            .map { project.file(it) }
-            .tap { layout.file(it) }
-
-        qemuExecutable.convention = providers.provider { qemuPath + '/qemu-system-i386' }
-            .map { project.file(it) }
-            .tap { layout.file(it) }
+        gdbExecutable.convention = providers.provider { new File("${gdbPath}/gdb")}
+        qemuExecutable.convention = providers.provider { new File("${qemuPath}/qemu-system-i386") }
     }
 
     @TaskAction void action ()
@@ -161,10 +132,7 @@ abstract class TestMultibootRescue extends DefaultTask
         final qemuCommand = project.objects.newInstance(QemuCommandBuilder).tap {
             command = qemuExecutable
             display = 'none'
-            drive {
-                media = 'cdrom'
-                file = imageFile
-            }
+            kernel = imageFile
             it.gdb = 'tcp:localhost:12345'
             machine = 'q35'
             rtc {
