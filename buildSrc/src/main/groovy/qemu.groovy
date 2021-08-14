@@ -97,6 +97,8 @@ abstract class QemuCommandBuilder extends QemuBase
 
     abstract Property<String> getGdb ()
 
+    abstract RegularFileProperty getKernel ()
+
     abstract Property<String> getMachine ()
 
     abstract Property<String> getRtc ()
@@ -151,6 +153,7 @@ abstract class QemuCommandBuilder extends QemuBase
         ifPresent bios, { list.addAll '-bios', it }
         ifPresent display, { list.addAll '-display', it }
         drives.get().forEach { list.addAll '-drive', it }
+        ifPresent kernel, { list.addAll '-kernel', it }
         ifPresent rtc, { list.addAll '-rtc', it }
         // support
         ifPresent debug, { list.addAll '-d', it }
