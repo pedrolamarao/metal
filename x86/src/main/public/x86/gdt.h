@@ -124,9 +124,17 @@ namespace x86
   template <unsigned N>
   void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] );
 
+  //! Get code segment register
+
+  auto get_code_segment_register () -> segment_selector ;
+
   //! Set code segment register
 
   void set_code_segment_register ( segment_selector value );
+
+  //! Set data segment registers
+
+  void set_data_segment_registers ( segment_selector value );
 
 }
 
@@ -148,7 +156,15 @@ namespace x86
 
     extern "C"
     [[gnu::fastcall]]
+    auto __x86_get_code_segment_register () -> size2;
+
+    extern "C"
+    [[gnu::fastcall]]
     void __x86_set_code_segment_register ( ps::size2 segment_selector );
+
+    extern "C"
+    [[gnu::fastcall]]
+    void __x86_set_data_segment_registers ( ps::size2 segment_selector );
 
   }
 
@@ -268,8 +284,20 @@ namespace x86
   // Segment selector registers
 
   inline
+  auto get_code_segment_register () -> segment_selector
+  {
+    return segment_selector { internal::__x86_get_code_segment_register() };
+  }
+
+  inline
   void set_code_segment_register ( segment_selector x )
   {
     internal::__x86_set_code_segment_register(x.value());
+  }
+
+  inline
+  void set_data_segment_registers ( segment_selector x )
+  {
+    internal::__x86_set_data_segment_registers(x.value());
   }
 }

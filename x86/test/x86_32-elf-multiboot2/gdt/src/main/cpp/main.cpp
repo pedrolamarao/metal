@@ -101,8 +101,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     _test_control = 21;
 
-    ps::size2 actual_cs {};
-    asm("" : "=cs"(actual_cs));
+    ps::size2 actual_cs { x86::internal::__x86_get_code_segment_register() };
 
     if (expected_cs.value() != actual_cs) {
         _test_debug = expected_cs.value();

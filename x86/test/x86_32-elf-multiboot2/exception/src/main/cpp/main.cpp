@@ -58,13 +58,8 @@ namespace x86
 
     void set_segment_registers ( segment_selector code, segment_selector data )
     {
-        auto const ds = data.value();
         set_code_segment_register(code);
-        asm volatile ("mov %0, %%ds" : : "r"(ds));
-        asm volatile ("mov %0, %%ss" : : "r"(ds));
-        asm volatile ("mov %0, %%es" : : "r"(ds));
-        asm volatile ("mov %0, %%fs" : : "r"(ds));
-        asm volatile ("mov %0, %%gs" : : "r"(ds));
+        set_data_segment_registers(data);
     }
 }
 

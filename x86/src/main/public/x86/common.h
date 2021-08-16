@@ -38,6 +38,9 @@ namespace x86
     constexpr
     segment_selector () = default ;
 
+    constexpr explicit
+    segment_selector ( size2 );
+
     constexpr
     segment_selector ( size2 index, bool is_ldt, size1 privilege );
 
@@ -67,6 +70,10 @@ namespace x86
   {
     return x.size != y.size || x.offset != y.offset;
   }
+
+  constexpr inline
+  segment_selector::segment_selector ( size2 value ) : _value{value}
+  { }
 
   constexpr inline
   segment_selector::segment_selector (ps::size2 index, bool is_ldt, ps::size1 privilege) :
