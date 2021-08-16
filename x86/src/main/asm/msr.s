@@ -1,31 +1,35 @@
-// Copyright (C) 2012 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2012, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-.att_syntax
+.intel_syntax
 
-// x86::internal::__read_msr [ fastcall ] : ( id : uint32_t ) -> ( uint64_t )
+// fastcall __x86_msr_read : ( id : dword, value : qword ptr ) -> (  )
 
-.global __read_msr
-.type   __read_msr, STT_FUNC
-__read_msr:
+.global __x86_msr_read
+.type   __x86_msr_read, @function
+__x86_msr_read:
+    mov ebx, edx
 	rdmsr
+	mov dword ptr [ebx], eax
+	mov dword ptr [ebx + 4], edx
 	ret
 
-// x86::internal::__write_msr_32 [ fastcall ] : ( id : uint32_t, value : uint32_t )
+// fastcall __x86_write_msr_32 : ( id : dword, value : dword )
 
-.global __write_msr_32
-.type   __write_msr_32, STT_FUNC
-__write_msr_32:
-	mov %edx, %eax
-	xor %edx, %edx
+.global __x86_msr_write_32
+.type   __x86_msr_write_32, @function
+__x86_msr_write_32:
+	mov eax, edx
+	mov edx, 0
 	wrmsr
 	ret
 
-// x86::internal::__write_msr_64 [ fastcall ] : ( id : uint32_t, value : uint64_t )
+// fastcall __x86_msr_write_64 : ( id : dword, value : qword ptr )
 
-.global __write_msr_64
-.type   __write_msr_64, STT_FUNC
-__write_msr_64:
-	mov 4(%esp), %eax
-	mov 8(%esp), %edx
+.global __x86_msr_write_64
+.type   __x86_msr_write_64, @function
+__x86_msr_write_64:
+    mov ebx, edx
+	mov eax, dword ptr [ebx]
+	mov edx, dword ptr [ebx + 4]
 	wrmsr
 	ret

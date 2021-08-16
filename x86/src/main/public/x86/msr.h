@@ -6,6 +6,8 @@
 
 namespace x86
 {
+  using ps::size4;
+  using ps::size8;
 
   //! True if model specific registers are supported
   //! @pre x = cpuid(1)
@@ -20,41 +22,26 @@ namespace x86
 
   //! Model specific registers
 
-  enum class msr : ps::size4
+  enum class msr : size4
   {
-    IA32_APIC_BASE   = 0x1B,
-    IA32_MISC_ENABLE = 0x1A0
+    IA32_APIC_BASE   = 0x001B,
+    IA32_MISC_ENABLE = 0x01A0,
   };
 
   //! Read value of model specific register
   //! @pre has_msr()
 
-  auto read_msr (ps::size4 id) -> ps::size8 ;
+  auto read_msr (msr id) -> size8 ;
 
   //! Write value into model specific register
   //! @pre has_msr()
 
-  void write_msr (ps::size4 id, ps::size4 value);
+  void write_msr (msr id, size4 value);
 
   //! Write value into model specific register
   //! @pre has_msr()
 
-  void write_msr (ps::size4 id, ps::size8 value);
-
-  //! Read value of model specific register
-  //! @pre has_msr()
-
-  auto read_msr (msr id) -> ps::size8 ;
-
-  //! Write value into model specific register
-  //! @pre has_msr()
-
-  void write_msr (msr id, ps::size4 value);
-
-  //! Write value into model specific register
-  //! @pre has_msr()
-
-  void write_msr (msr id, ps::size8 value);
+  void write_msr (msr id, size8 value);
 
 }
 
@@ -65,15 +52,9 @@ namespace x86
 
   namespace internal
   {
-    void read_msr ( ps::size4 id, ps::size4 & low, ps::size4 & high )
-    {
-        asm volatile ("rdmsr" : "=a"(low), "=d"(high) : "c"(id));
-    }
-
-    void write_msr ( ps::size4 id, ps::size4 low, ps::size4 high )
-    {
-        asm volatile ("wrmsr" : : "a"(low), "d"(high), "c"(id));
-    }
+    extern "C" [[gnu::fastcall]] void __x86_msr_read (size4 id, size8 * value);
+    extern "C" [[gnu::fastcall]] void __x86_msr_write_32 (size4 id, size4 value);
+    extern "C" [[gnu::fastcall]] void __x86_msr_write_64 (size4 id, size8 * value);
   }
 
   inline constexpr
@@ -89,43 +70,22 @@ namespace x86
   }
 
   inline
-  auto read_msr (ps::size4 id) -> ps::size8
-  {
-      ps::size4 low, high;
-      internal::read_msr(id, low, high);
-      return (ps::size8{high} << 32) | low;
-  }
-
-  inline
-  void write_msr (ps::size4 id, ps::size4 value)
-  {
-      internal::write_msr(id, value, 0);
-  }
-
-  inline
-  void write_msr (ps::size4 id, ps::size8 value)
-  {
-      ps::size4 low = value & 0xFFFFFFFF;
-      ps::size4 high = value >> 32;
-      internal::write_msr(id, low, high);
-  }
-
-  inline
   auto read_msr (msr id) -> ps::size8
   {
-    return read_msr((ps::size4)(id));
+    size8 value;
+    internal::__x86_msr_read( size4(id), &value );
+    return value;
   }
 
   inline
   void write_msr (msr id, ps::size4 value)
   {
-    write_msr((ps::size4)(id), value);
+    internal::__x86_msr_write_32( size4(id), value );
   }
 
   inline
   void write_msr (msr id, ps::size8 value)
   {
-    write_msr((ps::size4)(id), value);
+    internal::__x86_msr_write_64( size4(id), &value );
   }
-
 }

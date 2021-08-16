@@ -43,6 +43,8 @@ extern "C"
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
+    using namespace x86;
+
     // multiboot2
 
     _test_control = 1;
@@ -81,7 +83,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     _test_control = 5;
 
-    auto value = x86::read_msr(0x1B);
+    auto value = x86::read_msr(msr::IA32_APIC_BASE);
     if ((value & 0xFFFFFFFFFFFF0000) != 0x00000000FEE00000) {
         _test_control = 0;
         return;
