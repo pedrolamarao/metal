@@ -48,6 +48,7 @@ include 'pc'
 include 'pc:test:x86_32-elf-multiboot2:cmos'
 include 'pc:test:x86_32-elf-multiboot2:pic'
 include 'pc:test:x86_32-elf-multiboot2:pit'
+include 'pc:test:x86_32-elf-multiboot2:uart'
 
 include 'psys'
 
