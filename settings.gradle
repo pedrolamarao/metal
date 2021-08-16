@@ -33,7 +33,7 @@ pluginManagement
     }
 }
 
-rootProject.name = 'aasgard'
+rootProject.name = 'psys'
 
 // components
 
