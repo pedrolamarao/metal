@@ -34,7 +34,8 @@ namespace multiboot2
 namespace x86
 {
     [[gnu::section(".gdt")]]
-    constexpr segment_descriptor global_descriptor_table [6] =
+    constinit
+    segment_descriptor global_descriptor_table [6] =
     {
         // required null descriptor
         { },
@@ -64,6 +65,7 @@ namespace x86
     constexpr unsigned interrupt_descriptor_table_size = 256;
 
     [[gnu::section(".idt")]]
+    constinit
     interrupt_gate_descriptor interrupt_descriptor_table [ interrupt_descriptor_table_size ];
 
     extern "C"

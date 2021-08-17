@@ -19,7 +19,8 @@ namespace multiboot2
     };
 
     [[gnu::used, gnu::section(".multiboot2")]]
-    constexpr request_type request =
+    constinit
+    request_type request =
     {
         { architecture_type::x86, sizeof(request), },
         { },
@@ -31,7 +32,8 @@ namespace multiboot2
 namespace x86
 {
     [[gnu::section(".gdt")]]
-    constexpr segment_descriptor global_descriptor_table [8] =
+    constinit
+    segment_descriptor global_descriptor_table [8] =
     {
         // required null descriptor
         { },
@@ -63,6 +65,7 @@ namespace x86
 namespace x86
 {
     [[gnu::section(".idt")]]
+    constinit
     interrupt_gate_descriptor interrupt_descriptor_table [256] =
     { };
 

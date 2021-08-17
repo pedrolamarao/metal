@@ -18,7 +18,8 @@ namespace
     };
 
     [[gnu::used, gnu::section(".text")]]
-    constexpr request_type request =
+    constinit
+    request_type request =
     {
         { architecture_type::x86, sizeof(request), },
         { },

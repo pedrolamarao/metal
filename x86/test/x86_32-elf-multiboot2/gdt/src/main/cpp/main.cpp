@@ -18,7 +18,8 @@ namespace multiboot2
     };
 
     [[gnu::used, gnu::section(".multiboot2")]]
-    constexpr request_type request =
+    constinit
+    request_type request =
     {
         { architecture_type::x86, sizeof(request), },
         { },
@@ -32,7 +33,8 @@ namespace x86
     constexpr unsigned global_descriptor_table_size = 6;
 
     [[gnu::section(".gdt")]]
-    constexpr segment_descriptor global_descriptor_table [ global_descriptor_table_size ] =
+    constinit
+    segment_descriptor global_descriptor_table [ global_descriptor_table_size ] =
     {
         // required null descriptor
         { },

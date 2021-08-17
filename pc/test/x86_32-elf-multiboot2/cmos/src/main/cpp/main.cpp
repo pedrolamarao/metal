@@ -22,7 +22,8 @@ namespace
     };
 
     [[gnu::used, gnu::section(".multiboot2")]]
-    constexpr request_type request =
+    constinit
+    request_type request =
     {
         { multiboot2::architecture_type::x86, sizeof(request), },
         { },

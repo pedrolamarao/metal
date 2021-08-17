@@ -19,7 +19,7 @@ namespace multiboot2
     // Assumption: the .text section begins with _start at address 0x1000
 
     [[gnu::used, gnu::section(".multiboot2")]]
-    constexpr
+    constinit
     request_type request =
     {
         { architecture_type::x86, sizeof(request), },

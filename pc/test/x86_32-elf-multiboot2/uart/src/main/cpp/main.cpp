@@ -25,7 +25,8 @@ namespace multiboot2
     };
 
     [[gnu::used, gnu::section(".multiboot2")]]
-    constexpr request_type request =
+    constinit
+    request_type request =
     {
         { architecture_type::x86, sizeof(request), },
         { },
@@ -210,7 +211,8 @@ namespace x86
     // GDT
 
     [[gnu::section(".gdt")]]
-    constexpr segment_descriptor global_descriptor_table [5] =
+    constinit
+    segment_descriptor global_descriptor_table [5] =
     {
         { },
         { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
@@ -268,6 +270,7 @@ namespace x86
     extern "C" void __x86_interrupt ();
 
     [[gnu::section(".idt")]]
+    constinit
     interrupt_gate_descriptor interrupt_descriptor_table [256];
 
     void set_interrupt_descriptor_table_register ()
