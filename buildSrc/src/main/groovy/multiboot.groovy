@@ -46,8 +46,6 @@ abstract class CreateMultibootImage extends DefaultTask
             createNewFile()
             withReader { write(grub_cfg) }
         }
-        final stderrFile = new File(temporaryDir, 'err.txt').tap { createNewFile() }
-        final stdoutFile = new File(temporaryDir, 'out.txt').tap { createNewFile() }
 
         final builder = project.objects.newInstance(GrubMakeImageBuilder)
         builder.command = command
