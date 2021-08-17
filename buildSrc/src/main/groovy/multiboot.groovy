@@ -32,7 +32,7 @@ abstract class CreateMultibootImage extends DefaultTask
         outputFile.convention = inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${it.asFile.name}/image") }
     }
 
-    private static final String grub_cfg =
+    static final String grub_cfg =
         "default=0\r\n" +
         "timeout=0\r\n" +
         "\r\n" +
@@ -44,7 +44,7 @@ abstract class CreateMultibootImage extends DefaultTask
     {
         final configurationFile = new File(temporaryDir, 'grub.cfg').tap {
             createNewFile()
-            withReader { write(CreateMultibootImage.grub_cfg) }
+            withReader { write(grub_cfg) }
         }
         final stderrFile = new File(temporaryDir, 'err.txt').tap { createNewFile() }
         final stdoutFile = new File(temporaryDir, 'out.txt').tap { createNewFile() }
