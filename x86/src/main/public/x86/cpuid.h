@@ -9,9 +9,17 @@
 
 namespace x86
 {
+    using ps::size1;
+    using ps::size2;
+    using ps::size4;
+    using ps::size8;
+
   //! True if cpuid is supported
 
   auto has_cpuid () -> bool ;
+
+  //! Data types
+  //! @{
 
   //! CPU identification information
 
@@ -84,6 +92,15 @@ namespace x86
       //! @}
 
   };
+
+  //! @}
+
+    //! Primitive procedures.
+    //! @{
+
+    void cpuid_ (size4 feature, size4 variant, size4 * a, size4 * b, size4 * c, size4 * d);
+
+    //! @}
 }
 
 //! Inline definitions
@@ -95,10 +112,6 @@ namespace x86
       extern "C"
       [[gnu::fastcall]]
       ps::size4 _x86_cpu_age ();
-
-      extern "C"
-      [[gnu::fastcall]]
-      void _x86_cpuid (ps::size4 leaf, ps::size4 extra, cpuid * id);
   }
 
   inline
@@ -123,7 +136,7 @@ namespace x86
   auto cpuid::load ( ps::size4 feature, ps::size4 variant ) -> cpuid
   {
     cpuid _r;
-    internal::_x86_cpuid(feature, variant, &_r);
+    cpuid_(feature, variant, &_r._a, &_r._b, &_r._c, &_r._d);
     return _r;
   }
 

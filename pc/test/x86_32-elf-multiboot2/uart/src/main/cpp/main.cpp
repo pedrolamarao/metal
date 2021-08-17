@@ -119,7 +119,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     master.ocw1(0xFF);
     slave.ocw1(0xFF);
 
-    enable_interrupts();
+    sti();
 
     // uart: data types
 
@@ -227,7 +227,9 @@ namespace x86
         auto const cs = segment_selector(1, false, 0);
         set_code_segment_register(cs);
         auto const ds = segment_selector(2, false, 0);
-        set_data_segment_registers(ds);
+        set_data_segment_register(ds);
+        set_stack_segment_register(ds);
+        set_extra_segment_registers(ds);
     }
 
     // IDT

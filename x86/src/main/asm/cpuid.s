@@ -57,17 +57,3 @@ _x86_cpu_age_end:
     # return detected CPU age
     mov eax, edx
 	ret
-
-# _x86_cpuid [ fastcall ] : ( feature, variant, cpuid ) -> ()
-
-.global _x86_cpuid
-_x86_cpuid:
-	mov	esi, dword ptr [esp + 4]
-	mov eax, ecx
-	mov ecx, edx
-	cpuid
-	mov	dword ptr [esi], eax
-	mov	dword ptr [esi + 4], ebx
-	mov	dword ptr [esi + 8], ecx
-	mov	dword ptr [esi + 12], edx
-	ret 4

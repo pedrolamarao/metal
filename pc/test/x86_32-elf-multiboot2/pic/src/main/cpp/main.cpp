@@ -119,7 +119,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     master.ocw1(0xFE);
     slave.ocw1(0xFF);
 
-    enable_interrupts();
+    sti();
 
     // test: hardware interrupt increments counter
     // assumption: PIT shall interrupt IRQ 0
@@ -135,11 +135,11 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     _test_control = 14;
 
-    disable_interrupts();
+    cli();
 
     __x86_interrupt_master_counter = 0;
 
-    enable_interrupts();
+    sti();
 
     while (__x86_interrupt_master_counter == 0) {
         // wait!
@@ -172,7 +172,9 @@ namespace x86
         auto const cs = segment_selector(1, false, 0);
         set_code_segment_register(cs);
         auto const ds = segment_selector(2, false, 0);
-        set_data_segment_registers(ds);
+        set_data_segment_register(ds);
+        set_stack_segment_register(ds);
+        set_extra_segment_registers(ds);
     }
 
     // IDT

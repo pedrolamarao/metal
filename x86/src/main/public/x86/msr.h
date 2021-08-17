@@ -6,8 +6,30 @@
 
 namespace x86
 {
-  using ps::size4;
-  using ps::size8;
+    using ps::size4;
+    using ps::size8;
+
+    //! Data types.
+    //! @{
+
+    //! @}
+
+    //! Primitive procedures.
+    //! @{
+
+    auto rdmsr (size4 id) -> size8;
+
+    void wrmsr (size4 id, size8 value);
+
+    //! @}
+
+    //! Interface types.
+    //! @{
+
+    //! @}
+
+  //! Standard procedures.
+  //! @{
 
   //! True if model specific registers are supported
   //! @pre x = cpuid(1)
@@ -31,32 +53,19 @@ namespace x86
   //! Read value of model specific register
   //! @pre has_msr()
 
-  auto read_msr (msr id) -> size8 ;
+  inline
+  auto read_msr (msr id) -> size8
+  {
+    return rdmsr( static_cast<size4>(id) );
+  }
 
-  //! Write value into model specific register
-  //! @pre has_msr()
-
-  void write_msr (msr id, size4 value);
-
-  //! Write value into model specific register
-  //! @pre has_msr()
-
-  void write_msr (msr id, size8 value);
-
+  //! @}
 }
 
 //! Inline definitions
 
 namespace x86
 {
-
-  namespace internal
-  {
-    extern "C" [[gnu::fastcall]] void __x86_msr_read (size4 id, size8 * value);
-    extern "C" [[gnu::fastcall]] void __x86_msr_write_32 (size4 id, size4 value);
-    extern "C" [[gnu::fastcall]] void __x86_msr_write_64 (size4 id, size8 * value);
-  }
-
   inline constexpr
   auto has_msr (cpuid x) -> bool
   {
@@ -67,25 +76,5 @@ namespace x86
   auto has_msr () -> bool
   {
     return has_msr(cpuid::load(1));
-  }
-
-  inline
-  auto read_msr (msr id) -> ps::size8
-  {
-    size8 value;
-    internal::__x86_msr_read( size4(id), &value );
-    return value;
-  }
-
-  inline
-  void write_msr (msr id, ps::size4 value)
-  {
-    internal::__x86_msr_write_32( size4(id), value );
-  }
-
-  inline
-  void write_msr (msr id, ps::size8 value)
-  {
-    internal::__x86_msr_write_64( size4(id), &value );
   }
 }

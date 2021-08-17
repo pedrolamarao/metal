@@ -177,7 +177,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     _test_control = 31;
 
-    segment_selector actual_cs { x86::internal::__x86_get_code_segment_register() };
+    segment_selector actual_cs { get_code_segment_register() };
 
     if (expected_cs != actual_cs) {
         _test_debug = size2{expected_cs};

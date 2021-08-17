@@ -95,6 +95,15 @@ namespace x86
   static_assert(sizeof(segment_selector) == 2, "unexpected size of segment_selector");
 
   //! @}
+
+    //! Primitive procedures.
+    //! @{
+
+    void halt ();
+
+    void pause ();
+
+    //! @}
 }
 
 //! Definitions

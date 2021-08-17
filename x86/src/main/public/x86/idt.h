@@ -70,6 +70,24 @@ namespace x86
 
   //! @}
 
+    //! Primitive procedures.
+    //! @{
+
+    //! Enable interrupts on this processor
+
+    void sti ();
+
+    //! Disables interrupts on this processor
+
+    void cli ();
+
+    //! Interrupt this processor.
+
+    template <unsigned N>
+    void interrupt ();
+
+    //! @}
+
   //! Interface types.
   //! @{
 
@@ -87,43 +105,12 @@ namespace x86
   void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] );
 
   //! @}
-
-  //! Enable interrupts on this processor
-
-  void enable_interrupts ();
-
-  //! Disables interrupts on this processor
-
-  void disable_interrupts ();
-
 }
 
 //! Definitions
 
 namespace x86
 {
-
-  namespace internal
-  {
-
-    extern "C"
-    [[gnu::fastcall]]
-    void __x86_get_interrupt_descriptor_table_register ( void * system_table_register );
-
-    extern "C"
-    [[gnu::fastcall]]
-    void __x86_set_interrupt_descriptor_table_register ( void * system_table_register );
-
-    extern "C"
-    [[gnu::fastcall]]
-    void __x86_enable_interrupts ();
-
-    extern "C"
-    [[gnu::fastcall]]
-    void __x86_disable_interrupts ();
-
-  }
-
   // Gate descriptor.
 
   constexpr inline
@@ -196,44 +183,18 @@ namespace x86
 
   // Interrupt descriptor table register
 
-  inline
-  system_table_register get_interrupt_descriptor_table_register ()
-  {
-    system_table_register value;
-    internal::__x86_get_interrupt_descriptor_table_register(& value);
-    return value;
-  }
-
-  inline
-  void set_interrupt_descriptor_table_register ( system_table_register value )
-  {
-    internal::__x86_set_interrupt_descriptor_table_register(& value);
-  }
-
   template <unsigned N>
   inline
   void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] )
   {
     system_table_register value { N * sizeof(interrupt_gate_descriptor), reinterpret_cast<ps::size4>(table) };
-    internal::__x86_set_interrupt_descriptor_table_register(& value);
+    set_interrupt_descriptor_table_register(value);
   }
 
-  inline
-  void enable_interrupts ()
-  {
-    internal::__x86_enable_interrupts();
-  }
-
-  inline
-  void disable_interrupts ()
-  {
-    internal::__x86_disable_interrupts();
-  }
-
-  template <int N>
+  template <unsigned N>
   inline
   void interrupt ()
   {
-      __asm__ ("int %0\n" : : "N"(N) : "cc", "memory");
+    __asm__ volatile ("int %0" : : "N"(N) : "cc", "memory");
   }
 }

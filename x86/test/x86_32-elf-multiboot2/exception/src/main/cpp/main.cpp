@@ -56,7 +56,9 @@ namespace x86
     void set_segment_registers ( segment_selector code, segment_selector data )
     {
         set_code_segment_register(code);
-        set_data_segment_registers(data);
+        set_data_segment_register(data);
+        set_stack_segment_register(data);
+        set_extra_segment_registers(data);
     }
 }
 

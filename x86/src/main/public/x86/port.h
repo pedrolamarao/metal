@@ -2,11 +2,42 @@
 
 #pragma once
 
+#include <psys/integer.h>
+
 //! @brief Declarations
 
 namespace x86
 {
-  //! @brief I/O port
+    using ps::size1;
+    using ps::size2;
+    using ps::size4;
+
+    //! Data types.
+    //! @{
+
+    //! @}
+
+    //! Primitive procedures.
+    //! @{
+
+    auto in1 ( size2 port ) -> size1;
+
+    auto in2 ( size2 port ) -> size2;
+
+    auto in4 ( size2 port ) -> size4;
+
+    void out1 ( size2 port, size1 data );
+
+    void out2 ( size2 port, size2 data );
+
+    void out4 ( size2 port, size4 data );
+
+    //! @}
+
+  //! Interface types.
+  //! @{
+
+  //! I/O port.
 
   template <unsigned ByteWidth>
     requires (ByteWidth == 1 || ByteWidth == 2 || ByteWidth == 4)
@@ -30,61 +61,53 @@ namespace x86
     address_type _address;
 
   };
+
+  //! @}
 }
 
 //! @brief Inline definitions
 
 namespace x86
 {
-  namespace internal
-  {
-    extern "C" [[gnu::fastcall]] auto __x86_port_read_08 ( ps::size2 address ) -> ps::size1;
-    extern "C" [[gnu::fastcall]] auto __x86_port_read_16 ( ps::size2 address ) -> ps::size2;
-    extern "C" [[gnu::fastcall]] auto __x86_port_read_32 ( ps::size2 address ) -> ps::size4;
-    extern "C" [[gnu::fastcall]] void __x86_port_write_08 ( ps::size1 data, ps::size2 address );
-    extern "C" [[gnu::fastcall]] void __x86_port_write_16 ( ps::size2 data, ps::size2 address );
-    extern "C" [[gnu::fastcall]] void __x86_port_write_32 ( ps::size4 data, ps::size2 address );
-  }
-
   template <>
   inline
   auto port<1>::read () -> data_type
   {
-    return internal::__x86_port_read_08(_address);
+    return in1(_address);
   }
 
   template <>
   inline
   void port<1>::write (data_type data)
   {
-    internal::__x86_port_write_08(data, _address);
+    out1(_address, data);
   }
 
   template <>
   inline
   auto port<2>::read () -> data_type
   {
-    return internal::__x86_port_read_16(_address);
+    return in2(_address);
   }
 
   template <>
   inline
   void port<2>::write (data_type data)
   {
-    internal::__x86_port_write_16(data, _address);
+    out2(_address, data);
   }
 
   template <>
   inline
   auto port<4>::read () -> data_type
   {
-    return internal::__x86_port_read_32(_address);
+    return in4(_address);
   }
 
   template <>
   inline
   void port<4>::write (data_type data)
   {
-    internal::__x86_port_write_32(data, _address);
+    out4(_address, data);
   }
 }

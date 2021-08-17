@@ -85,7 +85,12 @@ namespace x86
 
   //! @}
 
-  //! Interfaces.
+    //! Primitive procedures.
+    //! @{
+
+    //! @}
+
+  //! Interface types.
   //! @{
 
   // GDT register.
@@ -113,11 +118,23 @@ namespace x86
 
   void set_code_segment_register ( segment_selector value );
 
-  // DS, SS, ES, FS, GS registers.
+  // DS register.
 
-  //! Set data segment registers
+  //! Set data segment register
 
-  void set_data_segment_registers ( segment_selector value );
+  void set_data_segment_register ( segment_selector value );
+
+  // SS register.
+
+  //! Set stack segment register
+
+  void set_stack_segment_register ( segment_selector value );
+
+  // ES, FS, GS registers.
+
+  //! Set extra segment registers
+
+  void set_extra_segment_registers ( segment_selector value );
 
   //! @}
 }
@@ -126,32 +143,6 @@ namespace x86
 
 namespace x86
 {
-
-  namespace internal
-  {
-
-    extern "C"
-    [[gnu::fastcall]]
-    void __x86_get_global_descriptor_table_register ( void * system_table_register );
-
-    extern "C"
-    [[gnu::fastcall]]
-    void __x86_set_global_descriptor_table_register ( void * system_table_register );
-
-    extern "C"
-    [[gnu::fastcall]]
-    auto __x86_get_code_segment_register () -> size2;
-
-    extern "C"
-    [[gnu::fastcall]]
-    void __x86_set_code_segment_register ( ps::size2 segment_selector );
-
-    extern "C"
-    [[gnu::fastcall]]
-    void __x86_set_data_segment_registers ( ps::size2 segment_selector );
-
-  }
-
   // Segment descriptor.
 
   constexpr inline
@@ -252,20 +243,6 @@ namespace x86
 
   // Global descriptor table register
 
-  inline
-  system_table_register get_global_descriptor_table_register ()
-  {
-    system_table_register value;
-    internal::__x86_get_global_descriptor_table_register(& value);
-    return value;
-  }
-
-  inline
-  void set_global_descriptor_table_register ( system_table_register value )
-  {
-    internal::__x86_set_global_descriptor_table_register(& value);
-  }
-
   template <unsigned N>
   inline
   void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] )
@@ -274,26 +251,6 @@ namespace x86
         ((N * sizeof(segment_descriptor)) - 1),
         reinterpret_cast<ps::size4>(table)
     };
-    internal::__x86_set_global_descriptor_table_register(& value);
-  }
-
-  // Segment selector registers
-
-  inline
-  auto get_code_segment_register () -> segment_selector
-  {
-    return segment_selector { internal::__x86_get_code_segment_register() };
-  }
-
-  inline
-  void set_code_segment_register ( segment_selector x )
-  {
-    internal::__x86_set_code_segment_register( size2{x} );
-  }
-
-  inline
-  void set_data_segment_registers ( segment_selector x )
-  {
-    internal::__x86_set_data_segment_registers( size2{x} );
+    set_global_descriptor_table_register(value);
   }
 }
