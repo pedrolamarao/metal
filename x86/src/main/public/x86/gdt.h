@@ -7,16 +7,21 @@
 #include <x86/common.h>
 
 
-//! Declarations
+// Declarations.
 
 namespace x86
 {
+  using ps::size1;
+  using ps::size2;
+  using ps::size4;
+  using ps::size8;
 
-  //! Segment descriptor
-  //!
-  //! Element of global and local descriptor tables.
+  //! Data types.
+  //! @{
 
-  class alignas(8) segment_descriptor
+  //! Segment descriptor.
+
+  class segment_descriptor : public descriptor
   {
   public:
 
@@ -24,92 +29,66 @@ namespace x86
     segment_descriptor () ;
 
     constexpr
-    segment_descriptor ( ps::size4 base, ps::size4 limit, ps::size1 access, ps::size1 granularity ) ;
+    segment_descriptor (
+      size4 base,
+      size4 limit,
+      descriptor_type type,
+      privilege_level privilege,
+      bool is_present,
+      bool is_available,
+      bool is_32bit,
+      bool is_4kb
+    ) ;
 
-    constexpr
-    auto access () { return _access; }
+    auto base () const -> size4 ;
 
-    constexpr
-    auto base_lower () { return _base_lower; }
+    auto limit () const -> size4 ;
 
-    constexpr
-    auto base_middle () { return _base_middle; }
+    auto is_available () const -> bool ;
 
-    constexpr
-    auto base_upper () { return _base_upper; }
+    auto is_64bit () const -> bool ;
 
-    constexpr
-    auto granularity () { return _granularity; }
+    auto is_32bit () const -> bool ;
 
-    constexpr
-    auto limit_lower () { return _limit_lower; }
+    auto is_4kb () const -> bool ;
 
-  private:
+  protected:
 
-    ps::size2 _limit_lower;
-    ps::size2 _base_lower;
-    ps::size1 _base_middle;
-    ps::size1 _access;
-    ps::size1 _granularity;
-    ps::size1 _base_upper;
+      constexpr
+      segment_descriptor (
+        size4 base_16_23,
+        size4 type,
+        size4 privilege,
+        size4 is_present,
+        size4 limit_16_19,
+        size4 is_available,
+        size4 is_32bit,
+        size4 is_4kb,
+        size4 base_24_31,
+        size4 limit_00_15,
+        size4 base_00_15
+      ) ;
 
   };
 
   static_assert(sizeof(segment_descriptor) == 8, "unexpected size of segment descriptor");
 
-
-  //! Computes access field for data segment
-  //!
-  //! @param may_write    true if writable
-  //! @param expand_down  true if expands down
-  //! @param privilege    privilege level
-  //! @param present      true if present in memory
+  //! Code segment descriptor type.
 
   constexpr
-  auto data_segment_access ( bool may_write, bool expand_down, ps::size1 privilege, bool present ) -> ps::size1 ;
+  auto code_segment ( bool conforming, bool readable, bool accessed ) -> descriptor_type ;
 
-  //! Computes access field for data segment
-  //!
-  //! @param may_write    true if writable
-  //! @param expand_down  true if expands down
-  //! @param privilege    privilege level
-  //!
-  //! @post data_segment_access(true, may_write, expand_down, privilege, true)
+  //! Data segment descriptor type.
 
   constexpr
-  auto data_segment_access ( bool may_write, bool expand_down, ps::size1 privilege ) -> ps::size1 ;
+  auto data_segment ( bool downwards, bool writable, bool accessed ) -> descriptor_type ;
 
-  //! Computes access field for code segments
-  //!
-  //! @param may_read     true if readable
-  //! @param conforming   true if conforming
-  //! @param privilege    privilege level
-  //! @param present      true if present in memory
+  //! @}
 
-  constexpr
-  auto code_segment_access ( bool may_read, bool conforming, ps::size1 privilege, bool present ) -> ps::size1 ;
+  //! Interfaces.
+  //! @{
 
-  //! Computes access field for code segments
-  //!
-  //! @param may_read     true if readable
-  //! @param conforming   true if conforming
-  //! @param privilege    privilege level
-  //!
-  //! @post code_segment_access(true, may_read, conforming, privilege, true)
-
-  constexpr
-  auto code_segment_access ( bool may_read, bool conforming, ps::size1 privilege ) -> ps::size1 ;
-
-  //! Computes granularity field for code or data segments
-  //!
-  //! @param is_long      true if 64-bit addressing
-  //! @param is_32bit     true if 32-bit addressing
-  //! @param is_4kb       true if limit unit is 4kb
-  //!
-  //! @post segment_granularity(0, false, is_long, is_32bit, is_4kb)
-
-  constexpr
-  auto segment_granularity ( bool is_long, bool is_32bit, bool is_4kb ) -> ps::size1 ;
+  // GDT register.
 
   //! Get the global descriptor table register
 
@@ -124,6 +103,8 @@ namespace x86
   template <unsigned N>
   void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] );
 
+  // CS register.
+
   //! Get code segment register
 
   auto get_code_segment_register () -> segment_selector ;
@@ -132,13 +113,16 @@ namespace x86
 
   void set_code_segment_register ( segment_selector value );
 
+  // DS, SS, ES, FS, GS registers.
+
   //! Set data segment registers
 
   void set_data_segment_registers ( segment_selector value );
 
+  //! @}
 }
 
-//! Inline definitions
+// Definitions.
 
 namespace x86
 {
@@ -168,90 +152,102 @@ namespace x86
 
   }
 
-  // Segment descriptor
+  // Segment descriptor.
 
-  inline constexpr
-  segment_descriptor::segment_descriptor ( ) :
-    _limit_lower(0),
-    _base_lower(0),
-    _base_middle(0),
-    _access(0),
-    _granularity(0),
-    _base_upper(0)
+  constexpr inline
+  segment_descriptor::segment_descriptor ( ) : descriptor { } { } ;
+
+  constexpr inline
+  segment_descriptor::segment_descriptor (
+    size4 base_16_23,
+    size4 type,
+    size4 privilege,
+    size4 is_present,
+    size4 limit_16_19,
+    size4 is_available,
+    size4 is_32bit,
+    size4 is_4kb,
+    size4 base_24_31,
+    size4 limit_00_15,
+    size4 base_00_15
+  ) :
+    descriptor {
+        limit_00_15  << 0
+      | base_00_15   << 16
+      ,
+        base_16_23   << 0
+      | type         << 8
+      | 1            << 12
+      | privilege    << 13
+      | is_present   << 15
+      | limit_16_19  << 16
+      | is_available << 20
+      | 0            << 21
+      | is_32bit     << 22
+      | is_4kb       << 23
+      | base_24_31   << 24
+    }
   { }
 
-  inline constexpr
-  segment_descriptor::segment_descriptor ( ps::size4 base, ps::size4 limit, ps::size1 access, ps::size1 granularity ) :
-    _limit_lower(limit & 0xFFFF),
-    _base_lower(base & 0xFFFF),
-    _base_middle((base >> 16) & 0xFF),
-    _access(access),
-    _granularity((granularity & 0xFFF0) | (limit & 0xF)),
-    _base_upper((base >> 24) & 0xFF)
-  {
+  constexpr inline
+  segment_descriptor::segment_descriptor (
+    size4 base,
+    size4 limit,
+    descriptor_type type,
+    privilege_level privilege,
+    bool is_present,
+    bool is_available,
+    bool is_32bit,
+    bool is_4kb
+  ) :
+    segment_descriptor {
+      (base  >> 16) & 0xFF,
+      size4{type},
+      size4{privilege},
+      size4{is_present},
+      (limit >> 16) & 0xF,
+      size4{is_available},
+      size4{is_32bit},
+      size4{is_4kb},
+      (base  >> 24) & 0xFF,
+      (limit >>  0) & 0xFFFF,
+      (base  >>  0) & 0xFFFF,
+    }
+  { }
 
+  inline
+  auto segment_descriptor::base () const -> size4 {
+    return ((_low  >> 16) & 0x0000FFFF)
+         | ((_high << 16) & 0x00FF0000)
+         | ((_high      ) & 0xFF000000);
   }
 
-  inline constexpr
-  auto data_segment_access ( bool may_write, bool expand_down, ps::size1 privilege, bool present ) -> ps::size1
-  {
-    return (present ? 0x01 : 0x00) << 7
-         | (privilege & 0x03) << 5
-         | (0x01) << 4
-         | (0x00) << 3
-         | (expand_down ? 0x01 : 0x00) << 2
-         | (may_write ? 0x01 : 0x00) << 1
-         | (0)
-         ;
+  inline
+  auto segment_descriptor::limit () const -> size4 {
+    return (_low  & 0x0000FFFF)
+         | (_high & 0x000F0000);
   }
 
-  inline constexpr
-  auto data_segment_access ( bool may_write, bool expand_down, ps::size1 privilege ) -> ps::size1
-  {
-    return (1 << 7)
-         | (privilege & 0x03) << 5
-         | (0x01) << 4
-         | (0x00) << 3
-         | (expand_down ? 0x01 : 0x00) << 2
-         | (may_write ? 0x01 : 0x00) << 1
-         | (0)
-         ;
+  inline
+  auto segment_descriptor::is_available () const -> bool { return (_high >> 20) & 1; }
+
+  inline
+  auto segment_descriptor::is_64bit () const -> bool { return (_high >> 21) & 1; }
+
+  inline
+  auto segment_descriptor::is_32bit () const -> bool { return (_high >> 22) & 1; }
+
+  inline
+  auto segment_descriptor::is_4kb () const -> bool { return (_high >> 23) & 1; }
+
+  constexpr inline
+  auto code_segment ( bool conforming, bool readable, bool accessed ) -> descriptor_type {
+    return (1 << 3) | (conforming << 2) | (readable << 1) | accessed;
   }
 
-  inline constexpr
-  auto code_segment_access ( bool may_read, bool conforming, ps::size1 privilege, bool present ) -> ps::size1
-  {
-    return (present ? 0x01 : 0x00) << 7
-         | (privilege & 0x03) << 5
-         | (0x01) << 4
-         | (0x01) << 3
-         | (conforming ? 0x01 : 0x00) << 2
-         | (may_read ? 0x01 : 0x00) << 1
-         | (0)
-         ;
-  }
-
-  inline constexpr
-  auto code_segment_access ( bool may_read, bool conforming, ps::size1 privilege ) -> ps::size1
-  {
-    return (1 << 7)
-         | (privilege & 0x03) << 5
-         | (0x01) << 4
-         | (0x01) << 3
-         | (conforming ? 0x01 : 0x00) << 2
-         | (may_read ? 0x01 : 0x00) << 1
-         | (0)
-         ;
-  }
-
-  inline constexpr
-  auto segment_granularity ( bool is_long, bool is_32bit, bool is_4kb ) -> ps::size1
-  {
-    return (is_4kb ? 0x01 : 0x00) << 7
-         | (is_32bit ? 0x01 : 0x00) << 6
-         | (is_long ? 0x01 : 0x00) << 5
-         | (0)
-         ;
+  constexpr inline
+  auto data_segment ( bool downwards, bool writable, bool accessed ) -> descriptor_type {
+    return (0 << 3) | (downwards << 2) | (writable << 1) | accessed;
   }
 
   // Global descriptor table register

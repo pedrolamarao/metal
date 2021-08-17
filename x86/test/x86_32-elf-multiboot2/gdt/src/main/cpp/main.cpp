@@ -39,13 +39,13 @@ namespace x86
         // unexpected null descriptor!
         { },
         // system flat code descriptor
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
         // system flat data descriptor
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), segment_granularity(false, true, true) },
+        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
         // user flat code descriptor
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), segment_granularity(false, true, true) },
+        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
         // user flat data descriptor
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), segment_granularity(false, true, true) },
+        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
     };
 }
 
@@ -63,9 +63,83 @@ extern "C"
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
-    // set GDT register
+    using namespace x86;
+
+    // test: data structures
+
+    auto& segment = global_descriptor_table[4];
+
+    _test_control = 1;
+    if (segment.type() != code_segment(true, true, true)) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 2;
+    if (segment.privilege() != 3) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 3;
+    if (segment.is_system()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 4;
+    if (segment.privilege() != 3) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 5;
+    if (! segment.is_present()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 6;
+    if (! segment.is_available()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 7;
+    if (segment.is_64bit()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 8;
+    if (! segment.is_32bit()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 9;
+    if (! segment.is_4kb()) {
+        _test_control = 0;
+        return;
+    }
 
     _test_control = 10;
+    if (segment.base() != 0) {
+        _test_debug = segment.base();
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 11;
+    if (segment.limit() != 0x000FFFFF) {
+        _test_debug = segment.limit();
+        _test_control = 0;
+        return;
+    }
+
+    // set GDT register
+
+    _test_control = 20;
 
     const x86::system_table_register expected_gdtr {
         ((x86::global_descriptor_table_size * sizeof(x86::segment_descriptor)) - 1),
@@ -76,7 +150,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     // test: did we successfully update the GDT register?
 
-    _test_control = 11;
+    _test_control = 21;
 
     auto const actual_gdtr = x86::get_global_descriptor_table_register();
 
@@ -91,7 +165,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     // set CS register
 
-    _test_control = 20;
+    _test_control = 30;
 
     auto const expected_cs = x86::segment_selector(2, false, 0);
 
@@ -99,7 +173,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     // test: did we successfully update the CS register?
 
-    _test_control = 21;
+    _test_control = 31;
 
     ps::size2 actual_cs { x86::internal::__x86_get_code_segment_register() };
 

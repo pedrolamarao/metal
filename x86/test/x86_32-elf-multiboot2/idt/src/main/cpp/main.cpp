@@ -38,16 +38,16 @@ namespace x86
     {
         // required null descriptor
         { },
-        // atypical null descriptor!
+        // unexpected null descriptor!
         { },
-        // system flat code segment
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, true) },
-        // system flat data segment
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), segment_granularity(false, true, true) },
-        // user flat code segment
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), segment_granularity(false, true, true) },
-        // user flat data segment
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), segment_granularity(false, true, true) },
+        // system flat code descriptor
+        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
+        // system flat data descriptor
+        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
+        // user flat code descriptor
+        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
+        // user flat data descriptor
+        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
     };
 
     void set_segment_registers ( segment_selector code, segment_selector data )

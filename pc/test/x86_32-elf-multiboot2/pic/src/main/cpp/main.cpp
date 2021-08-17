@@ -158,10 +158,10 @@ namespace x86
     constexpr segment_descriptor global_descriptor_table [5] =
     {
         { },
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), segment_granularity(false, true, true) },
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), segment_granularity(false, true, true) },
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), segment_granularity(false, true, true) },
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), segment_granularity(false, true, true) },
+        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
+        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
+        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
+        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
     };
 
     void set_global_descriptor_table_register ()

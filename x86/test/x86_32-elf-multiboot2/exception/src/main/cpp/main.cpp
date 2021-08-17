@@ -30,30 +30,25 @@ namespace multiboot2
 
 namespace x86
 {
-    inline namespace details
-    {
-        constexpr auto granularity = segment_granularity(false, true, true);
-    }
-
     [[gnu::section(".gdt")]]
     constexpr segment_descriptor global_descriptor_table [8] =
     {
-        // required null segment
+        // required null descriptor
         { },
-        // atypical null segment!
+        // unexpected null descriptor!
         { },
-        // system flat code segment
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 0), granularity },
-        // system flat data segment
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0), granularity },
-        // user flat code segment
-        { 0, 0xFFFFFFFF, code_segment_access(true, false, 3), granularity },
-        // user flat data segment
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 3), granularity },
+        // system flat code descriptor
+        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
+        // system flat data descriptor
+        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
+        // user flat code descriptor
+        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
+        // user flat data descriptor
+        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
         // test segment: data non-present
-        { 0, 0xFFFFFFFF, data_segment_access(true, false, 0, false), granularity },
+        { 0, 0xFFFFF, data_segment(true, true, true), 0, false, true, true, true, },
         // test segment: code execute-only
-        { 0, 0xFFFFFFFF, code_segment_access(false, false, 0), granularity },
+        { 0, 0xFFFFF, code_segment(true, false, true), 0, true, true, true, true, },
     };
 
     void set_segment_registers ( segment_selector code, segment_selector data )
