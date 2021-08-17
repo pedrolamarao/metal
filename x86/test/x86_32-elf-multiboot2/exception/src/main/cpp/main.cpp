@@ -139,19 +139,18 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     _test_control = 3;
 
     auto interrupt_selector = segment_selector(2, false, 0);
-    auto interrupt_access = interrupt_gate_access(true, 0);
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table[i] = { interrupt_selector, __x86_interrupt_FF, interrupt_access };
+        interrupt_descriptor_table[i] = { interrupt_selector, __x86_interrupt_FF, true, true, 0, true };
     }
 
-    interrupt_descriptor_table[0x00] = { interrupt_selector, __x86_interrupt_00, interrupt_access };
-    interrupt_descriptor_table[0x03] = { interrupt_selector, __x86_interrupt_03, interrupt_access };
-    interrupt_descriptor_table[0x04] = { interrupt_selector, __x86_interrupt_04, interrupt_access };
-    interrupt_descriptor_table[0x05] = { interrupt_selector, __x86_interrupt_05, interrupt_access };
-    interrupt_descriptor_table[0x06] = { interrupt_selector, __x86_interrupt_06, interrupt_access };
-    interrupt_descriptor_table[0x0B] = { interrupt_selector, __x86_interrupt_0B, interrupt_access };
-    interrupt_descriptor_table[0x0D] = { interrupt_selector, __x86_interrupt_0D, interrupt_access };
+    interrupt_descriptor_table[0x00] = { interrupt_selector, __x86_interrupt_00, true, true, 0, true };
+    interrupt_descriptor_table[0x03] = { interrupt_selector, __x86_interrupt_03, true, true, 0, true };
+    interrupt_descriptor_table[0x04] = { interrupt_selector, __x86_interrupt_04, true, true, 0, true };
+    interrupt_descriptor_table[0x05] = { interrupt_selector, __x86_interrupt_05, true, true, 0, true };
+    interrupt_descriptor_table[0x06] = { interrupt_selector, __x86_interrupt_06, true, true, 0, true };
+    interrupt_descriptor_table[0x0B] = { interrupt_selector, __x86_interrupt_0B, true, true, 0, true };
+    interrupt_descriptor_table[0x0D] = { interrupt_selector, __x86_interrupt_0D, true, true, 0, true };
 
     set_interrupt_descriptor_table_register(interrupt_descriptor_table);
 

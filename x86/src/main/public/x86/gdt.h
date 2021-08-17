@@ -288,12 +288,12 @@ namespace x86
   inline
   void set_code_segment_register ( segment_selector x )
   {
-    internal::__x86_set_code_segment_register(x.value());
+    internal::__x86_set_code_segment_register( size2{x} );
   }
 
   inline
   void set_data_segment_registers ( segment_selector x )
   {
-    internal::__x86_set_data_segment_registers(x.value());
+    internal::__x86_set_data_segment_registers( size2{x} );
   }
 }

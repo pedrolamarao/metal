@@ -273,51 +273,50 @@ namespace x86
     void set_interrupt_descriptor_table_register ()
     {
         auto const interrupt_segment = segment_selector(1, false, 0);
-        auto const interrupt_access = interrupt_gate_access(true, 0);
 
-        interrupt_descriptor_table[0x00] = { interrupt_segment, __x86_exception_00, interrupt_access };
-        interrupt_descriptor_table[0x01] = { interrupt_segment, __x86_exception_01, interrupt_access };
-        interrupt_descriptor_table[0x02] = { interrupt_segment, __x86_exception_02, interrupt_access };
-        interrupt_descriptor_table[0x03] = { interrupt_segment, __x86_exception_03, interrupt_access };
-        interrupt_descriptor_table[0x04] = { interrupt_segment, __x86_exception_04, interrupt_access };
-        interrupt_descriptor_table[0x05] = { interrupt_segment, __x86_exception_05, interrupt_access };
-        interrupt_descriptor_table[0x06] = { interrupt_segment, __x86_exception_06, interrupt_access };
-        interrupt_descriptor_table[0x07] = { interrupt_segment, __x86_exception_07, interrupt_access };
-        interrupt_descriptor_table[0x08] = { interrupt_segment, __x86_exception_08, interrupt_access };
-        interrupt_descriptor_table[0x09] = { interrupt_segment, __x86_exception_09, interrupt_access };
-        interrupt_descriptor_table[0x0A] = { interrupt_segment, __x86_exception_0A, interrupt_access };
-        interrupt_descriptor_table[0x0B] = { interrupt_segment, __x86_exception_0B, interrupt_access };
-        interrupt_descriptor_table[0x0C] = { interrupt_segment, __x86_exception_0C, interrupt_access };
-        interrupt_descriptor_table[0x0D] = { interrupt_segment, __x86_exception_0D, interrupt_access };
-        interrupt_descriptor_table[0x0E] = { interrupt_segment, __x86_exception_0E, interrupt_access };
-        interrupt_descriptor_table[0x0F] = { interrupt_segment, __x86_exception_0F, interrupt_access };
-        interrupt_descriptor_table[0x10] = { interrupt_segment, __x86_exception_10, interrupt_access };
-        interrupt_descriptor_table[0x11] = { interrupt_segment, __x86_exception_11, interrupt_access };
-        interrupt_descriptor_table[0x12] = { interrupt_segment, __x86_exception_12, interrupt_access };
-        interrupt_descriptor_table[0x13] = { interrupt_segment, __x86_exception_13, interrupt_access };
-        interrupt_descriptor_table[0x14] = { interrupt_segment, __x86_exception_14, interrupt_access };
-        interrupt_descriptor_table[0x15] = { interrupt_segment, __x86_exception_15, interrupt_access };
-        interrupt_descriptor_table[0x16] = { interrupt_segment, __x86_exception_16, interrupt_access };
-        interrupt_descriptor_table[0x17] = { interrupt_segment, __x86_exception_17, interrupt_access };
-        interrupt_descriptor_table[0x18] = { interrupt_segment, __x86_exception_18, interrupt_access };
-        interrupt_descriptor_table[0x19] = { interrupt_segment, __x86_exception_19, interrupt_access };
-        interrupt_descriptor_table[0x1A] = { interrupt_segment, __x86_exception_1A, interrupt_access };
-        interrupt_descriptor_table[0x1B] = { interrupt_segment, __x86_exception_1B, interrupt_access };
-        interrupt_descriptor_table[0x1C] = { interrupt_segment, __x86_exception_1C, interrupt_access };
-        interrupt_descriptor_table[0x1D] = { interrupt_segment, __x86_exception_1D, interrupt_access };
-        interrupt_descriptor_table[0x1E] = { interrupt_segment, __x86_exception_1E, interrupt_access };
-        interrupt_descriptor_table[0x1F] = { interrupt_segment, __x86_exception_1F, interrupt_access };
+        interrupt_descriptor_table[0x00] = { interrupt_segment, __x86_exception_00, true, true, 0, true };
+        interrupt_descriptor_table[0x01] = { interrupt_segment, __x86_exception_01, true, true, 0, true };
+        interrupt_descriptor_table[0x02] = { interrupt_segment, __x86_exception_02, true, true, 0, true };
+        interrupt_descriptor_table[0x03] = { interrupt_segment, __x86_exception_03, true, true, 0, true };
+        interrupt_descriptor_table[0x04] = { interrupt_segment, __x86_exception_04, true, true, 0, true };
+        interrupt_descriptor_table[0x05] = { interrupt_segment, __x86_exception_05, true, true, 0, true };
+        interrupt_descriptor_table[0x06] = { interrupt_segment, __x86_exception_06, true, true, 0, true };
+        interrupt_descriptor_table[0x07] = { interrupt_segment, __x86_exception_07, true, true, 0, true };
+        interrupt_descriptor_table[0x08] = { interrupt_segment, __x86_exception_08, true, true, 0, true };
+        interrupt_descriptor_table[0x09] = { interrupt_segment, __x86_exception_09, true, true, 0, true };
+        interrupt_descriptor_table[0x0A] = { interrupt_segment, __x86_exception_0A, true, true, 0, true };
+        interrupt_descriptor_table[0x0B] = { interrupt_segment, __x86_exception_0B, true, true, 0, true };
+        interrupt_descriptor_table[0x0C] = { interrupt_segment, __x86_exception_0C, true, true, 0, true };
+        interrupt_descriptor_table[0x0D] = { interrupt_segment, __x86_exception_0D, true, true, 0, true };
+        interrupt_descriptor_table[0x0E] = { interrupt_segment, __x86_exception_0E, true, true, 0, true };
+        interrupt_descriptor_table[0x0F] = { interrupt_segment, __x86_exception_0F, true, true, 0, true };
+        interrupt_descriptor_table[0x10] = { interrupt_segment, __x86_exception_10, true, true, 0, true };
+        interrupt_descriptor_table[0x11] = { interrupt_segment, __x86_exception_11, true, true, 0, true };
+        interrupt_descriptor_table[0x12] = { interrupt_segment, __x86_exception_12, true, true, 0, true };
+        interrupt_descriptor_table[0x13] = { interrupt_segment, __x86_exception_13, true, true, 0, true };
+        interrupt_descriptor_table[0x14] = { interrupt_segment, __x86_exception_14, true, true, 0, true };
+        interrupt_descriptor_table[0x15] = { interrupt_segment, __x86_exception_15, true, true, 0, true };
+        interrupt_descriptor_table[0x16] = { interrupt_segment, __x86_exception_16, true, true, 0, true };
+        interrupt_descriptor_table[0x17] = { interrupt_segment, __x86_exception_17, true, true, 0, true };
+        interrupt_descriptor_table[0x18] = { interrupt_segment, __x86_exception_18, true, true, 0, true };
+        interrupt_descriptor_table[0x19] = { interrupt_segment, __x86_exception_19, true, true, 0, true };
+        interrupt_descriptor_table[0x1A] = { interrupt_segment, __x86_exception_1A, true, true, 0, true };
+        interrupt_descriptor_table[0x1B] = { interrupt_segment, __x86_exception_1B, true, true, 0, true };
+        interrupt_descriptor_table[0x1C] = { interrupt_segment, __x86_exception_1C, true, true, 0, true };
+        interrupt_descriptor_table[0x1D] = { interrupt_segment, __x86_exception_1D, true, true, 0, true };
+        interrupt_descriptor_table[0x1E] = { interrupt_segment, __x86_exception_1E, true, true, 0, true };
+        interrupt_descriptor_table[0x1F] = { interrupt_segment, __x86_exception_1F, true, true, 0, true };
 
         for (auto i = 32U, j = 40U; i != j; ++i) {
-           interrupt_descriptor_table[i] = { interrupt_segment, __x86_interrupt_master, interrupt_access };
+           interrupt_descriptor_table[i] = { interrupt_segment, __x86_interrupt_master, true, true, 0, true };
         }
 
         for (auto i = 40U, j = 48U; i != j; ++i) {
-           interrupt_descriptor_table[i] = { interrupt_segment, __x86_interrupt_slave, interrupt_access };
+           interrupt_descriptor_table[i] = { interrupt_segment, __x86_interrupt_slave, true, true, 0, true };
         }
 
         for (auto i = 48U, j = 256U; i != j; ++i) {
-           interrupt_descriptor_table[i] = { interrupt_segment, __x86_interrupt, interrupt_access };
+           interrupt_descriptor_table[i] = { interrupt_segment, __x86_interrupt, true, true, 0, true };
         }
 
         set_interrupt_descriptor_table_register(interrupt_descriptor_table);

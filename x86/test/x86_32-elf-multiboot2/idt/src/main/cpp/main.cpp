@@ -109,22 +109,71 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     set_segment_registers(segment_selector(2, false, 0), segment_selector(3, false, 0));
 
-    // set the IDT register
-
-    _test_control = 10;
+    // test: data structures
 
     auto interrupt_segment = segment_selector(2, false, 0);
-    auto interrupt_access = interrupt_gate_access(true, 0);
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table[i] = { interrupt_segment, __interrupt_service_routine, interrupt_access };
+        interrupt_descriptor_table[i] = { interrupt_segment, __interrupt_service_routine, true, true, 0, true };
     }
+
+    auto& descriptor = interrupt_descriptor_table[0];
+
+    _test_control = 10;
+    if (descriptor.type() != 0b1110) {
+        _test_debug = descriptor.type();
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 11;
+    if (descriptor.privilege() != 0) {
+        _test_debug = descriptor.privilege();
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 12;
+    if (descriptor.is_present() != true) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 13;
+    if (descriptor.segment() != interrupt_segment) {
+        _test_debug = size2{descriptor.segment()};
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 14;
+    if (descriptor.offset() != size4(__interrupt_service_routine)) {
+        _test_debug = descriptor.offset();
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 15;
+    if (descriptor.is_32bit() != true) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 16;
+    if (descriptor.must_cli() != true) {
+        _test_control = 0;
+        return;
+    }
+
+    // set the IDT register
+
+    _test_control = 20;
 
     set_interrupt_descriptor_table_register(interrupt_descriptor_table);
     
     // test: did we successfully update the IDT register?
 
-    _test_control = 11;
+    _test_control = 21;
 
     auto expected_idtr = system_table_register {
         interrupt_descriptor_table_size * sizeof(interrupt_gate_descriptor),
@@ -144,7 +193,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     // test: handle one software interrupt
 
-    _test_control = 20;
+    _test_control = 30;
 
     interrupt<0x30>();
 
@@ -155,7 +204,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     // test: handle another software interrupt
 
-    _test_control = 21;
+    _test_control = 31;
 
     interrupt<0x31>();
 
@@ -166,7 +215,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
     // test: enable hardware interrupts
 
-    _test_control = 30;
+    _test_control = 40;
 
     enable_interrupts();
 

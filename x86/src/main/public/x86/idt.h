@@ -10,11 +10,30 @@
 
 namespace x86
 {
-  //! Interrupt gate descriptor
-  //!
-  //! Element of interrupt descriptor tables.
+  //! Data types.
+  //! @{
 
-  class alignas(8) interrupt_gate_descriptor
+  //! Gate descriptor.
+
+  class gate_descriptor : public descriptor
+  {
+  public:
+
+    constexpr
+    gate_descriptor ();
+
+    constexpr
+    gate_descriptor ( size4 low, size4 high );
+
+    auto segment () const -> segment_selector;
+
+  };
+
+  static_assert(sizeof(gate_descriptor) == 8, "unexpected size of gate_descriptor");
+
+  //! Interrupt gate descriptor.
+
+  class interrupt_gate_descriptor : public gate_descriptor
   {
   public:
 
@@ -22,41 +41,37 @@ namespace x86
     interrupt_gate_descriptor ();
 
     constexpr
-    interrupt_gate_descriptor ( segment_selector segment, ps::size4 address, ps::size1 access );
+    interrupt_gate_descriptor (
+      segment_selector segment, ps::size4 offset,
+      bool is_32bit, bool must_cli,
+      privilege_level privilege, bool is_present
+    );
 
-    interrupt_gate_descriptor ( segment_selector segment, void (* address) (), ps::size1 access );
+    interrupt_gate_descriptor (
+      segment_selector segment, void (* offset) (),
+      bool is_32bit, bool must_cli,
+      privilege_level, bool is_present
+    );
 
-    auto offset_lower () const { return _offset_lower; }
+    auto is_32bit () const -> bool;
 
-    auto segment () const { return _segment; }
+    auto must_cli () const -> bool;
 
-    auto unused () const { return _unused; }
+    auto offset () const -> size4;
 
-    auto type () const { return _type; }
+  protected:
 
-    auto offset_upper () const { return _offset_upper; }
-
-  private:
-
-    ps::size2 _offset_lower;
-    segment_selector _segment;
-    ps::size1  _unused;
-    ps::size1  _type;
-    ps::size2 _offset_upper;
+    constexpr
+    interrupt_gate_descriptor ( size4 segment, size4 offset, size4 type, size4 access );
 
   };
 
   static_assert(sizeof(interrupt_gate_descriptor) == 8, "unexpected size of interrupt_gate_descriptor");
 
-  //! Computes access field for interrupt gate descriptors
+  //! @}
 
-  constexpr
-  auto interrupt_gate_access ( bool is_32bit, ps::size1 privilege, bool is_present ) -> ps::size1 ;
-
-  //! Computes access field for interrupt gate descriptors
-
-  constexpr
-  auto interrupt_gate_access ( bool is_32bit, ps::size1 privilege ) -> ps::size1 ;
+  //! Interface types.
+  //! @{
 
   //! Get the global descriptor table register
 
@@ -71,6 +86,8 @@ namespace x86
   template <unsigned N>
   void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] );
 
+  //! @}
+
   //! Enable interrupts on this processor
 
   void enable_interrupts ();
@@ -81,7 +98,7 @@ namespace x86
 
 }
 
-//! Inline definitions
+//! Definitions
 
 namespace x86
 {
@@ -107,61 +124,74 @@ namespace x86
 
   }
 
-  inline constexpr
-  interrupt_gate_descriptor::interrupt_gate_descriptor () :
-    _offset_lower(),
-    _segment(),
-    _unused(),
-    _type(),
-    _offset_upper()
-  { }
+  // Gate descriptor.
 
-  inline constexpr
-  interrupt_gate_descriptor::interrupt_gate_descriptor ( segment_selector segment, ps::size4 address, ps::size1 access ) :
-    _offset_lower(address & 0xFFFF),
-    _segment(segment),
-    _unused(0),
-    _type(access),
-    _offset_upper(address >> 16)
-  {
+  constexpr inline
+  gate_descriptor::gate_descriptor () : descriptor{} { }
 
-  }
+  constexpr inline
+  gate_descriptor::gate_descriptor ( size4 low, size4 high ) : descriptor{low,high} { }
 
   inline
-  interrupt_gate_descriptor::interrupt_gate_descriptor ( segment_selector segment, void (* address) (), ps::size1 access ) :
-    _offset_lower((ps::size4)(address) & 0xFFFF),
-    _segment(segment),
-    _unused(0),
-    _type(access),
-    _offset_upper((ps::size4)(address) >> 16)
-  {
-
+  auto gate_descriptor::segment () const -> segment_selector {
+    return segment_selector { static_cast<size2>(_low >> 16) };
   }
 
-  inline constexpr
-  auto interrupt_gate_access ( bool is_32bit, ps::size1 privilege, bool is_present ) -> ps::size1
-  {
-    return ((is_present ? 1 : 0) << 7)
-         | (privilege << 5)
-         | (0 << 4)
-         | ((is_32bit ? 1 : 0) << 3)
-         | (1 << 2)
-         | (1 << 1)
-         | (0)
-         ;
-  }
+  // Interrupt gate descriptor.
 
-  inline constexpr
-  auto interrupt_gate_access ( bool is_32bit, ps::size1 privilege ) -> ps::size1
-  {
-    return (1 << 7)
-         | (privilege << 5)
-         | (0 << 4)
-         | ((is_32bit ? 1 : 0) << 3)
-         | (1 << 2)
-         | (1 << 1)
-         | (0)
-         ;
+  constexpr inline
+  interrupt_gate_descriptor::interrupt_gate_descriptor () : gate_descriptor {}
+  { }
+
+  constexpr inline
+  interrupt_gate_descriptor::interrupt_gate_descriptor (
+    size4 segment, size4 offset, size4 type, size4 access
+  )
+  : gate_descriptor {
+       (offset  & 0xFFFF) <<  0
+     | (segment         ) << 16
+     ,
+       (offset & 0xFFFF0000)
+     |  type              <<  8
+     |  access            << 12
+    }
+  { }
+
+  constexpr inline
+  interrupt_gate_descriptor::interrupt_gate_descriptor (
+    segment_selector segment, size4 offset,
+    bool is_32bit, bool must_cli,
+    privilege_level privilege, bool is_present
+  )
+  : interrupt_gate_descriptor {
+      size2{segment}, offset,
+      size4{is_32bit} << 3 | 1 << 2 | 1 << 1 | size4{ ! must_cli },
+      size4{is_present} << 3 | size4{privilege} << 1
+    }
+  { }
+
+  inline
+  interrupt_gate_descriptor::interrupt_gate_descriptor (
+    segment_selector segment, void (* offset) (),
+    bool is_32bit, bool must_cli,
+    privilege_level privilege, bool is_present
+  )
+  : interrupt_gate_descriptor {
+      size2{segment}, reinterpret_cast<size4>(offset),
+      size4{is_32bit} << 3 | 1 << 2 | 1 << 1 | size4{ ! must_cli },
+      size4{is_present} << 3 | size4{privilege} << 1
+    }
+  { }
+
+  inline
+  auto interrupt_gate_descriptor::is_32bit () const -> bool { return (_high >> 11) & 1; }
+
+  inline
+  auto interrupt_gate_descriptor::must_cli () const -> bool { return ((_high >> 8) & 1) == 0; }
+
+  inline
+  auto interrupt_gate_descriptor::offset () const -> size4 {
+    return (_low & 0x0000FFFF) | (_high & 0xFFFF0000);
   }
 
   // Interrupt descriptor table register

@@ -73,16 +73,18 @@ namespace x86
   public:
 
     constexpr
-    segment_selector () = default ;
+    segment_selector () ;
 
     constexpr explicit
     segment_selector ( size2 );
 
     constexpr
-    segment_selector ( size2 index, bool is_ldt, size1 privilege );
+    segment_selector ( size2 index, bool is_ldt, privilege_level );
 
-    constexpr
-    auto value () const { return _value; }
+    explicit
+    operator size2 () const;
+
+    bool operator== ( segment_selector ) const;
 
   private:
 
@@ -132,11 +134,21 @@ namespace x86
   }
 
   constexpr inline
+  segment_selector::segment_selector () : _value{}
+  { }
+
+  constexpr inline
   segment_selector::segment_selector ( size2 value ) : _value{value}
   { }
 
   constexpr inline
-  segment_selector::segment_selector (ps::size2 index, bool is_ldt, ps::size1 privilege) :
-    _value((index << 3) | ((is_ldt ? 1 : 0) << 2) | (privilege & 3))
+  segment_selector::segment_selector ( size2 index, bool is_ldt, privilege_level privilege ) :
+    _value { index << 3 | size2{is_ldt} << 2 | privilege }
   { }
+
+  inline
+  segment_selector::operator size2 () const { return _value; }
+
+  inline
+  bool segment_selector::operator== (segment_selector other) const { return _value == other._value; }
 }
