@@ -83,6 +83,7 @@ abstract class RunMultibootImage extends DefaultTask
     {
         final qemuCommand = project.objects.newInstance(QemuCommandBuilder)
         qemuCommand.command = command
+        qemuCommand.debugConsole = 'vc'
         qemuCommand.debugFile = new File(temporaryDir, 'qemu.debug.txt')
         qemuCommand.kernel = imageFile
         qemuCommand.gdb = 'tcp:localhost:12345'

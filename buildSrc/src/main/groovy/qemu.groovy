@@ -89,6 +89,8 @@ abstract class QemuCommandBuilder extends QemuBase
 
     abstract Property<String> getDebug ()
 
+    abstract Property<String> getDebugConsole ()
+
     abstract RegularFileProperty getDebugFile ()
 
     abstract Property<String> getDisplay ()
@@ -151,6 +153,7 @@ abstract class QemuCommandBuilder extends QemuBase
         accelerators.get().forEach { list.addAll '-accel', it }
         // devices
         ifPresent bios, { list.addAll '-bios', it }
+        ifPresent debugConsole, { list.addAll '-debugcon', it }
         ifPresent display, { list.addAll '-display', it }
         drives.get().forEach { list.addAll '-drive', it }
         ifPresent kernel, { list.addAll '-kernel', it }
