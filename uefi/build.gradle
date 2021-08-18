@@ -1,3 +1,5 @@
+// project
+
 plugins
 {
     id 'dev.nokee.cpp-library'

@@ -1,14 +1,9 @@
-// settings
+// project
 
 plugins
 {
     id 'dev.nokee.cpp-library'
 }
-
-// project
-
-group 'aasgard'
-version '0.1.0-SNAPSHOT'
 
 library
 {

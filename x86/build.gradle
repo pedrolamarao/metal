@@ -1,4 +1,4 @@
-// settings
+// project
 
 plugins
 {
@@ -6,11 +6,6 @@ plugins
 }
 
 apply plugin: AsmLanguage
-
-// project
-
-group 'aasgard'
-version '0.1.0-SNAPSHOT'
 
 library
 {
