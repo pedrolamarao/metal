@@ -1,9 +1,6 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
@@ -65,32 +62,25 @@ abstract class CreateMultibootImage extends DefaultTask
 
 abstract class RunMultibootImage extends DefaultTask
 {
-    @Input abstract RegularFileProperty getCommand ()
-
     @InputFile abstract RegularFileProperty getImageFile ()
+
+    @Nested abstract QemuCommandBuilder getQemu ()
 
     RunMultibootImage ()
     {
-        final layout = project.layout
-        final providers = project.providers
+        final path = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.qemu.path']
 
-        final qemu = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.qemu.path']
-
-        command.convention = providers.provider { new File("${qemu}/qemu-system-i386") }
+        qemu.command = new File("${path}/qemu-system-i386")
+        qemu.debugConsole = 'vc'
+        qemu.kernel = imageFile
+        qemu.gdb = 'tcp:localhost:12345'
+        qemu.machine = 'q35'
+        qemu.stop = true
     }
 
     @TaskAction void action ()
     {
-        final qemuCommand = project.objects.newInstance(QemuCommandBuilder)
-        qemuCommand.command = command
-        qemuCommand.debugConsole = 'vc'
-        qemuCommand.debugFile = new File(temporaryDir, 'qemu.debug.txt')
-        qemuCommand.kernel = imageFile
-        qemuCommand.gdb = 'tcp:localhost:12345'
-        qemuCommand.machine = 'q35'
-        qemuCommand.stop = true
-
-        project.exec { commandLine qemuCommand.build() }
+        project.exec { commandLine qemu.build() }
     }
 }
 
@@ -102,7 +92,7 @@ abstract class TestMultibootImage extends DefaultTask
 
     @InputFile abstract RegularFileProperty getImageFile ()
 
-    @Input abstract RegularFileProperty getQemuExecutable ()
+    @Nested abstract QemuCommandBuilder getQemu ()
 
     @Inject abstract WorkerExecutor getWorkers ()
 
@@ -115,7 +105,7 @@ abstract class TestMultibootImage extends DefaultTask
         final qemuPath = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.qemu.path']
 
         gdbExecutable.convention = providers.provider { new File("${gdbPath}/gdb")}
-        qemuExecutable.convention = providers.provider { new File("${qemuPath}/qemu-system-i386") }
+        qemu.command = new File("${qemuPath}/qemu-system-i386")
     }
 
     @TaskAction void action ()
@@ -128,20 +118,26 @@ abstract class TestMultibootImage extends DefaultTask
             timeLimit = Duration.ofSeconds(10)
         }
 
-        final qemuCommand = project.objects.newInstance(QemuCommandBuilder).tap {
-            command = qemuExecutable
-            display = 'none'
-            kernel = imageFile
-            it.gdb = 'tcp:localhost:12345'
-            machine = 'q35'
+        qemu.with {
+            display.set 'none'
+            kernel.set imageFile
+            it.gdb.set 'tcp:localhost:12345'
+            machine.set 'q35'
             rtc {
                 base = '2020-07-24T22:46:00'
             }
-            stop = true
+            characterDriver 'file', {
+                options.put 'path', new File(temporaryDir, 'qemu.debugcon.txt').toString()
+                options.put 'id', 'debugcon'
+            }
+            debugConsole.set 'chardev:debugcon'
+            stop.set true
         }
 
-        final qemu = new ProcessBuilder()
-            .command( qemuCommand.build() )
+        final qemuProcess = new ProcessBuilder()
+            .command( qemu.build() )
+            .redirectError( new File(temporaryDir, 'qemu.error.txt') )
+            .redirectOutput( new File(temporaryDir, 'qemu.out.txt'))
             .start()
 
         // Handle breakpoint-hit on _test_finish
@@ -168,16 +164,16 @@ abstract class TestMultibootImage extends DefaultTask
             gdb.breakWatch '_test_control', {}
             gdb.breakWatch '_test_debug', {}
             gdb.execContinue {}
-            final complete = qemu.waitFor 5, TimeUnit.SECONDS
+            final complete = qemuProcess.waitFor 5, TimeUnit.SECONDS
             if (! complete) { logger.lifecycle "${project.path}:${this.name}: [FAILURE]: timeout" }
         }
         finally
         {
-            qemu.destroyForcibly()
+            qemuProcess.destroyForcibly()
             gdb.close()
         }
 
-        logger.info "${project.path}:${this.name}: QEMU completed with status = ${qemu.exitValue()}"
+        logger.info "${project.path}:${this.name}: QEMU completed with status = ${qemuProcess.exitValue()}"
         logger.info "${project.path}:${this.name}: GDB completed with status = ${gdb.exitValue()}"
     }
 

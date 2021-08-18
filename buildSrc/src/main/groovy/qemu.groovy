@@ -2,6 +2,7 @@ import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 
 import javax.inject.Inject
@@ -25,6 +26,21 @@ abstract class QemuAcceleratorWriter extends QemuBase
         final list = []
         ifPresent name, { list.add "${it}" }
         ifPresent kernelIrqchip, { list.add "kernel-irqchip=${it}" }
+        return String.join(',', list)
+    }
+}
+
+abstract class QemuDeviceDriverEditor extends QemuBase
+{
+    abstract MapProperty<String, String> getOptions ()
+
+    abstract Property<String> getType ()
+
+    @Override String toString ()
+    {
+        final list = []
+        list.add type.get()
+        options.get().forEach { key, value -> list.add "${key}=${value}" }
         return String.join(',', list)
     }
 }
@@ -83,6 +99,10 @@ abstract class QemuCommandBuilder extends QemuBase
 
     abstract RegularFileProperty getBios ()
 
+    abstract ListProperty<String> getBlockDrivers ()
+
+    abstract ListProperty<String> getCharacterDrivers ()
+
     abstract RegularFileProperty getCommand ()
 
     abstract Property<String> getCpu ()
@@ -92,6 +112,8 @@ abstract class QemuCommandBuilder extends QemuBase
     abstract Property<String> getDebugConsole ()
 
     abstract RegularFileProperty getDebugFile ()
+
+    abstract ListProperty<String> getDevices ()
 
     abstract Property<String> getDisplay ()
 
@@ -120,6 +142,30 @@ abstract class QemuCommandBuilder extends QemuBase
         writer.name = name;
         configure.execute(writer)
         accelerators.add( writer.toString() )
+    }
+
+    void blockDriver ( String type, Action<? super QemuDeviceDriverEditor> configure )
+    {
+        final editor = objects.newInstance(QemuDeviceDriverEditor)
+        editor.type.convention type
+        configure.execute editor
+        blockDrivers.add editor.toString()
+    }
+
+    void characterDriver ( String type, Action<? super QemuDeviceDriverEditor> configure )
+    {
+        final editor = objects.newInstance(QemuDeviceDriverEditor)
+        editor.type.convention type
+        configure.execute editor
+        characterDrivers.add editor.toString()
+    }
+
+    void device ( String type, Action<? super QemuDeviceDriverEditor> configure )
+    {
+        final editor = objects.newInstance(QemuDeviceDriverEditor)
+        editor.type.convention type
+        configure.execute editor
+        devices.add editor.toString()
     }
 
     void drive ( Action<? super QemuDriveWriter> configure )
@@ -151,13 +197,18 @@ abstract class QemuCommandBuilder extends QemuBase
         ifPresent machine, { list.addAll '-machine', it }
         ifPresent cpu, { list.addAll '-cpu', it }
         accelerators.get().forEach { list.addAll '-accel', it }
+        // drivers
+        characterDrivers.get().forEach { list.addAll '-chardev', it }
+        blockDrivers.get().forEach { list.addAll '-blockdev', it }
         // devices
-        ifPresent bios, { list.addAll '-bios', it }
         ifPresent debugConsole, { list.addAll '-debugcon', it }
+        devices.get().forEach { list.addAll '-device', it }
         ifPresent display, { list.addAll '-display', it }
         drives.get().forEach { list.addAll '-drive', it }
-        ifPresent kernel, { list.addAll '-kernel', it }
         ifPresent rtc, { list.addAll '-rtc', it }
+        // software
+        ifPresent bios, { list.addAll '-bios', it }
+        ifPresent kernel, { list.addAll '-kernel', it }
         // support
         ifPresent debug, { list.addAll '-d', it }
         ifPresent debugFile, { list.addAll '-D', it }
