@@ -1,0 +1,49 @@
+// project
+
+plugins
+{
+    id 'dev.nokee.cpp-application'
+    id 'br.dev.pedrolamarao.gdb'
+}
+
+apply plugin: AsmLanguage
+
+application
+{
+    // #XXX: Nokee can't cross compile to system "none"
+    final none = org.gradle.internal.os.OperatingSystem.current().getName()
+    targetMachines = [ machines.os(none).architecture('-multiboot-x86_32') ]
+
+    dependencies
+    {
+        implementation project(':multiboot2')
+        implementation project(':x86')
+    }
+
+    binaries.configureEach {
+
+        compileTasks.configureEach {
+            compilerArgs.addAll '-std=c++20', '-flto', '-gdwarf'
+        }
+
+        final linker = it.linkTask.get()
+        linker.linkerArgs.addAll '-std=c++20', '-flto', '-gdwarf', '-Wl,-Ttext=0x1000'
+
+    }
+}
+
+final createImage = tasks.register('createImage', CreateMultibootImage) {
+    group = 'psys'
+    dependsOn assemble
+    inputFile = providers.provider {
+        application.binaries
+            .filter { it.isBuildable() }
+            .map { it.get(0).linkTask.get().linkedFile.get() }
+            .get()
+    }
+}
+
+tasks.register('runImage', RunMultibootImage) {
+    group = 'psys'
+    imageFile = createImage.get().outputFile
+}
