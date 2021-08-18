@@ -27,14 +27,14 @@ namespace x86
 
     void set_code_segment_register ( segment_selector value )
     {
+        unsigned int const _value { size2 { value } };
         __asm__ (
-            "pushl %0        \n"
-            "movl %%eax, %=f \n"
-            "pushl %%eax     \n"
-            "lretl           \n"
-            "%=:             \n"
+            "pushl %0   \n"
+            "pushl $%=f \n"
+            "lretl      \n"
+            "%=:        \n"
             :
-            : "m"(value)
+            : "m"(_value)
             :
        );
     }
