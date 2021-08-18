@@ -165,7 +165,7 @@ abstract class TestMultibootImage extends DefaultTask
             gdb.breakWatch '_test_debug', {}
             gdb.execContinue {}
             final complete = qemuProcess.waitFor 5, TimeUnit.SECONDS
-            if (! complete) { logger.lifecycle "${project.path}:${this.name}: [FAILURE]: timeout" }
+            if (! complete) { logger.error "${project.path}:${this.name}: [FAILURE]: timeout" }
         }
         finally
         {
@@ -199,7 +199,7 @@ abstract class TestMultibootImage extends DefaultTask
             logger.info "${project.path}:${this.name}: [ENTER]: ${_new}"
         }
         else if (_new == '0') {
-            logger.lifecycle "${project.path}:${this.name}: [FAILURE]: ${_old}"
+            logger.error "${project.path}:${this.name}: [FAILURE]: ${_old}"
         }
         else {
             logger.lifecycle "${project.path}:${this.name}: [SUCCESS]: ${_old}"
