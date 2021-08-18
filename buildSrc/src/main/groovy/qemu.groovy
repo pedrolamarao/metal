@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 abstract class QemuBase
 {
-    protected <T> void ifPresent (Property<T> property, Action<? super T> action)
+    static <T> void ifPresent (Property<T> property, Action<? super T> action)
     {
         if (property.isPresent()) { action.execute(property.get()) }
     }
