@@ -21,7 +21,7 @@ namespace x86
     auto get_code_segment_register () -> segment_selector
     {
         segment_selector value;
-        __asm__ ( "movw %%cs, %0" : "=m"(value) );
+        __asm__ ( "movw %%cs, %0" : "=mr"(value) );
         return value;
     }
 
@@ -34,23 +34,23 @@ namespace x86
             "lretl      \n"
             "%=:        \n"
             :
-            : "m"(_value)
+            : "mr"(_value)
             :
        );
     }
 
     void set_data_segment_register ( segment_selector value )
     {
-        __asm__ ( "movw %%ds, %0" : : "m"(value) : );
+        __asm__ ( "movw %%ds, %0" : : "mr"(value) : );
     }
 
     void set_stack_segment_register ( segment_selector value )
     {
-        __asm__ ( "movw %%ss, %0" : : "m"(value) : );
+        __asm__ ( "movw %%ss, %0" : : "mr"(value) : );
     }
 
     void set_extra_segment_registers ( segment_selector value )
     {
-        __asm__ ( "movw %%ds, %0" : : "m"(value) : );
+        __asm__ ( "movw %%ds, %0" : : "mr"(value) : );
     }
 }
