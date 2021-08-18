@@ -6,8 +6,6 @@ plugins
     id 'br.dev.pedrolamarao.gdb'
 }
 
-apply plugin: AsmLanguage
-
 application
 {
     // #XXX: Nokee can't cross compile to system "none"
@@ -20,15 +18,16 @@ application
         implementation project(':x86')
     }
 
+    final baseArgs = [ '-std=c++20', '-flto', '-fasm-blocks', '-gdwarf', '-masm=intel' ]
+
     binaries.configureEach {
-
         compileTasks.configureEach {
-            compilerArgs.addAll '-std=c++20', '-flto', '-gdwarf'
+            compilerArgs.addAll baseArgs
         }
-
-        final linker = it.linkTask.get()
-        linker.linkerArgs.addAll '-std=c++20', '-flto', '-gdwarf', '-Wl,-Ttext=0x1000'
-
+        linkTask.get().with {
+            linkerArgs.addAll baseArgs
+            linkerArgs.addAll '-Wl,-Ttext=0x1000', '-Wl,--entry=__multiboot2_start'
+        }
     }
 }
 

@@ -7,7 +7,6 @@ subprojects
 {
     // settings
 
-    apply plugin: AsmLanguage
     apply plugin: 'br.dev.pedrolamarao.gdb'
     apply plugin: 'dev.nokee.cpp-application'
 
@@ -23,16 +22,17 @@ subprojects
         {
             implementation project(':multiboot2')
         }
-    
-        binaries.configureEach {
-        
-            compileTasks.configureEach {
-                compilerArgs.addAll '-std=c++20', '-flto', '-ggdb', '-Werror', '-Wall'
-            }
 
-            final linker = it.linkTask.get()
-            linker.linkerArgs.addAll '-std=c++20', '-flto', '-Wl,-Ttext=0x1000'
-    
+        final baseArgs = [ '-std=c++20', '-flto', '-fasm-blocks', '-gdwarf' ]
+
+        binaries.configureEach {
+            compileTasks.configureEach {
+                compilerArgs.addAll baseArgs
+            }
+            linkTask.get().with {
+                linkerArgs.addAll baseArgs
+                linkerArgs.addAll '-Wl,-Ttext=0x1000', '-Wl,--entry=__multiboot2_start'
+            }
         }
     }
 

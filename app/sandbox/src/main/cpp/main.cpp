@@ -30,11 +30,13 @@ void main ( ps::size4 magic, multiboot2::information_list * response )
     return;
 }
 
-//! Multiboot 2 request
+//! Multiboot 2
 
 namespace
 {
     using namespace multiboot2;
+
+    //! Multiboot2 request
 
     struct request_type
     {
@@ -49,4 +51,26 @@ namespace
         { architecture_type::x86, sizeof(request), },
         { },
     };
+
+    //! Multiboot2 entry point with response
+
+    extern "C"
+    constinit
+    unsigned char __multiboot2_stack [ 0x4000 ] {};
+
+    extern "C"
+    [[gnu::naked]]
+    void __multiboot2_start ()
+    {
+        __asm__
+        {
+            mov esp, offset __multiboot2_stack + 0x4000
+            xor ecx, ecx
+            push ecx
+            popf
+            __multiboot2_halt:
+            hlt
+            jmp __multiboot2_halt
+        }
+    }
 }

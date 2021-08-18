@@ -42,7 +42,6 @@ include 'acpi'
 include 'multiboot2'
 include 'multiboot2:test:x86_32-elf:entry'
 include 'multiboot2:test:x86_32-elf:minimal'
-include 'multiboot2:test:x86_32-elf:smoke'
 
 include 'pc'
 include 'pc:test:x86_32-elf-multiboot2:cmos'

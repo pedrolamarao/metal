@@ -7,7 +7,7 @@
 
 .global _start
 .type   _start, STT_FUNC
-_start:
+__multiboot2_start:
         jmp     multiboot_entry
         .align  8
 multiboot_header:

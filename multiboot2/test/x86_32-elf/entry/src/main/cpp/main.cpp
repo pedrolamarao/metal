@@ -5,6 +5,17 @@
 #include <multiboot2/information.h>
 
 
+//! Psys test protocol
+
+extern "C"
+{
+    [[gnu::used]] unsigned volatile _test_control {};
+	[[gnu::used]] unsigned volatile _test_debug {};
+
+    void _test_start () { }
+    void _test_finish () { }
+}
+
 //! Multiboot 2 request
 
 namespace multiboot2
@@ -16,7 +27,7 @@ namespace multiboot2
         end_request            end;
     };
 
-    // Assumption: the .text section begins with _start at address 0x1000
+    // Assumption: the .text section begins with __multiboot2_start at address 0x1000
 
     [[gnu::used, gnu::section(".multiboot2")]]
     constinit
@@ -26,12 +37,30 @@ namespace multiboot2
         { tag_type::entry, 0, sizeof(entry_address_request), 0x1000 },
         { },
     };
-}
 
-//! Psys test protocol
+    //! Multiboot2 entry point with response
 
-extern "C"
-{
-    [[gnu::used]] unsigned volatile _test_control {};
-	[[gnu::used]] unsigned volatile _test_debug {};
+    extern "C"
+    constinit
+    unsigned char __multiboot2_stack [ 0x4000 ] {};
+
+    extern "C"
+    [[gnu::naked]]
+    void __multiboot2_start ()
+    {
+        __asm__
+        {
+            mov esp, offset __multiboot2_stack + 0x4000
+            xor ecx, ecx
+            push ecx
+            popf
+            call _test_start
+            mov _test_control, 1
+            mov _test_control, -1
+            call _test_finish
+            __multiboot2_halt:
+            hlt
+            jmp __multiboot2_halt
+        }
+    }
 }
