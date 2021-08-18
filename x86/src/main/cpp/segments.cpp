@@ -21,7 +21,7 @@ namespace x86
     auto get_code_segment_register () -> segment_selector
     {
         segment_selector value;
-        __asm__ ( "movw %0, %%cs" : "=m"(value) );
+        __asm__ ( "movw %%cs, %0" : "=m"(value) );
         return value;
     }
 
