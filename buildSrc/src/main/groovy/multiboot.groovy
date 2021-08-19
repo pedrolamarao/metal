@@ -125,6 +125,7 @@ abstract class TestMultibootImage extends DefaultTask
 
         final gdb = project.gdb.exec {
             command = "${gdbExecutable.get()}"
+            debugOutput = new File(temporaryDir, 'gdb.mi.txt').newOutputStream()
             timeLimit = Duration.ofSeconds(10)
         }
 
