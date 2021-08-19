@@ -1,6 +1,7 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
@@ -16,6 +17,8 @@ abstract class CreateMultibootImage extends DefaultTask
     @Input abstract RegularFileProperty getCommand ()
 
     @OutputFile abstract RegularFileProperty getOutputFile ()
+
+    @Inject abstract ExecOperations getExecOperations ()
 
     CreateMultibootImage ()
     {
@@ -53,10 +56,10 @@ abstract class CreateMultibootImage extends DefaultTask
         builder.source '/boot/grub/grub.cfg', configurationFile
         builder.source '/program', inputFile
 
-        project.exec {
+        execOperations.exec {
             commandLine builder.build()
-            errorOutput = new File(temporaryDir, 'err.txt').tap{createNewFile()}.newOutputStream()
-            standardOutput = new File(temporaryDir, 'out.txt').tap{createNewFile()}.newOutputStream()
+            errorOutput = new File(temporaryDir, 'grub-mkstandalone.err.txt').newOutputStream()
+            standardOutput = new File(temporaryDir, 'grub-mkstandalone.out.txt').newOutputStream()
         }
     }
 }
@@ -66,6 +69,8 @@ abstract class RunMultibootImage extends DefaultTask
     @InputFile abstract RegularFileProperty getImageFile ()
 
     @Nested abstract QemuCommandBuilder getQemu ()
+
+    @Inject abstract ExecOperations getExecOperations ();
 
     RunMultibootImage ()
     {
@@ -81,7 +86,11 @@ abstract class RunMultibootImage extends DefaultTask
 
     @TaskAction void action ()
     {
-        project.exec { commandLine qemu.build() }
+        execOperations.exec {
+            commandLine qemu.build()
+            errorOutput = new File(temporaryDir, 'qemu.err.txt').newOutputStream()
+            standardOutput = new File(temporaryDir, 'qemu.out.txt').newOutputStream()
+        }
     }
 }
 
