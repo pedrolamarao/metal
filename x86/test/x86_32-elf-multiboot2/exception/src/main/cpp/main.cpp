@@ -10,93 +10,65 @@
 #include <x86/idt.h>
 
 
-namespace multiboot2
-{
-    struct request_type
-    {
-        header_prologue prologue;
-        end_request     end;
-    };
-
-    [[gnu::used, gnu::section(".multiboot2")]]
-    constinit
-    request_type request =
-    {
-        { architecture_type::x86, sizeof(request), },
-        { },
-    };
-}
-
-// IA32 GDT
+// x86-32 architecture.
 
 namespace x86
 {
-    [[gnu::section(".gdt")]]
-    constinit
-    segment_descriptor global_descriptor_table [8] =
-    {
-        // required null descriptor
-        { },
-        // unexpected null descriptor!
-        { },
-        // system flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
-        // system flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
-        // user flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
-        // user flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
-        // test segment: data non-present
-        { 0, 0xFFFFF, data_segment(true, true, true), 0, false, true, true, true, },
-        // test segment: code execute-only
-        { 0, 0xFFFFF, code_segment(true, false, true), 0, true, true, true, true, },
-    };
+    // Segments.
 
-    void set_segment_registers ( segment_selector code, segment_selector data )
-    {
-        set_code_segment_register(code);
-        set_data_segment_register(data);
-        set_stack_segment_register(data);
-        set_extra_segment_registers(data);
-    }
+    extern segment_descriptor global_descriptor_table [8];
+
+    void set_segment_registers ( segment_selector code, segment_selector data );
+
+    // This test raises several x86 exceptions.
+    // Below are the exact code locations which raise each fault.
+    // It is safe to write 4 NOP at these locations.
+
+    extern "C" void __raise_DE ();
+    extern "C" void * __raise_DE_bad;
+    extern "C" void __raise_BP ();
+    extern "C" void * __raise_BP_bad;
+    extern "C" void __raise_OF ();
+    extern "C" void * __raise_OF_bad;
+    extern "C" void __raise_BR ();
+    extern "C" void * __raise_BR_bad;
+    extern "C" void __raise_UD ();
+    extern "C" void * __raise_UD_bad;
+    extern "C" void __raise_NP ();
+    extern "C" void * __raise_NP_bad;
+    extern "C" void * __raise_GP_bad;
+    extern "C" void __raise_GP ();
+
+    // Interrupts.
+
+    extern interrupt_gate_descriptor interrupt_descriptor_table [256];
+
+    unsigned __x86_interrupt_00_counter {};
+    void __x86_interrupt_00 ();
+
+    unsigned __x86_interrupt_03_counter {};
+    void __x86_interrupt_03 ();
+
+    unsigned __x86_interrupt_04_counter {};
+    void __x86_interrupt_04 ();
+
+    unsigned __x86_interrupt_05_counter {};
+    void __x86_interrupt_05 ();
+
+    unsigned __x86_interrupt_06_counter {};
+    void __x86_interrupt_06 ();
+
+    unsigned __x86_interrupt_0B_counter {};
+    void __x86_interrupt_0B ();
+
+    unsigned __x86_interrupt_0D_counter {};
+    void __x86_interrupt_0D ();
+
+    unsigned __x86_interrupt_FF_counter {};
+    void __x86_interrupt_FF ();
 }
 
-// IA32 IDT
-
-namespace x86
-{
-    [[gnu::section(".idt")]]
-    constinit
-    interrupt_gate_descriptor interrupt_descriptor_table [256] =
-    { };
-
-    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_00_counter {};
-    extern "C" void __x86_interrupt_00 ();
-
-    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_03_counter {};
-    extern "C" void __x86_interrupt_03 ();
-
-    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_04_counter {};
-    extern "C" void __x86_interrupt_04 ();
-
-    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_05_counter {};
-    extern "C" void __x86_interrupt_05 ();
-
-    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_06_counter {};
-    extern "C" void __x86_interrupt_06 ();
-
-    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_0B_counter {};
-    extern "C" void __x86_interrupt_0B ();
-
-    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_0D_counter {};
-    extern "C" void __x86_interrupt_0D ();
-
-    extern "C" [[gnu::used]] unsigned volatile __x86_interrupt_FF_counter {};
-    extern "C" void __x86_interrupt_FF ();
-}
-
-//! Psys test protocol
+// Psys test protocol.
 
 namespace
 {
@@ -105,17 +77,9 @@ namespace
 
     extern "C" void _test_start () { }
     extern "C" void _test_finish () { }
-
-    extern "C" void __test_trap_DE ();
-    extern "C" void __test_trap_BP ();
-    extern "C" void __test_trap_OF ();
-    extern "C" void __test_trap_BR ();
-    extern "C" void __test_trap_UD ();
-    extern "C" void __test_trap_NP ();
-    extern "C" void __test_trap_GP ();
 }
 
-//! Multiboot2 entry point
+// Psys multiboot2 program.
 
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
@@ -164,7 +128,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     // test: exception 00: division error
 
     _test_control = 1000;
-    __test_trap_DE();
+    __raise_DE();
     if (__x86_interrupt_00_counter == 0) {
         _test_control = 0;
         return;
@@ -173,7 +137,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     // test: exception 03: breakpoint
 
     _test_control = 1003;
-    __test_trap_BP();
+    __raise_BP();
     if (__x86_interrupt_03_counter == 0) {
         _test_control = 0;
         return;
@@ -182,7 +146,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     // test: exception 04: integer overflow
 
     _test_control = 1004;
-    __test_trap_OF();
+    __raise_OF();
     if (__x86_interrupt_04_counter == 0) {
         _test_control = 0;
         return;
@@ -191,7 +155,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     // test: exception 05: bound range exceeded
 
     _test_control = 1005;
-    __test_trap_BR();
+    __raise_BR();
     if (__x86_interrupt_05_counter == 0) {
         _test_control = 0;
         return;
@@ -200,7 +164,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     // test: exception 06: undefined instruction
 
     _test_control = 1006;
-    __test_trap_UD();
+    __raise_UD();
     if (__x86_interrupt_06_counter == 0) {
         _test_control = 0;
         return;
@@ -209,7 +173,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     // test: exception 0B: segment not present
 
     _test_control = 1000 + 0x0B;
-    __test_trap_NP();
+    __raise_NP();
     if (__x86_interrupt_0B_counter == 0) {
         _test_control = 0;
         return;
@@ -218,7 +182,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     // test: exception 0D: general protection fault
 
     _test_control = 1000 + 0x0D;
-    __test_trap_GP();
+    __raise_GP();
     if (__x86_interrupt_0D_counter == 0) {
         _test_control = 0;
         return;
@@ -228,9 +192,157 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     return;
 }
 
+// x86-32 architecture.
+
+namespace x86
+{
+    [[gnu::section(".idt")]]
+    constinit
+    interrupt_gate_descriptor interrupt_descriptor_table [256] =
+    { };
+
+    [[gnu::naked]] void __x86_interrupt_00 ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_DE_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_00_counter
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_03 ()
+    {
+        __asm__
+        {
+             // increment interrupt counter
+             inc __x86_interrupt_03_counter
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_04 ()
+    {
+        __asm__
+        {
+             // increment interrupt counter
+             inc __x86_interrupt_04_counter
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_05 ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_BR_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_05_counter
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_06 ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_UD_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_06_counter
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_0B ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_NP_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_0B_counter
+             // discard error code from stack
+             add esp, 4
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_0D ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_GP_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_0D_counter
+             // discard error code from stack
+             add esp, 4
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_FF ()
+    {
+        __asm__
+        {
+             // increment interrupt counter
+             inc __x86_interrupt_FF_counter
+             iretd
+        }
+    }
+
+    [[gnu::section(".gdt")]]
+    constinit
+    segment_descriptor global_descriptor_table [8] =
+    {
+        // required null descriptor
+        { },
+        // unexpected null descriptor!
+        { },
+        // system flat code descriptor
+        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
+        // system flat data descriptor
+        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
+        // user flat code descriptor
+        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
+        // user flat data descriptor
+        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
+        // test segment: data non-present
+        { 0, 0xFFFFF, data_segment(true, true, true), 0, false, true, true, true, },
+        // test segment: code execute-only
+        { 0, 0xFFFFF, code_segment(true, false, true), 0, true, true, true, true, },
+    };
+
+    void set_segment_registers ( segment_selector code, segment_selector data )
+    {
+        set_code_segment_register(code);
+        set_data_segment_register(data);
+        set_stack_segment_register(data);
+        set_extra_segment_registers(data);
+    }
+}
+
+// Multiboot2 loader.
+
 namespace multiboot2
 {
-    //! Multiboot2 entry point
+    struct request_type
+    {
+        header_prologue prologue;
+        end_request     end;
+    };
+
+    [[gnu::used, gnu::section(".multiboot2")]]
+    constinit
+    request_type request =
+    {
+        { architecture_type::x86, sizeof(request), },
+        { },
+    };
 
     extern "C"
     constinit

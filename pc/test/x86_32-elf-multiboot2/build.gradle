@@ -7,7 +7,6 @@ subprojects
 {
     // settings
 
-    apply plugin: AsmLanguage
     apply plugin: 'br.dev.pedrolamarao.gdb'
     apply plugin: 'dev.nokee.cpp-application'
 

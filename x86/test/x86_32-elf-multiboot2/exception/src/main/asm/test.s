@@ -2,14 +2,14 @@
 
 .intel_syntax noprefix
 
-.global __test_trap_DE
-.type   __test_trap_DE, @function
-__test_trap_DE:
+.global __raise_DE
+.type   __raise_DE, @function
+__raise_DE:
     pushad
     # prepare zero divisor
     mov eax, 0
-.global __test_trap_DE_bad
-__test_trap_DE_bad:
+.global __raise_DE_bad
+__raise_DE_bad:
     # divide by zero
     div eax, eax
     nop
@@ -18,18 +18,18 @@ __test_trap_DE_bad:
     popad
     ret
 
-.global __test_trap_BP
-.type   __test_trap_BP, @function
-__test_trap_BP:
+.global __raise_BP
+.type   __raise_BP, @function
+__raise_BP:
     pushad
     # trap breakpoint
     int3
     popad
     ret
 
-.global __test_trap_OF
-.type   __test_trap_OF, @function
-__test_trap_OF:
+.global __raise_OF
+.type   __raise_OF, @function
+__raise_OF:
     pushad
     # cause arithmetic overflow flag to set
     mov al, 0x7F
@@ -39,9 +39,9 @@ __test_trap_OF:
     popad
     ret
 
-.global __test_trap_BR
-.type   __test_trap_BR, @function
-__test_trap_BR:
+.global __raise_BR
+.type   __raise_BR, @function
+__raise_BR:
     pushad
     # push array upper bound
     mov eax, 1
@@ -51,8 +51,8 @@ __test_trap_BR:
     push eax
     # prepare array index
     mov eax, 4
-.global __test_trap_BR_bad
-__test_trap_BR_bad:
+.global __raise_BR_bad
+__raise_BR_bad:
     # test array index
     bound eax, [esp]
     nop
@@ -63,12 +63,12 @@ __test_trap_BR_bad:
     popad
     ret
 
-.global __test_trap_UD
-.type   __test_trap_UD, @function
-__test_trap_UD:
+.global __raise_UD
+.type   __raise_UD, @function
+__raise_UD:
     pushad
-.global __test_trap_UD_bad
-__test_trap_UD_bad:
+.global __raise_UD_bad
+__raise_UD_bad:
     # convenient undefined instruction
     ud2
     nop
@@ -77,16 +77,16 @@ __test_trap_UD_bad:
     popad
     ret
 
-.global __test_trap_NP
-.type   __test_trap_NP, @function
-__test_trap_NP:
+.global __raise_NP
+.type   __raise_NP, @function
+__raise_NP:
     pushad
     # save GS register
     mov ax, gs
     # prepare segment selector for non-present data segment
     mov bx, 0x30
-.global __test_trap_NP_bad
-__test_trap_NP_bad:
+.global __raise_NP_bad
+__raise_NP_bad:
     mov gs, bx
     nop
     nop
@@ -97,16 +97,16 @@ __test_trap_NP_bad:
     popad
     ret
 
-.global __test_trap_GP
-.type   __test_trap_GP, @function
-__test_trap_GP:
+.global __raise_GP
+.type   __raise_GP, @function
+__raise_GP:
     pushad
     # save GS register
     mov ax, gs
     # prepare segment selector for execute-only code segment
     mov bx, 0x38
-.global __test_trap_GP_bad
-__test_trap_GP_bad:
+.global __raise_GP_bad
+__raise_GP_bad:
     mov gs, bx
     nop
     nop

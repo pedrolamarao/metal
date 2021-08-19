@@ -9,27 +9,8 @@
 #include <x86/gdt.h>
 #include <x86/idt.h>
 
-// Multiboot2 boot request
 
-namespace multiboot2
-{
-    using namespace multiboot2;
-
-    struct request_type
-    {
-        header_prologue prologue;
-        end_request     end;
-    };
-
-    [[gnu::used, gnu::section(".multiboot2")]]
-    constexpr request_type request =
-    {
-        { architecture_type::x86, sizeof(request), },
-        { },
-    };
-}
-
-// IA32 GDT
+// x86-32 architecture.
 
 namespace x86
 {
@@ -58,27 +39,29 @@ namespace x86
         set_stack_segment_register(data);
         set_extra_segment_registers(data);
     }
-}
 
-// IA32 IDT
+    // Interrupts.
 
-namespace x86
-{
     constexpr unsigned interrupt_descriptor_table_size = 256;
 
     [[gnu::section(".idt")]]
     constinit
     interrupt_gate_descriptor interrupt_descriptor_table [ interrupt_descriptor_table_size ];
 
-    extern "C"
-    [[gnu::used]]
-    unsigned volatile interrupted {};
+    unsigned interrupted {};
 
-    extern "C"
-    void __interrupt_service_routine ();
+    [[gnu::naked]]
+    void interrupt_handler ()
+    {
+        __asm__
+        {
+            inc interrupted
+            iretd
+        }
+    }
 }
 
-//! Psys test protocol
+// Psys test protocol.
 
 extern "C"
 {
@@ -89,7 +72,7 @@ extern "C"
     void _test_finish () { }
 }
 
-//! Multiboot2 entry point
+// Psys multiboot2 program.
 
 extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
@@ -120,7 +103,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     auto interrupt_segment = segment_selector(2, false, 0);
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table[i] = { interrupt_segment, __interrupt_service_routine, true, true, 0, true };
+        interrupt_descriptor_table[i] = { interrupt_segment, interrupt_handler, true, true, 0, true };
     }
 
     auto& descriptor = interrupt_descriptor_table[0];
@@ -153,7 +136,7 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     }
 
     _test_control = 14;
-    if (descriptor.offset() != size4(__interrupt_service_routine)) {
+    if (descriptor.offset() != reinterpret_cast<size4>(interrupt_handler)) {
         _test_debug = descriptor.offset();
         _test_control = 0;
         return;
@@ -229,9 +212,22 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     return;
 }
 
+// Multiboot2 loader.
+
 namespace multiboot2
 {
-    //! Multiboot2 entry point
+    struct request_type
+    {
+        header_prologue prologue;
+        end_request     end;
+    };
+
+    [[gnu::used, gnu::section(".multiboot2")]]
+    constexpr request_type request =
+    {
+        { architecture_type::x86, sizeof(request), },
+        { },
+    };
 
     extern "C"
     constinit
