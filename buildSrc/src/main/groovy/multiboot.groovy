@@ -1,5 +1,6 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkerExecutor
@@ -14,7 +15,7 @@ abstract class CreateMultibootImage extends DefaultTask
 {
     @InputFile abstract RegularFileProperty getInputFile ()
 
-    @Input abstract RegularFileProperty getCommand ()
+    @Input abstract Property<String> getCommand ()
 
     @OutputFile abstract RegularFileProperty getOutputFile ()
 
@@ -23,12 +24,11 @@ abstract class CreateMultibootImage extends DefaultTask
     CreateMultibootImage ()
     {
         final layout = project.layout
-        final providers = project.providers
         final tools = project.rootProject.ext.tools
 
         final grubPath = tools['br.dev.pedrolamarao.psys.grub.path']
 
-        command.convention = providers.provider { new File("${grubPath}/grub-mkstandalone") }
+        command.convention grubPath != null ? "${grubPath}/grub-mkstandalone" : 'grub-mkstandalone'
 
         outputFile.convention = inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${it.asFile.name}/image") }
     }
@@ -49,7 +49,6 @@ abstract class CreateMultibootImage extends DefaultTask
         }
 
         final builder = project.objects.newInstance(GrubMakeImageBuilder)
-        builder.command = command
         builder.platform = 'i386-pc'
         builder.imageFile = outputFile
         builder.installModules = [ 'configfile', 'memdisk', 'multiboot2', 'normal' ]
@@ -57,7 +56,8 @@ abstract class CreateMultibootImage extends DefaultTask
         builder.source '/program', inputFile
 
         execOperations.exec {
-            commandLine builder.build()
+            executable command.get()
+            args builder.build()
             errorOutput = new File(temporaryDir, 'grub-mkstandalone.err.txt').newOutputStream()
             standardOutput = new File(temporaryDir, 'grub-mkstandalone.out.txt').newOutputStream()
         }
