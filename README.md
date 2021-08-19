@@ -1,4 +1,4 @@
-Date: 2021-08-05
+Date: 2021-08-19
 
 # summary
 
@@ -8,25 +8,15 @@ Psys is a research project on "bare metal" software engineering.
 
 For more information, see [GOAL](doc/GOAL.md).
 
-# index
-
-0. summary
-1. prepare
-2. assemble
-3. check
-4. use
-5. architecture
-6. references
-
 # prepare
 
 Psys is built with an LLVM based toolset.
 
 These tools are required:
 
-- GNU grub version 2
+- GNU grub
 - GNU gdb
-- LLVM (clang, lld, llvm-ar) version 13
+- LLVM (clang, lld, llvm-ar)
 - QEMU
 
 You may configure tools in `tools.properties`.
@@ -41,38 +31,16 @@ To build: `./gradlew build`
 
 To clean: `./gradlew clean`
 
+# play
+
+To play around, mess with the [sandbox application](app/sandbox).
+
+To run: `./gradlew :app:sandbox:runImage`
+
 # verify
 
 Psys is verified by automated tests.
 
 For more information, see [TEST](doc/TEST.md).
 
-To check: `./gradlew check`
-
-# use
-
-Psys is reusable as a set of Gradle projects.
-Each project describes a single module.
-Gradle should compute the required variants from the build configuration.
-
-To reuse a modules, add a dependency on it:
-
-```gradle
-dependencies {
-    implementation project(':uefi')
-}
-```
-
-# architecture
-
-The collection includes the following components:
-
-* [acpi](acpi/README.md)
-* [multiboot2](multiboot2/README.md)
-* [pc](pc/README.md)
-* uefi
-* [x86](x86/README.md)
-
-# references
-
-_TODO_
+To verify: `./gradlew check`
