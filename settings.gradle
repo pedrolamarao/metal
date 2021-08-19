@@ -1,10 +1,12 @@
 pluginManagement
 {
-    includeBuild 'gdb'
+    plugins
+    {
+        id 'br.dev.pedrolamarao.gdb' version '1.0.0-SNAPSHOT'
+    }
 
     repositories
     {
-        mavenLocal()
         maven {
             name = "Nokee Release Repository"
             url = uri("https://repo.nokee.dev/release")
@@ -20,6 +22,10 @@ pluginManagement
                 includeGroupByRegex("dev\\.nokee.*")
                 includeGroupByRegex("dev\\.gradleplugins.*")
             }
+        }
+        maven {
+            name = 'Sonatype Open Source Snapshot Repository'
+            url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
         }
         gradlePluginPortal()
     }
