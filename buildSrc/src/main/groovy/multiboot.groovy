@@ -68,26 +68,29 @@ abstract class RunMultibootImage extends DefaultTask
 {
     @InputFile abstract RegularFileProperty getImageFile ()
 
-    @Nested abstract QemuCommandBuilder getQemu ()
+    @Nested abstract QemuCommandEditor getQemuArgs ()
 
-    @Inject abstract ExecOperations getExecOperations ();
+    @Nested abstract Property<String> getQemuExecutable ()
+
+    @Inject abstract ExecOperations getExecOperations ()
 
     RunMultibootImage ()
     {
         final path = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.qemu.path']
+        qemuExecutable.convention path != null ? "${path}/qemu-system-i386" : 'qemu-system-i386'
 
-        qemu.command = new File("${path}/qemu-system-i386")
-        qemu.debugConsole = 'vc'
-        qemu.kernel = imageFile
-        qemu.gdb = 'tcp:localhost:12345'
-        qemu.machine = 'q35'
-        qemu.stop = true
+        qemuArgs.debugConsole = 'vc'
+        qemuArgs.kernel = imageFile
+        qemuArgs.gdb = 'tcp:localhost:12345'
+        qemuArgs.machine = 'q35'
+        qemuArgs.stop = true
     }
 
     @TaskAction void action ()
     {
         execOperations.exec {
-            commandLine qemu.build()
+            executable qemuExecutable.get()
+            args qemuArgs.build()
             errorOutput = new File(temporaryDir, 'qemu.err.txt').newOutputStream()
             standardOutput = new File(temporaryDir, 'qemu.out.txt').newOutputStream()
         }
@@ -102,20 +105,21 @@ abstract class TestMultibootImage extends DefaultTask
 
     @InputFile abstract RegularFileProperty getImageFile ()
 
-    @Nested abstract QemuCommandBuilder getQemu ()
+    @Nested abstract QemuCommandEditor getQemuArgs ()
+
+    @Nested abstract Property<String> getQemuExecutable ()
 
     @Inject abstract WorkerExecutor getWorkers ()
 
     TestMultibootImage ()
     {
-        final layout = project.layout
         final providers = project.providers
 
         final gdbPath = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.gdb.path']
         final qemuPath = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.qemu.path']
 
         gdbExecutable.convention = providers.provider { new File("${gdbPath}/gdb")}
-        qemu.command = new File("${qemuPath}/qemu-system-i386")
+        qemuExecutable.convention qemuPath != null ? "${qemuPath}/qemu-system-i386" : 'qemu-system-i386'
     }
 
     @TaskAction void action ()
@@ -131,7 +135,7 @@ abstract class TestMultibootImage extends DefaultTask
 
         final port = ThreadLocalRandom.current().nextInt(20000, 40000)
 
-        qemu.with {
+        qemuArgs.with {
             display.set 'none'
             kernel.set imageFile
             it.gdb.set "tcp:localhost:${port}"
@@ -147,8 +151,12 @@ abstract class TestMultibootImage extends DefaultTask
             stop.set true
         }
 
+        final List<String> qemuCommand = []
+        qemuCommand.add qemuExecutable.get()
+        qemuCommand.addAll qemuArgs.build()
+
         final qemuProcess = new ProcessBuilder()
-            .command( qemu.build() )
+            .command( qemuCommand )
             .redirectError( new File(temporaryDir, 'qemu.error.txt') )
             .redirectOutput( new File(temporaryDir, 'qemu.out.txt'))
             .start()

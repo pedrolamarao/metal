@@ -93,7 +93,7 @@ abstract class QemuRtcWriter extends QemuBase
     }
 }
 
-abstract class QemuCommandBuilder extends QemuBase
+abstract class QemuCommandEditor extends QemuBase
 {
     abstract ListProperty<String> getAccelerators ()
 
@@ -102,8 +102,6 @@ abstract class QemuCommandBuilder extends QemuBase
     abstract ListProperty<String> getBlockDrivers ()
 
     abstract ListProperty<String> getCharacterDrivers ()
-
-    abstract RegularFileProperty getCommand ()
 
     abstract Property<String> getCpu ()
 
@@ -131,7 +129,7 @@ abstract class QemuCommandBuilder extends QemuBase
 
     @Inject abstract ObjectFactory getObjects ()
 
-    QemuCommandBuilder ()
+    QemuCommandEditor()
     {
         stop.convention false
     }
@@ -189,30 +187,29 @@ abstract class QemuCommandBuilder extends QemuBase
         getRtc().set( writer.toString() )
     }
 
-    String[] build ()
+    List<String> build ()
     {
-        final ArrayList<String> list = []
-        list.add command.get()
+        final List<String> list = []
         // machine
-        ifPresent machine, { list.addAll '-machine', it }
-        ifPresent cpu, { list.addAll '-cpu', it }
-        accelerators.get().forEach { list.addAll '-accel', it }
+        ifPresent machine, { list.addAll '-machine', it.toString() }
+        ifPresent cpu, { list.addAll '-cpu', it.toString() }
+        accelerators.get().forEach { list.addAll '-accel', it.toString() }
         // drivers
-        characterDrivers.get().forEach { list.addAll '-chardev', it }
-        blockDrivers.get().forEach { list.addAll '-blockdev', it }
+        characterDrivers.get().forEach { list.addAll '-chardev', it.toString() }
+        blockDrivers.get().forEach { list.addAll '-blockdev', it.toString() }
         // devices
-        ifPresent debugConsole, { list.addAll '-debugcon', it }
-        devices.get().forEach { list.addAll '-device', it }
-        ifPresent display, { list.addAll '-display', it }
-        drives.get().forEach { list.addAll '-drive', it }
-        ifPresent rtc, { list.addAll '-rtc', it }
+        ifPresent debugConsole, { list.addAll '-debugcon', it.toString() }
+        devices.get().forEach { list.addAll '-device', it.toString() }
+        ifPresent display, { list.addAll '-display', it.toString() }
+        drives.get().forEach { list.addAll '-drive', it.toString() }
+        ifPresent rtc, { list.addAll '-rtc', it.toString() }
         // software
-        ifPresent bios, { list.addAll '-bios', it }
-        ifPresent kernel, { list.addAll '-kernel', it }
+        ifPresent bios, { list.addAll '-bios', it.toString() }
+        ifPresent kernel, { list.addAll '-kernel', it.toString() }
         // support
-        ifPresent debug, { list.addAll '-d', it }
-        ifPresent debugFile, { list.addAll '-D', it }
-        ifPresent gdb, { list.addAll '-gdb', it }
+        ifPresent debug, { list.addAll '-d', it.toString() }
+        ifPresent debugFile, { list.addAll '-D', it.toString() }
+        ifPresent gdb, { list.addAll '-gdb', it.toString() }
         ifPresent stop, { if (it) list.add '-S' }
         return list
     }

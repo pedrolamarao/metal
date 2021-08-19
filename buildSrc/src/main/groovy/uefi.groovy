@@ -96,14 +96,14 @@ abstract class RunUefi extends DefaultTask
         imageQemuDrive.format = 'raw'
         imageQemuDrive.file = imageFile
 
-        final qemuCommand = project.objects.newInstance(QemuCommandBuilder)
-        qemuCommand.command = qemuExecutable
-        qemuCommand.bios = ovmfImage
-        qemuCommand.drives.add "${imageQemuDrive}"
-        qemuCommand.machine = 'q35'
+        final qemuArgs = project.objects.newInstance(QemuCommandEditor)
+        qemuArgs.bios = ovmfImage
+        qemuArgs.drives.add "${imageQemuDrive}"
+        qemuArgs.machine = 'q35'
 
         execOperations.exec {
-            commandLine qemuCommand.build()
+            executable qemuExecutable.get()
+            args qemuArgs.build()
             standardOutput = new File(temporaryDir, 'qemu.out.txt').newOutputStream()
             errorOutput = new File(temporaryDir, 'qemu.err.txt').newOutputStream()
         }
