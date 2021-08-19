@@ -4,6 +4,9 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
+
+import javax.inject.Inject
 
 abstract class CreateUefi extends DefaultTask
 {
@@ -16,6 +19,8 @@ abstract class CreateUefi extends DefaultTask
     @Input abstract RegularFileProperty getMcopy ()
 
     @OutputFile abstract RegularFileProperty getOutputFile ()
+
+    @Inject abstract ExecOperations getExecOperations ()
 
     CreateUefi ()
     {
@@ -38,12 +43,23 @@ abstract class CreateUefi extends DefaultTask
 
     @TaskAction void action ()
     {
-        logger.info "${project.path}${project.name}${this.name}: inputFile = ${inputFile.get()}"
+        logger.info "${project.path}:${this.name}: inputFile = ${inputFile.get()}"
         project.mkdir inputFile.get().asFile.parent
-        project.exec { commandLine mformat.get(), '-C', '-f', '1440', '-i', outputFile.get(), '::' }
-        project.exec { commandLine mmd.get(), '-i', outputFile.get(), '::/EFI' }
-        project.exec { commandLine mmd.get(), '-i', outputFile.get(), '::/EFI/BOOT' }
-        project.exec { commandLine mcopy.get(), '-i', outputFile.get(), inputFile.get(), '::/EFI/BOOT/BOOTX64.EFI' }
+        execOperations.exec {
+            commandLine mformat.get(), '-C', '-f', '1440', '-i', outputFile.get(), '::'
+            standardOutput = new File(temporaryDir, 'mformat.out.txt').newOutputStream()
+            errorOutput = new File(temporaryDir, 'mformat.err.txt').newOutputStream()
+        }
+        execOperations.exec {
+            commandLine mmd.get(), '-i', outputFile.get(), '::/EFI', '::/EFI/BOOT'
+            standardOutput = new File(temporaryDir, 'mmd.out.txt').newOutputStream()
+            errorOutput = new File(temporaryDir, 'mmd.err.txt').newOutputStream()
+        }
+        execOperations.exec {
+            commandLine mcopy.get(), '-i', outputFile.get(), inputFile.get(), '::/EFI/BOOT/BOOTX64.EFI'
+            standardOutput = new File(temporaryDir, 'mcopy.out.txt').newOutputStream()
+            errorOutput = new File(temporaryDir, 'mcopy.err.txt').newOutputStream()
+        }
     }
 }
 
@@ -54,6 +70,8 @@ abstract class RunUefi extends DefaultTask
     @Input abstract RegularFileProperty getOvmfImage ()
 
     @Input abstract RegularFileProperty getQemuExecutable ()
+
+    @Inject abstract ExecOperations getExecOperations ()
 
     RunUefi ()
     {
@@ -84,6 +102,10 @@ abstract class RunUefi extends DefaultTask
         qemuCommand.drives.add "${imageQemuDrive}"
         qemuCommand.machine = 'q35'
 
-        project.exec { commandLine qemuCommand.build() }
+        execOperations.exec {
+            commandLine qemuCommand.build()
+            standardOutput = new File(temporaryDir, 'qemu.out.txt').newOutputStream()
+            errorOutput = new File(temporaryDir, 'qemu.err.txt').newOutputStream()
+        }
     }
 }
