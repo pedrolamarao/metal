@@ -20,47 +20,35 @@ namespace x86
 
     void set_segment_registers ( segment_selector code, segment_selector data );
 
-    // This test raises several x86 exceptions.
-    // Below are the exact code locations which raise each fault.
-    // It is safe to write 4 NOP at these locations.
-
-    extern "C" void __raise_DE ();
-    extern "C" void * __raise_DE_bad;
-    extern "C" void __raise_BP ();
-    extern "C" void * __raise_BP_bad;
-    extern "C" void __raise_OF ();
-    extern "C" void * __raise_OF_bad;
-    extern "C" void __raise_BR ();
-    extern "C" void * __raise_BR_bad;
-    extern "C" void __raise_UD ();
-    extern "C" void * __raise_UD_bad;
-    extern "C" void __raise_NP ();
-    extern "C" void * __raise_NP_bad;
-    extern "C" void * __raise_GP_bad;
-    extern "C" void __raise_GP ();
-
     // Interrupts.
 
     extern interrupt_gate_descriptor interrupt_descriptor_table [256];
 
+    extern "C" void __raise_DE ();
     unsigned __x86_interrupt_00_counter {};
     void __x86_interrupt_00 ();
 
+    void __raise_BP ();
     unsigned __x86_interrupt_03_counter {};
     void __x86_interrupt_03 ();
 
+    void __raise_OF ();
     unsigned __x86_interrupt_04_counter {};
     void __x86_interrupt_04 ();
 
+    extern "C" void __raise_BR ();
     unsigned __x86_interrupt_05_counter {};
     void __x86_interrupt_05 ();
 
+    extern "C" void __raise_UD ();
     unsigned __x86_interrupt_06_counter {};
     void __x86_interrupt_06 ();
 
+    extern "C" void __raise_NP ();
     unsigned __x86_interrupt_0B_counter {};
     void __x86_interrupt_0B ();
 
+    extern "C" void __raise_GP ();
     unsigned __x86_interrupt_0D_counter {};
     void __x86_interrupt_0D ();
 
@@ -196,104 +184,6 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
 namespace x86
 {
-    [[gnu::section(".idt")]]
-    constinit
-    interrupt_gate_descriptor interrupt_descriptor_table [256] =
-    { };
-
-    [[gnu::naked]] void __x86_interrupt_00 ()
-    {
-        __asm__
-        {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_DE_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_00_counter
-             iretd
-        }
-    }
-
-    [[gnu::naked]] void __x86_interrupt_03 ()
-    {
-        __asm__
-        {
-             // increment interrupt counter
-             inc __x86_interrupt_03_counter
-             iretd
-        }
-    }
-
-    [[gnu::naked]] void __x86_interrupt_04 ()
-    {
-        __asm__
-        {
-             // increment interrupt counter
-             inc __x86_interrupt_04_counter
-             iretd
-        }
-    }
-
-    [[gnu::naked]] void __x86_interrupt_05 ()
-    {
-        __asm__
-        {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_BR_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_05_counter
-             iretd
-        }
-    }
-
-    [[gnu::naked]] void __x86_interrupt_06 ()
-    {
-        __asm__
-        {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_UD_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_06_counter
-             iretd
-        }
-    }
-
-    [[gnu::naked]] void __x86_interrupt_0B ()
-    {
-        __asm__
-        {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_NP_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_0B_counter
-             // discard error code from stack
-             add esp, 4
-             iretd
-        }
-    }
-
-    [[gnu::naked]] void __x86_interrupt_0D ()
-    {
-        __asm__
-        {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_GP_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_0D_counter
-             // discard error code from stack
-             add esp, 4
-             iretd
-        }
-    }
-
-    [[gnu::naked]] void __x86_interrupt_FF ()
-    {
-        __asm__
-        {
-             // increment interrupt counter
-             inc __x86_interrupt_FF_counter
-             iretd
-        }
-    }
 
     [[gnu::section(".gdt")]]
     constinit
@@ -323,6 +213,277 @@ namespace x86
         set_data_segment_register(data);
         set_stack_segment_register(data);
         set_extra_segment_registers(data);
+    }
+
+    [[gnu::section(".idt")]]
+    constinit
+    interrupt_gate_descriptor interrupt_descriptor_table [256] =
+    { };
+
+    // Fault handlers return to the very same location which caused the fault.
+    // If the handler can't solve the fault, the program must terminate.
+    // If the handler solves the fault, the program must retry the instruction.
+
+    // In these tests, all faults are solved by rewriting the program.
+    // Offending instructions are rewritten with NOPs.
+    // It is assumed safe to write four NOPs into "bad" locations.
+
+    [[gnu::naked]] void __raise_DE_bad ()
+    {
+        // divide zero by zero
+
+        __asm__
+        {
+            div eax, eax
+            nop
+            nop
+            nop
+            popad
+            ret
+        }
+    }
+
+    [[gnu::naked]] void __raise_DE ()
+    {
+        // prepare zero divisor
+
+        __asm__
+        {
+            pushad
+            mov eax, 0
+            jmp __raise_DE_bad
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_00 ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_DE_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_00_counter
+             iretd
+        }
+    }
+
+    void __raise_BP ()
+    {
+        // `int3` raises BP
+
+        __asm__ volatile ( "int3" : : : );
+    }
+
+    [[gnu::naked]] void __x86_interrupt_03 ()
+    {
+        __asm__
+        {
+             // increment interrupt counter
+             inc __x86_interrupt_03_counter
+             iretd
+        }
+    }
+
+    void __raise_OF ()
+    {
+        // increment 0x7F overflows, `into` raises OF
+
+        unsigned char value { 0x7F };
+        __asm__ volatile ( "incb %0 \n into" : : "r"(value) : );
+    }
+
+    [[gnu::naked]] void __x86_interrupt_04 ()
+    {
+        __asm__
+        {
+             // increment interrupt counter
+             inc __x86_interrupt_04_counter
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __raise_BR_bad ()
+    {
+        // `bound` index 4 bounds [0, 1] raises BR
+
+        __asm__
+        {
+            bound eax, [esp]
+            nop
+            nop
+            nop
+            add esp, 8
+            popad
+            ret
+        }
+    }
+
+    [[gnu::naked]] void __raise_BR ()
+    {
+        // prepare bounds [0, 1] and index 4
+
+        __asm__
+        {
+            pushad
+            mov eax, 1
+            push eax
+            mov eax, 0
+            push eax
+            mov eax, 4
+            jmp __raise_BR_bad
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_05 ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_BR_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_05_counter
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __raise_UD_bad ()
+    {
+        // `ud2` raises UD
+
+        __asm__
+        {
+            ud2
+            nop
+            nop
+            nop
+            popad
+            ret
+        }
+    }
+
+    [[gnu::naked]] void __raise_UD ()
+    {
+        __asm__
+        {
+            pushad
+            jmp __raise_UD_bad
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_06 ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_UD_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_06_counter
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __raise_NP_bad ()
+    {
+        // storing non-present data segment into GS raises `NP`
+
+        __asm__
+        {
+            mov gs, bx
+            nop
+            nop
+            nop
+            mov gs, ax
+            popad
+            ret
+        }
+
+        // restore GS before leaving
+    }
+
+    [[gnu::naked]] void __raise_NP ()
+    {
+        // prepare segment selector for non-present data segment
+
+        __asm__
+        {
+            pushad
+            mov ax, gs
+            mov bx, 0x30
+            jmp __raise_NP_bad
+        }
+
+        // save GS before leaving
+    }
+
+    [[gnu::naked]] void __x86_interrupt_0B ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_NP_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_0B_counter
+             // discard error code from stack
+             add esp, 4
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __raise_GP_bad ()
+    {
+        // storing non-readable code segment into GS raises `GP`
+
+        __asm__
+        {
+            mov gs, bx
+            nop
+            nop
+            nop
+            mov gs, ax
+            popad
+            ret
+        }
+
+        // restore GS before leaving
+    }
+
+    [[gnu::naked]] void __raise_GP ()
+    {
+        // prepare segment selector for non-readable code segment
+
+        __asm__
+        {
+            pushad
+            mov ax, gs
+            mov bx, 0x38
+            jmp __raise_GP_bad
+        }
+
+        // save GS before leaving
+    }
+
+    [[gnu::naked]] void __x86_interrupt_0D ()
+    {
+        __asm__
+        {
+             // "fix" caller: rewrite with NOPS
+             mov __raise_GP_bad, 0x90909090
+             // increment interrupt counter
+             inc __x86_interrupt_0D_counter
+             // discard error code from stack
+             add esp, 4
+             iretd
+        }
+    }
+
+    [[gnu::naked]] void __x86_interrupt_FF ()
+    {
+        __asm__
+        {
+             // increment interrupt counter
+             inc __x86_interrupt_FF_counter
+             iretd
+        }
     }
 }
 
