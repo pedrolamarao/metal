@@ -98,6 +98,8 @@ namespace x86
     //! Primitive procedures.
     //! @{
 
+    auto cpu_age () -> size4;
+
     void cpuid_ (size4 feature, size4 variant, size4 * a, size4 * b, size4 * c, size4 * d);
 
     //! @}
@@ -107,17 +109,10 @@ namespace x86
 
 namespace x86
 {
-  namespace internal
-  {
-      extern "C"
-      [[gnu::fastcall]]
-      ps::size4 _x86_cpu_age ();
-  }
-
   inline
   auto has_cpuid () -> bool
   {
-    return internal::_x86_cpu_age() >= 4;
+    return cpu_age() >= 4;
   }
 
   inline constexpr
