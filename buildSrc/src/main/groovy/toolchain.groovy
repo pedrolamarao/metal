@@ -9,7 +9,7 @@ import org.gradle.nativeplatform.toolchain.NativeToolChainRegistry
 
 class ToolchainRules implements Plugin<Project>
 {
-    private static Provider<String> llvmPath;
+    private static Provider<String> llvmPath
 
     void apply (Project project)
     {
@@ -22,12 +22,12 @@ class ToolchainRules implements Plugin<Project>
         void configure (NativeToolChainRegistry toolChains, ServiceRegistry serviceRegistry)
         {
             toolChains.create 'multiboot-x86_32', Clang.class, {
-                path(llvmPath)
+                if (llvmPath.isPresent()) { path(llvmPath) }
                 target('windows-multiboot-x86_32', multiboot_x86_32)
                 target('linux-multiboot-x86_32', multiboot_x86_32)
             }
             toolChains.create 'uefi-x86_64', Clang.class, {
-                path(llvmPath)
+                if (llvmPath.isPresent()) { path(llvmPath) }
                 target('linux-uefi-x86_64', uefi_x86_64)
                 target('windows-uefi-x86_64', uefi_x86_64)
             }
