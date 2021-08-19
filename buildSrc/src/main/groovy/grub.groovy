@@ -29,7 +29,7 @@ abstract class GrubMakeImageBuilder extends QemuBase
 
     void source ( String path, File file )
     {
-        sources.add "\"${path}=${file}\""
+        sources.add "${path}=${file}"
     }
 
     void source ( String path, RegularFile file )
