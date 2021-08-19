@@ -9,12 +9,12 @@ plugins
 ext.tools = new Properties().tap { it.load( file('tools.properties').newReader() ) }
 
 group 'br.dev.pedrolamarao.psys'
-version '0.3.0-SNAPSHOT'
+version '0.4.0-SNAPSHOT'
 
 subprojects
 {
     group 'br.dev.pedrolamarao.psys'
-    version '0.3.0-SNAPSHOT'
+    version '0.4.0-SNAPSHOT'
 
     pluginManager.withPlugin('dev.nokee.cpp-application') { apply plugin: ToolchainRules }
     pluginManager.withPlugin('dev.nokee.cpp-library') { apply plugin: ToolchainRules }
