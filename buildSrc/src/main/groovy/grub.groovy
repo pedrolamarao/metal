@@ -17,8 +17,6 @@ abstract class GrubBase
 
 abstract class GrubMakeImageBuilder extends QemuBase
 {
-    abstract RegularFileProperty getCommand ();
-
     abstract ListProperty<String> getInstallModules ()
 
     abstract RegularFileProperty getImageFile ()
@@ -47,13 +45,12 @@ abstract class GrubMakeImageBuilder extends QemuBase
     String[] build ()
     {
         final ArrayList<String> args = []
-        args.add command.get()
         args.addAll '-O', platform.get()
         args.addAll '-o', imageFile.get()
         args.add '--themes='
         args.add '--fonts='
         args.add '--locales='
-        args.add "\"--install-modules=${ String.join(" ", installModules.get()) }\""
+        args.add "--install-modules=${ String.join(" ", installModules.get()) }"
         args.addAll sources.get()
         args.add '-v'
         return args
