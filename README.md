@@ -49,7 +49,7 @@ Psys is verified by automated tests.
 
 For more information, see [TEST](doc/TEST.md).
 
-To check: `./gradlew --no-parallel check`
+To check: `./gradlew check`
 
 # use
 
