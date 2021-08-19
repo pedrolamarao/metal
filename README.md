@@ -22,16 +22,14 @@ For more information, see [GOAL](doc/GOAL.md).
 
 Psys is built with an LLVM based toolset.
 
-You must configure the toolset by defining file `tools.properties`
-based on `tools.properties.default`.
-
 These tools are required:
 
 - GNU grub version 2
 - GNU gdb
-- GNU mtools
 - LLVM (clang, lld, llvm-ar) version 13
 - QEMU
+
+You may configure tools in `tools.properties`.
 
 For more information, see [TOOLS](doc/TOOLS.md).
 
