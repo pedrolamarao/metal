@@ -9,9 +9,8 @@
 #include <x86/port.h>
 
 
-//! Program entry point
+//! Psys multiboot2 program.
 
-extern "C"
 void main ( ps::size4 magic, multiboot2::information_list * response )
 {
     if (magic != multiboot2::information_magic) {
@@ -30,12 +29,10 @@ void main ( ps::size4 magic, multiboot2::information_list * response )
     return;
 }
 
-//! Multiboot 2
+//! Multiboot2 loader.
 
-namespace
+namespace multiboot2
 {
-    using namespace multiboot2;
-
     //! Multiboot2 request
 
     struct request_type
@@ -52,11 +49,10 @@ namespace
         { },
     };
 
-    //! Multiboot2 entry point with response
+    //! Multiboot2 entry point.
 
-    extern "C"
     constinit
-    unsigned char __multiboot2_stack [ 0x4000 ] {};
+    unsigned char multiboot2_stack [ 0x4000 ] {};
 
     extern "C"
     [[gnu::naked]]
@@ -64,7 +60,7 @@ namespace
     {
         __asm__
         {
-            mov esp, offset __multiboot2_stack + 0x4000
+            mov esp, offset multiboot2_stack + 0x4000
             xor ecx, ecx
             push ecx
             popf
