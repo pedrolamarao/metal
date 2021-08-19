@@ -101,7 +101,7 @@ abstract class TestMultibootImage extends DefaultTask
 {
     @InputFile abstract RegularFileProperty getExecutableFile ()
 
-    @Input abstract RegularFileProperty getGdbExecutable ()
+    @Input abstract Property<String> getGdbExecutable ()
 
     @InputFile abstract RegularFileProperty getImageFile ()
 
@@ -113,12 +113,10 @@ abstract class TestMultibootImage extends DefaultTask
 
     TestMultibootImage ()
     {
-        final providers = project.providers
-
         final gdbPath = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.gdb.path']
         final qemuPath = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.qemu.path']
 
-        gdbExecutable.convention = providers.provider { new File("${gdbPath}/gdb")}
+        gdbExecutable.convention gdbPath != null ? "${gdbPath}/gdb" : 'gdb'
         qemuExecutable.convention qemuPath != null ? "${qemuPath}/qemu-system-i386" : 'qemu-system-i386'
     }
 

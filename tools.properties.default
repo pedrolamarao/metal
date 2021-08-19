@@ -1,17 +1,11 @@
-# GDB search path (required)
-br.dev.pedrolamarao.psys.gdb.path = /usr/bin
+# GDB search path (default: system PATH)
+# br.dev.pedrolamarao.psys.gdb.path = /usr/bin
 
-# GRUB search path (required)
-br.dev.pedrolamarao.psys.grub.path = /usr/bin
+# GRUB search path (default: system PATH)
+# br.dev.pedrolamarao.psys.grub.path = /usr/bin
 
 # LLVM search path (default: system PATH)
 # br.dev.pedrolamarao.psys.mtools.path =
 
-# GNU mtools search path (required))
-br.dev.pedrolamarao.psys.mtools.path = /usr/bin
-
-# OVMF search path (required)
-br.dev.pedrolamarao.psys.ovmf.path = /usr/share/ovmf
-
-# QEMU search path (required))
-br.dev.pedrolamarao.psys.qemu.path = /usr/bin
+# QEMU search path (default: system PATH)
+# br.dev.pedrolamarao.psys.qemu.path = /usr/bin
