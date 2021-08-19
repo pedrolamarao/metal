@@ -16,7 +16,7 @@ extern "C"
     void _test_finish () { }
 }
 
-//! Multiboot 2 request
+//! Multiboot 2 loader.
 
 namespace
 {
@@ -36,11 +36,8 @@ namespace
         { },
     };
 
-    //! Multiboot2 entry point
-
-    extern "C"
     constinit
-    unsigned char __multiboot2_stack [ 0x4000 ] {};
+    unsigned char multiboot2_stack [ 0x4000 ] {};
 
     extern "C"
     [[gnu::naked]]
@@ -48,7 +45,7 @@ namespace
     {
         __asm__
         {
-            mov esp, offset __multiboot2_stack + 0x4000
+            mov esp, offset multiboot2_stack + 0x4000
             xor ecx, ecx
             push ecx
             popf

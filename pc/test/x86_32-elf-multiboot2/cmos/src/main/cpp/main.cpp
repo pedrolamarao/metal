@@ -128,9 +128,8 @@ namespace multiboot2
 {
     //! Multiboot2 entry point
 
-    extern "C"
     constinit
-    unsigned char __multiboot2_stack [ 0x4000 ] {};
+    unsigned char multiboot2_stack [ 0x4000 ] {};
 
     extern "C"
     [[gnu::naked]]
@@ -138,7 +137,7 @@ namespace multiboot2
     {
         __asm__
         {
-            mov esp, offset __multiboot2_stack + 0x4000
+            mov esp, offset multiboot2_stack + 0x4000
             xor ecx, ecx
             push ecx
             popf
