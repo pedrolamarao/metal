@@ -42,7 +42,6 @@ extern "C"
 
 //! Multiboot2 entry point
 
-extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
     pc::cmos<x86::port> cmos { 0x70, 0x71 };

@@ -42,8 +42,6 @@ extern "C"
 //!
 //! @see start.S
 
-extern "C"
-[[gnu::fastcall]]
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
     _test_control = 1;

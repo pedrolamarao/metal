@@ -74,7 +74,6 @@ extern "C"
 
 // Psys multiboot2 program.
 
-extern "C"
 void main ( ps::size4 magic, multiboot2::information_list & mbi )
 {
     using namespace multiboot2;

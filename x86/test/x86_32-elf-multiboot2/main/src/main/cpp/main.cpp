@@ -41,7 +41,6 @@ extern "C"
 
 //! Multiboot2 entry point
 
-extern "C"
 void main ( ps::size4 magic, multiboot2::information_list * response )
 {
     _test_control = 1;
