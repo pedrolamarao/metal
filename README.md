@@ -6,7 +6,7 @@ Welcome to the Psys project!
 
 Psys is a research project on "bare metal" software engineering.
 
-For more information on this projects mission, ambitions and aims, see [GOAL](doc/GOAL.md).
+For more information on this project's mission, ambitions and aims, see [GOAL](doc/GOAL.md).
 
 # prepare
 
