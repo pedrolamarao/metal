@@ -1,20 +1,10 @@
-// Copyright (C) 2020 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <multiboot2/header.h>
 #include <multiboot2/information.h>
 
-
-//! Psys test protocol
-
-extern "C"
-{
-    [[gnu::used]] unsigned volatile _test_control {};
-	[[gnu::used]] unsigned volatile _test_debug {};
-
-    void _test_start () { }
-    void _test_finish () { }
-}
+#include <psys/test.h>
 
 //! Multiboot 2 request
 

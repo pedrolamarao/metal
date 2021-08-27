@@ -3,14 +3,8 @@
 #include <multiboot2/header.h>
 #include <multiboot2/information.h>
 
+#include <psys/test.h>
 
-//! Psys test protocol.
-
-extern "C"
-{
-    extern void _test_start ();
-    extern void _test_finish ();
-}
 
 //! Multiboot2 loader protocol.
 

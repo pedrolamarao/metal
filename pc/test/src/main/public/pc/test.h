@@ -2,10 +2,4 @@
 
 #pragma once
 
-//! Psys test protocol
-
-extern "C"
-{
-    extern decltype(sizeof(nullptr)) volatile _test_control;
-    extern decltype(sizeof(nullptr)) volatile _test_debug;
-}
+#include <psys/test.h>
