@@ -35,14 +35,22 @@ class ToolchainRules implements Plugin<Project>
 
         static final multiboot_x86_32 = { platform ->
             platform.assembler.executable = 'clang'
-            platform.assembler.withArguments { addAll '-target', 'i386-elf' }
+            platform.assembler.withArguments {
+                addAll '-target', 'i386-elf', '-gdwarf'
+            }
             platform.cCompiler.executable = 'clang'
-            platform.cCompiler.withArguments { addAll '-target', 'i386-elf', '-ffreestanding', '-nostdinc' }
+            platform.cCompiler.withArguments {
+                addAll '-target', 'i386-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
+            }
             platform.cppCompiler.executable = 'clang++'
-            platform.cppCompiler.withArguments { addAll '-target', 'i386-elf', '-ffreestanding', '-nostdinc' }
+            platform.cppCompiler.withArguments {
+                addAll '-target', 'i386-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
+            }
             platform.linker.executable = 'clang'
             // #XXX: clang can't link target i386-elf with lld
-            platform.linker.withArguments { addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-nostdlib' }
+            platform.linker.withArguments {
+                addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib'
+            }
             platform.staticLibArchiver.executable = 'llvm-ar'
         }
 

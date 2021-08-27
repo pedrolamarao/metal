@@ -17,7 +17,7 @@ library
 
     binaries.configureEach {
         compileTasks.configureEach {
-            compilerArgs.addAll '-std=c++20', '-fasm-blocks', '-flto', '-gdwarf'
+            compilerArgs.addAll '-std=c++20', '-fasm-blocks', '-flto'
         }
     }
 }
