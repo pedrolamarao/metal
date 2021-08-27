@@ -13,9 +13,6 @@ extern "C"
 {
     [[gnu::used]] unsigned volatile _test_control {};
     [[gnu::used]] unsigned volatile _test_debug {};
-
-    void _test_start () { }
-    void _test_finish () { }
 }
 
 //! Multiboot2 application procedure.

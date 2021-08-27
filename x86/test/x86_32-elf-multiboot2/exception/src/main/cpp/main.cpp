@@ -61,9 +61,6 @@ namespace
 {
     extern "C" [[gnu::used]] unsigned volatile _test_control {};
     extern "C" [[gnu::used]] unsigned volatile _test_debug {};
-
-    extern "C" void _test_start () { }
-    extern "C" void _test_finish () { }
 }
 
 // Psys multiboot2 program.
