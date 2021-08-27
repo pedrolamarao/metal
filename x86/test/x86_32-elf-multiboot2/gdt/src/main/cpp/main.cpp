@@ -43,7 +43,7 @@ extern "C"
 
 //! Multiboot2 entry point
 
-void main ( ps::size4 magic, multiboot2::information_list & mbi )
+void main ( multiboot2::information_list & mbi )
 {
     using namespace x86;
 

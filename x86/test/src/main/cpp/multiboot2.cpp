@@ -36,7 +36,7 @@ namespace multiboot2
 //! Multiboot2 application procedure.
 
 extern
-void main ( ps::size4 magic, multiboot2::information_list & mbi );
+void main ( multiboot2::information_list & mbi );
 
 namespace multiboot2
 {
@@ -44,6 +44,9 @@ namespace multiboot2
 
     constinit
     unsigned char stack [ 0x4000 ] {};
+
+    // #XXX: Clang is not capable of assembling cmp with _ExtInt
+    constexpr unsigned _magic = information_magic;
 
     extern "C"
     [[gnu::naked]]
@@ -55,14 +58,15 @@ namespace multiboot2
             xor ecx, ecx
             push ecx
             popf
+            cmp eax, _magic
+            jne halt
             call _test_start
             push ebx
-            push eax
             call main
             call _test_finish
-            __multiboot2_halt:
+            halt:
             hlt
-            jmp __multiboot2_halt
+            jmp halt
         }
     }
 }

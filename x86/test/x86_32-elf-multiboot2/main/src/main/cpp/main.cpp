@@ -16,25 +16,11 @@ extern "C"
 
 //! Multiboot2 entry point
 
-void main ( ps::size4 magic, multiboot2::information_list & response )
+void main ( multiboot2::information_list & response )
 {
     _test_control = 1;
 
-    if (magic == 0) {
-        _test_control = 0;
-        return;
-    }
-
-    _test_control = 2;
-
     if ((& response) == nullptr) {
-        _test_control = 0;
-        return;
-    }
-
-    _test_control = 3;
-
-    if (magic != multiboot2::information_magic) {
         _test_control = 0;
         return;
     }

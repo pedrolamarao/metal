@@ -65,20 +65,10 @@ namespace
 
 // Psys multiboot2 program.
 
-void main ( ps::size4 magic, multiboot2::information_list & mbi )
+void main ( multiboot2::information_list & mbi )
 {
-    using namespace multiboot2;
     using namespace ps;
     using namespace x86;
-
-    // verify boot sanity
-
-    _test_control = 1;
-
-    if (magic != multiboot2::information_magic) {
-        _test_control = 0;
-        return;
-    }
 
     // set the GDT register and set segment registers
 

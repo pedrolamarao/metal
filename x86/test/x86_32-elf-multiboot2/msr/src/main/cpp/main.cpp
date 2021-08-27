@@ -21,18 +21,9 @@ extern "C"
 
 //! Multiboot2 entry point
 
-void main ( ps::size4 magic, multiboot2::information_list & mbi )
+void main ( multiboot2::information_list & mbi )
 {
     using namespace x86;
-
-    // multiboot2
-
-    _test_control = 1;
-
-    if (magic != multiboot2::information_magic) {
-        _test_control = 0;
-        return;
-    }
 
     // cpuid
 
