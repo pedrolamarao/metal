@@ -11,6 +11,7 @@
 #include <x86/port.h>
 
 #include <pc/pic.h>
+#include <pc/test.h>
 #include <pc/uart.h>
 
 
@@ -28,32 +29,12 @@ namespace x86
     void set_interrupt_descriptor_table_register ();
 }
 
-// Psys test protocol.
+// Multiboot2 application procedure.
 
-namespace
+void main ( multiboot2::information_list & mbi )
 {
-    extern "C" [[gnu::used]] unsigned volatile _test_control {};
-    extern "C" [[gnu::used]] unsigned volatile _test_debug {};
-    extern "C" [[gnu::used]] void _test_start () {};
-    extern "C" [[gnu::used]] void _test_finish () {};
-}
-
-// Psys multiboot2 program.
-
-void main ( ps::size4 magic, multiboot2::information_list & mbi )
-{
-    using namespace multiboot2;
     using namespace pc::uart;
     using namespace x86;
-
-    // test: verify boot sanity
-
-    _test_control = 1;
-
-    if (magic != multiboot2::information_magic) {
-        _test_control = 0;
-        return;
-    }
 
     // set the GDT register and set segment registers
 
@@ -328,48 +309,5 @@ namespace x86
         }
 
         set_interrupt_descriptor_table_register(interrupt_descriptor_table);
-    }
-}
-
-//! Multiboot2 loader.
-
-namespace multiboot2
-{
-    struct request_type
-    {
-        header_prologue prologue;
-        end_request     end;
-    };
-
-    [[gnu::used, gnu::section(".multiboot2")]]
-    constinit
-    request_type request =
-    {
-        { architecture_type::x86, sizeof(request), },
-        { },
-    };
-
-    constinit
-    unsigned char multiboot2_stack [ 0x4000 ] {};
-
-    extern "C"
-    [[gnu::naked]]
-    void __multiboot2_start ()
-    {
-        __asm__
-        {
-            mov esp, offset multiboot2_stack + 0x4000
-            xor ecx, ecx
-            push ecx
-            popf
-            call _test_start
-            push ebx
-            push eax
-            call main
-            call _test_finish
-            __multiboot2_halt:
-            hlt
-            jmp __multiboot2_halt
-        }
     }
 }
