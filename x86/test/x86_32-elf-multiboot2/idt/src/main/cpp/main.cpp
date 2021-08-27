@@ -3,7 +3,6 @@
 
 #include <psys/integer.h>
 
-#include <multiboot2/header.h>
 #include <multiboot2/information.h>
 
 #include <x86/gdt.h>
@@ -215,21 +214,8 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
 
 namespace multiboot2
 {
-    struct request_type
-    {
-        header_prologue prologue;
-        end_request     end;
-    };
-
-    [[gnu::used, gnu::section(".multiboot2")]]
-    constexpr request_type request =
-    {
-        { architecture_type::x86, sizeof(request), },
-        { },
-    };
-
-    constinit
-    unsigned char multiboot2_stack [ 0x4000 ] {};
+    extern
+    unsigned char stack [ 0x4000 ];
 
     extern "C"
     [[gnu::naked]]
@@ -237,7 +223,7 @@ namespace multiboot2
     {
         __asm__
         {
-            mov esp, offset multiboot2_stack + 0x4000
+            mov esp, offset stack + 0x4000
             xor ecx, ecx
             push ecx
             popf

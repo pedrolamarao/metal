@@ -3,7 +3,6 @@
 
 #include <psys/integer.h>
 
-#include <multiboot2/header.h>
 #include <multiboot2/information.h>
 
 #include <x86/cpuid.h>
@@ -11,25 +10,6 @@
 #include <x86/idt.h>
 #include <x86/msr.h>
 
-
-//! Multiboot2 minimal request for ELF program
-
-namespace
-{
-    struct request_type
-    {
-        multiboot2::header_prologue prologue;
-        multiboot2::end_request     end;
-    };
-
-    [[gnu::used, gnu::section(".multiboot2")]]
-    constinit
-    request_type request =
-    {
-        { multiboot2::architecture_type::x86, sizeof(request), },
-        { },
-    };
-}
 
 //! Test result
 
@@ -100,8 +80,8 @@ namespace multiboot2
 {
     //! Multiboot2 entry point
 
-    constinit
-    unsigned char multiboot2_stack [ 0x4000 ] {};
+    extern
+    unsigned char stack [ 0x4000 ];
 
     extern "C"
     [[gnu::naked]]
@@ -109,7 +89,7 @@ namespace multiboot2
     {
         __asm__
         {
-            mov esp, offset multiboot2_stack + 0x4000
+            mov esp, offset stack + 0x4000
             xor ecx, ecx
             push ecx
             popf
