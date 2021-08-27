@@ -9,15 +9,10 @@
 #include <x86/port.h>
 
 
-//! Psys multiboot2 program.
+//! Multiboot2 application procedure.
 
-void main ( ps::size4 magic, multiboot2::information_list * response )
+void main ( multiboot2::information_list & response )
 {
-    if (magic != multiboot2::information_magic) {
-        // oops.
-        return;
-    }
-
     // Look for this output in QEMU debugcon!
 
     auto debug = x86::port<1>(0xE9);
@@ -29,11 +24,11 @@ void main ( ps::size4 magic, multiboot2::information_list * response )
     return;
 }
 
-//! Multiboot2 loader.
+//! Multiboot2 loader protocol.
 
 namespace multiboot2
 {
-    //! Multiboot2 request
+    //! Multiboot2 request.
 
     struct request_type
     {
@@ -49,24 +44,31 @@ namespace multiboot2
         { },
     };
 
-    //! Multiboot2 entry point.
+    //! Multiboot2 start procedure.
 
     constinit
-    unsigned char multiboot2_stack [ 0x4000 ] {};
+    unsigned char stack [ 0x4000 ] {};
+
+    // #XXX: Clang cannot assemble cmp with _ExtInt.
+    constexpr unsigned _magic = information_magic;
 
     extern "C"
     [[gnu::naked]]
-    void __multiboot2_start ()
+    void multiboot2_start ()
     {
         __asm__
         {
-            mov esp, offset multiboot2_stack + 0x4000
+            mov esp, offset stack + 0x4000
             xor ecx, ecx
             push ecx
             popf
-            __multiboot2_halt:
+            cmp eax, _magic
+            jne halt
+            push ebx
+            call main
+            halt:
             hlt
-            jmp __multiboot2_halt
+            jmp halt
         }
     }
 }
