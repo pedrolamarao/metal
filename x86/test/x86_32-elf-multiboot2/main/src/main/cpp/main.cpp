@@ -1,20 +1,14 @@
-// Copyright (C) 2020 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <psys/integer.h>
 
 #include <multiboot2/information.h>
 
+#include <x86/test.h>
 
-//! Test result
 
-extern "C"
-{
-    [[gnu::used]] unsigned volatile _test_control {};
-    [[gnu::used]] unsigned volatile _test_debug {};
-}
-
-//! Multiboot2 entry point
+//! Multiboot2 application procedure.
 
 void main ( multiboot2::information_list & response )
 {

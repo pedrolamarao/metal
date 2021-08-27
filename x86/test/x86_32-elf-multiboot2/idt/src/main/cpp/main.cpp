@@ -1,4 +1,4 @@
-// Copyright (C) 2020,2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <psys/integer.h>
@@ -7,6 +7,7 @@
 
 #include <x86/gdt.h>
 #include <x86/idt.h>
+#include <x86/test.h>
 
 
 // x86-32 architecture.
@@ -60,15 +61,7 @@ namespace x86
     }
 }
 
-// Psys test protocol.
-
-extern "C"
-{
-    [[gnu::used]] unsigned volatile _test_control {};
-    [[gnu::used]] unsigned volatile _test_debug {};
-}
-
-// Psys multiboot2 program.
+// Multiboot2 application procedure.
 
 void main ( multiboot2::information_list & mbi )
 {

@@ -7,6 +7,7 @@
 
 #include <x86/gdt.h>
 #include <x86/idt.h>
+#include <x86/test.h>
 
 
 // x86-32 architecture.
@@ -55,15 +56,7 @@ namespace x86
     void __x86_interrupt_FF ();
 }
 
-// Psys test protocol.
-
-namespace
-{
-    extern "C" [[gnu::used]] unsigned volatile _test_control {};
-    extern "C" [[gnu::used]] unsigned volatile _test_debug {};
-}
-
-// Psys multiboot2 program.
+// Multiboot2 application procedure.
 
 void main ( multiboot2::information_list & mbi )
 {

@@ -6,9 +6,10 @@
 #include <multiboot2/information.h>
 
 #include <x86/gdt.h>
+#include <x86/test.h>
 
 
-// IA32 GDT
+// x86-32 architecture.
 
 namespace x86
 {
@@ -33,15 +34,7 @@ namespace x86
     };
 }
 
-//! Psys test protocol
-
-extern "C"
-{
-    [[gnu::used]] unsigned volatile _test_control {};
-    [[gnu::used]] unsigned volatile _test_debug {};
-}
-
-//! Multiboot2 entry point
+//! Multiboot2 application procedure.
 
 void main ( multiboot2::information_list & mbi )
 {
