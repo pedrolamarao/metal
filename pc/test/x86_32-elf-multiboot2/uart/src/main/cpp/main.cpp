@@ -3,7 +3,6 @@
 
 #include <psys/integer.h>
 
-#include <multiboot2/header.h>
 #include <multiboot2/information.h>
 
 #include <x86/gdt.h>
