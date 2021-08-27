@@ -13,7 +13,7 @@ library
     final os = org.gradle.internal.os.OperatingSystem.current().getName()
     targetMachines = [ machines.os(os).architecture('-multiboot-x86_32') ]
 
-    dependencies.api project(':multiboot2')
+    dependencies.implementation project(':multiboot2')
 
     binaries.configureEach {
         compileTasks.configureEach {

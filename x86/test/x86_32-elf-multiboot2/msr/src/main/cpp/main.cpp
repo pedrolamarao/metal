@@ -75,32 +75,3 @@ void main ( ps::size4 magic, multiboot2::information_list & mbi )
     _test_control = -1;
     return;
 }
-
-namespace multiboot2
-{
-    //! Multiboot2 entry point
-
-    extern
-    unsigned char stack [ 0x4000 ];
-
-    extern "C"
-    [[gnu::naked]]
-    void __multiboot2_start ()
-    {
-        __asm__
-        {
-            mov esp, offset stack + 0x4000
-            xor ecx, ecx
-            push ecx
-            popf
-            call _test_start
-            push ebx
-            push eax
-            call main
-            call _test_finish
-            __multiboot2_halt:
-            hlt
-            jmp __multiboot2_halt
-        }
-    }
-}

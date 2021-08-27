@@ -33,7 +33,7 @@ subprojects
             }
             linkTask.get().with {
                 linkerArgs.addAll baseArgs
-                linkerArgs.addAll '-Wl,-Ttext=0x1000', '-Wl,--entry=__multiboot2_start'
+                linkerArgs.addAll '-Wl,-Ttext=0x1000', '-Wl,--entry=multiboot2_start'
             }
         }
     }
