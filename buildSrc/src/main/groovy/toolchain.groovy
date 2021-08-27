@@ -49,7 +49,9 @@ class ToolchainRules implements Plugin<Project>
             platform.linker.executable = 'clang'
             // #XXX: clang can't link target i386-elf with lld
             platform.linker.withArguments {
-                addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib'
+                addAll '-target', 'i386-linux-elf',
+                    '-fuse-ld=lld', '-gdwarf', '-nostdlib',
+                    '-Wl,--entry=multiboot2_start'
             }
             platform.staticLibArchiver.executable = 'llvm-ar'
         }

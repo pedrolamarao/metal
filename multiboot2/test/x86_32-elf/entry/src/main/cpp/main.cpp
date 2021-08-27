@@ -45,7 +45,7 @@ namespace multiboot2
 
     extern "C"
     [[gnu::naked]]
-    void __multiboot2_start ()
+    void multiboot2_start ()
     {
         __asm__
         {
