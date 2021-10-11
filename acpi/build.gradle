@@ -3,7 +3,10 @@
 plugins
 {
     id 'dev.nokee.cpp-library'
+    id 'dev.nokee.native-unit-testing'
 }
+
+import dev.nokee.testing.nativebase.NativeTestSuite
 
 library
 {
@@ -11,7 +14,10 @@ library
 
     // #XXX: Nokee can't cross compile to system "none"
     final none = org.gradle.internal.os.OperatingSystem.current().getName()
-    targetMachines = [ machines.os(none).architecture('-multiboot-x86_32') ]
+    targetMachines = [
+        machines.os(none).architecture('-multiboot-x86_32'),
+        machines.windows.x86_64
+    ]
 
     dependencies.api project(':psys')
 
@@ -22,3 +28,22 @@ library
     }
 }
 
+testSuites
+{
+    test(NativeTestSuite)
+    {
+        testedComponent library
+
+        dependencies.implementation project(':googletest')
+
+        binaries.configureEach {
+            compileTasks.configureEach {
+                compilerArgs.addAll '-std=c++20', '-flto'
+            }
+            linkTask.get().with {
+                // #XXX: Nokee ignores toolchain linker arguments
+                linkerArgs.addAll '-fuse-ld=lld', '-flto'
+            }
+        }
+    }
+}

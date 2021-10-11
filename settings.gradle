@@ -45,6 +45,8 @@ rootProject.name = 'psys'
 
 include 'acpi'
 
+include 'googletest'
+
 include 'multiboot2'
 new File(rootDir, 'multiboot2/test/x86_32-elf').eachDir {
     include "multiboot2:test:x86_32-elf:${it.name}"

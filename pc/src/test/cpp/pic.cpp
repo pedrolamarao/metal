@@ -4,31 +4,25 @@
 
 namespace
 {
-    template <typename Size>
+    template <unsigned Size>
     class port
     {
     public:
 
-        static_assert(sizeof(Size) == 1, "unexpected size");
+        typedef _ExtInt(16) address_type;
 
-        port (std::uint16_t address)
-        {
-        }
+        typedef _ExtInt(Size * 8) data_type;
 
-        Size read (Size)
-        {
+        port (address_type address) { }
 
-        }
+        data_type read () { return data_type{} }
 
-        void write (Size value)
-        {
-
-        }
+        void write (data_type value) { }
 
     };
 
     TEST(pic, smoke)
     {
-        pc::pic<port> pic { 0 };
+        pc::pic<port> pic { 0, 0 };
     }
 }

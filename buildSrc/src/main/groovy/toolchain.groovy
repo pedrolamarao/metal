@@ -21,16 +21,26 @@ class ToolchainRules implements Plugin<Project>
         @Finalize
         void configure (NativeToolChainRegistry toolChains, ServiceRegistry serviceRegistry)
         {
-            toolChains.create 'multiboot-x86_32', Clang.class, {
+            toolChains.create('llvm', Clang.class, {
                 if (llvmPath.isPresent()) { path(llvmPath) }
+                // host
+                target('windowsx86-64', host)
+                // multiboot-x86_32
                 target('windows-multiboot-x86_32', multiboot_x86_32)
                 target('linux-multiboot-x86_32', multiboot_x86_32)
-            }
-            toolChains.create 'uefi-x86_64', Clang.class, {
-                if (llvmPath.isPresent()) { path(llvmPath) }
+                // uefi-x86_64
                 target('linux-uefi-x86_64', uefi_x86_64)
                 target('windows-uefi-x86_64', uefi_x86_64)
-            }
+            })
+        }
+
+        static final host = { platform ->
+            platform.assembler.executable = 'clang'
+            platform.cCompiler.executable = 'clang'
+            platform.cppCompiler.executable = 'clang++'
+            platform.linker.executable = 'clang'
+            platform.linker.withArguments { '-fuse-ld=lld' }
+            platform.staticLibArchiver.executable = 'llvm-ar'
         }
 
         static final multiboot_x86_32 = { platform ->
