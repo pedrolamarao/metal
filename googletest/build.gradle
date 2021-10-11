@@ -1,26 +1,18 @@
-// settings
-
 plugins
 {
-    id 'cpp-library'
+    id 'dev.nokee.cpp-library'
 }
-
-// project
-
-group 'com.github.google'
-version '1.10.0'
 
 library
 {
-    linkage = [ Linkage.STATIC ]
-    
-    source.from 'src/gtest-all.cc'
-    privateHeaders.from '.'
+    targetLinkages = [ linkages.static ]
+
     publicHeaders.from 'include'
-    
+    privateHeaders.from '.'
+
     binaries.configureEach {
-    	def compiler = compileTask.get()
-    	compiler.compilerArgs.addAll '-stdlib=libc++', '-std=c++17', '-Wall', '-Werror'
-        compiler.macros.put 'GTEST_HAS_PTHREAD', '0'
+        compileTasks.configureEach {
+            compilerArgs.addAll '-std=c++17', '-flto'
+        }
     }
 }
