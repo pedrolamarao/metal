@@ -1,4 +1,4 @@
-Date: 2021-08-19
+Date: 2021-10-12
 
 # tools
 
@@ -25,16 +25,15 @@ Quick start:
 sudo apt install \
  gdb \
  grub2 \
+ libstdc++-11-dev \
  openjdk-11-jdk-headless \
  qemu-system
 
-sudo wget -O - https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0-rc1/clang+llvm-13.0.0-rc1-x86_64-linux-gnu-ubuntu-21.04.tar.xz | sudo tar -xJf - -C /opt
+sudo wget -O - https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0-rc2/clang+llvm-13.0.0-rc2-x86_64-linux-gnu-ubuntu-21.04.tar.xz | sudo tar -xJf - -C /opt
 ```
 
 Edit `tools.properties` with appropriate values for LLVM.
 Alternatively, add LLVM to `PATH`.
-
-Also, Ubuntu 21.04 on WSL 2 (upgraded from 20.04) has been verified to work.
 
 ## windows
 
