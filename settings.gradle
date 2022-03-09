@@ -33,7 +33,7 @@ pluginManagement
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("dev.nokee.")) {
-                useModule("${requested.id.id}:${requested.id.id}.gradle.plugin:0.4.479-202110050928.48a563d9")
+                useModule("${requested.id.id}:${requested.id.id}.gradle.plugin:0.4.0-202112012027.ff552c41")
             }
         }
     }
