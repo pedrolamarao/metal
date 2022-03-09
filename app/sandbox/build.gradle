@@ -2,7 +2,7 @@
 
 plugins
 {
-    id 'dev.nokee.cpp-application'
+    id 'psys-application'
     id 'br.dev.pedrolamarao.gdb'
 }
 

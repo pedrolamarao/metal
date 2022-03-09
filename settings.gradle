@@ -5,6 +5,8 @@ pluginManagement
         id 'br.dev.pedrolamarao.gdb' version '1.0.0-SNAPSHOT'
     }
 
+    includeBuild 'gradle/plugins'
+
     repositories
     {
         maven {
@@ -28,14 +30,6 @@ pluginManagement
             url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
         }
         gradlePluginPortal()
-    }
-
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id.startsWith("dev.nokee.")) {
-                useModule("${requested.id.id}:${requested.id.id}.gradle.plugin:0.4.0-202112012027.ff552c41")
-            }
-        }
     }
 }
 

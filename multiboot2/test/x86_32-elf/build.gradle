@@ -7,8 +7,8 @@ subprojects
 {
     // settings
 
+    apply plugin: 'psys-application'
     apply plugin: 'br.dev.pedrolamarao.gdb'
-    apply plugin: 'dev.nokee.cpp-application'
 
     // project
     

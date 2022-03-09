@@ -1,4 +1,0 @@
-dependencies
-{
-    implementation 'dev.nokee.cpp-library:dev.nokee.cpp-library.gradle.plugin:0.4.0-202112012027.ff552c41'
-}

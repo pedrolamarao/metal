@@ -1,0 +1,12 @@
+plugins
+{
+    id 'groovy-gradle-plugin'
+}
+
+final nokee = '0.4.0-202112012027.ff552c41'
+
+dependencies
+{
+    implementation "dev.nokee.cpp-library:dev.nokee.cpp-library.gradle.plugin:${nokee}"
+    implementation "dev.nokee.native-unit-testing:dev.nokee.native-unit-testing.gradle.plugin:${nokee}"
+}
