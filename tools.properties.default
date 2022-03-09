@@ -5,6 +5,9 @@
 # br.dev.pedrolamarao.psys.grub.path = /usr/bin
 
 # LLVM search path (default: system PATH)
+# br.dev.pedrolamarao.psys.llvm.path =
+
+# Mtools search path (default: system PATH)
 # br.dev.pedrolamarao.psys.mtools.path =
 
 # QEMU search path (default: system PATH)
