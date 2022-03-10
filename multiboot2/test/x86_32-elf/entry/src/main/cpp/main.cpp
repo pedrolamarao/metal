@@ -6,10 +6,35 @@
 
 #include <psys/test.h>
 
-//! Multiboot 2 request
+
+//! Test.
+
+namespace
+{
+    //! Uninteresting test procedure.
+    //! Did we correctly define the Multiboot2 entry point?
+
+    [[gnu::used]]
+    void test ()
+    {
+        _test_control = 1;
+        _test_control = -1;
+    }
+
+    //! Very large initialized data.
+    //! Did we correctly position the Multiboot2 request object?
+
+    [[gnu::used]]
+    constinit
+    char test_data [ 0x8000 ] { -1 };
+}
+
+//! Multiboot 2 loader.
 
 namespace multiboot2
 {
+    //! Multiboot2 request.
+
     struct request_type
     {
         header_prologue        prologue;
@@ -17,9 +42,10 @@ namespace multiboot2
         end_request            end;
     };
 
-    // Assumption: the .text section begins with __multiboot2_start at address 0x1000
+    // Assumption: multiboot2_start is located at physical address 0x1000
+    //! Did we correctly position the Multiboot2 entry point?
 
-    [[gnu::used, gnu::section(".multiboot2")]]
+    [[gnu::used, gnu::section(".multiboot2.request")]]
     constinit
     request_type request =
     {
@@ -28,13 +54,16 @@ namespace multiboot2
         { },
     };
 
-    //! Multiboot2 entry point with response
+    //! Multiboot2 entry point stack.
 
+    [[gnu::section(".multiboot2.stack")]]
     constinit
     unsigned char multiboot2_stack [ 0x4000 ] {};
 
+    //! Multiboot2 entry point.
+
     extern "C"
-    [[gnu::naked]]
+    [[gnu::naked, gnu::section(".multiboot2.start")]]
     void multiboot2_start ()
     {
         __asm__
@@ -44,8 +73,7 @@ namespace multiboot2
             push ecx
             popf
             call _test_start
-            mov _test_control, 1
-            mov _test_control, -1
+            call test
             call _test_finish
             __multiboot2_halt:
             hlt
