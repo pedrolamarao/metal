@@ -12,9 +12,10 @@ library
     targetLinkages = [ linkages.static ]
 
     // #XXX: Nokee can't cross compile to system "none"
-    final os = org.gradle.internal.os.OperatingSystem.current().getName()
+    final none = org.gradle.internal.os.OperatingSystem.current().getName()
     targetMachines = [
-        machines.os(os).architecture('-multiboot-x86_32'),
+        machines.os(none).architecture('-multiboot-x86_32'),
+        machines.os(none).architecture('-multiboot-x86_64'),
         machines.linux.x86_64,
         machines.windows.x86_64,
     ]
