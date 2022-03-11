@@ -5,6 +5,7 @@ plugins {
 val tools = java.util.Properties()
 tools.load(java.io.FileReader(file("tools.properties")))
 ext["tools"] = tools
+extensions.add("tools", tools)
 
 allprojects {
     group = "br.dev.pedrolamarao.psys"

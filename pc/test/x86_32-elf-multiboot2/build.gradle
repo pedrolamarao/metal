@@ -33,7 +33,7 @@ subprojects
         }
     }
 
-    final createImage = tasks.register('createImage', CreateMultibootImage) {
+    final createImage = tasks.register('createImage', MultibootCreateImageTask) {
         group = 'psys'
         dependsOn assemble
         inputFile = providers.provider {

@@ -1,7 +1,10 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkerExecutor
 
@@ -10,59 +13,6 @@ import java.time.Duration
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
-
-abstract class CreateMultibootImage extends DefaultTask
-{
-    @InputFile abstract RegularFileProperty getInputFile ()
-
-    @Input abstract Property<String> getCommand ()
-
-    @OutputFile abstract RegularFileProperty getOutputFile ()
-
-    @Inject abstract ExecOperations getExecOperations ()
-
-    CreateMultibootImage ()
-    {
-        final layout = project.layout
-        final tools = project.rootProject.ext.tools
-
-        final grubPath = tools['br.dev.pedrolamarao.psys.grub.path']
-
-        command.convention grubPath != null ? "${grubPath}/grub-mkstandalone" : 'grub-mkstandalone'
-
-        outputFile.convention = inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${it.asFile.name}/image") }
-    }
-
-    static final String grub_cfg =
-        "default=0\r\n" +
-        "timeout=0\r\n" +
-        "\r\n" +
-        "menuentry psys {\r\n" +
-        "   multiboot2 (memdisk)/program\r\n" +
-        "}\r\n"
-
-    @TaskAction void action ()
-    {
-        final configurationFile = new File(temporaryDir, 'grub.cfg').tap {
-            createNewFile()
-            withReader { write(grub_cfg) }
-        }
-
-        final builder = project.objects.newInstance(GrubMakeImageBuilder)
-        builder.platform = 'i386-pc'
-        builder.imageFile = outputFile
-        builder.installModules = [ 'configfile', 'memdisk', 'multiboot2', 'normal' ]
-        builder.source '/boot/grub/grub.cfg', configurationFile
-        builder.source '/program', inputFile
-
-        execOperations.exec {
-            executable command.get()
-            args builder.build()
-            errorOutput = new File(temporaryDir, 'grub-mkstandalone.err.txt').newOutputStream()
-            standardOutput = new File(temporaryDir, 'grub-mkstandalone.out.txt').newOutputStream()
-        }
-    }
-}
 
 abstract class RunMultibootImage extends DefaultTask
 {
