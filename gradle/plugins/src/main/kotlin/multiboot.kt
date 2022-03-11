@@ -1,10 +1,7 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.ExecOperations
@@ -62,6 +59,45 @@ abstract class MultibootCreateImageTask : DefaultTask()
             argumentProviders += builder
             errorOutput = File(temporaryDir, "grub-mkstandalone.err.txt").outputStream()
             standardOutput = File(temporaryDir, "grub-mkstandalone.out.txt").outputStream()
+        }
+    }
+}
+
+abstract class MultibootRunImageTask : DefaultTask()
+{
+    @get:InputFile
+    abstract val imageFile : RegularFileProperty
+
+    @get:Nested
+    abstract val qemuArgs : QemuSystemEditor
+
+    @get:Nested
+    abstract val qemuExecutable : Property<String>
+
+    @get:Inject
+    abstract val execOperations : ExecOperations
+
+    init
+    {
+        val tools = project.rootProject.extensions["tools"] as java.util.Properties
+        val path = tools["br.dev.pedrolamarao.psys.qemu.path"]
+        qemuExecutable.convention( if (path != null) "${path}/qemu-system-i386" else "qemu-system-i386" )
+
+        qemuArgs.debugConsole.convention("vc")
+        qemuArgs.kernel.convention(imageFile)
+        qemuArgs.gdb.convention("tcp:localhost:12345")
+        qemuArgs.machine.convention("q35")
+        qemuArgs.stop.convention(true)
+    }
+
+    @TaskAction
+    fun action ()
+    {
+        execOperations.exec {
+            executable = qemuExecutable.get()
+            argumentProviders += qemuArgs
+            errorOutput = File(temporaryDir, "qemu.err.txt").outputStream()
+            standardOutput = File(temporaryDir, "qemu.out.txt").outputStream()
         }
     }
 }

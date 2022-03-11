@@ -5,7 +5,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
-import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkerExecutor
 
 import javax.inject.Inject
@@ -13,39 +12,6 @@ import java.time.Duration
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
-
-abstract class RunMultibootImage extends DefaultTask
-{
-    @InputFile abstract RegularFileProperty getImageFile ()
-
-    @Nested abstract QemuCommandEditor getQemuArgs ()
-
-    @Nested abstract Property<String> getQemuExecutable ()
-
-    @Inject abstract ExecOperations getExecOperations ()
-
-    RunMultibootImage ()
-    {
-        final path = project.rootProject.ext.tools['br.dev.pedrolamarao.psys.qemu.path']
-        qemuExecutable.convention path != null ? "${path}/qemu-system-i386" : 'qemu-system-i386'
-
-        qemuArgs.debugConsole = 'vc'
-        qemuArgs.kernel = imageFile
-        qemuArgs.gdb = 'tcp:localhost:12345'
-        qemuArgs.machine = 'q35'
-        qemuArgs.stop = true
-    }
-
-    @TaskAction void action ()
-    {
-        execOperations.exec {
-            executable qemuExecutable.get()
-            args qemuArgs.build()
-            errorOutput = new File(temporaryDir, 'qemu.err.txt').newOutputStream()
-            standardOutput = new File(temporaryDir, 'qemu.out.txt').newOutputStream()
-        }
-    }
-}
 
 abstract class TestMultibootImage extends DefaultTask
 {

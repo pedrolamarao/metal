@@ -44,7 +44,7 @@ subprojects
         }
     }
 
-    tasks.register('runImage', RunMultibootImage) {
+    tasks.register('runImage', MultibootRunImageTask) {
         group = 'psys'
         imageFile = createImage.get().outputFile
     }
