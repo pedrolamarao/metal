@@ -20,12 +20,24 @@ namespace
         _test_control = -1;
     }
 
+    //! Very large object in the text section.
+    //! Did we correctly position the Multiboot2 request object?
+
+    [[gnu::used]]
+    void large_text ()
+    {
+        __asm__
+        {
+            .zero 0x8000
+        }
+    }
+
     //! Very large initialized data.
     //! Did we correctly position the Multiboot2 request object?
 
     [[gnu::used]]
     constinit
-    char test_data [ 0x8000 ] { -1 };
+    char large_data [ 0x8000 ] { -1 };
 }
 
 //! Multiboot 2 loader.

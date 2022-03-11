@@ -21,12 +21,24 @@ namespace
         _test_control = -1;
     }
 
-    //! Very large initialized data.
+    //! Very large object in the text section.
+    //! Did we correctly position the Multiboot2 request object?
+
+    [[gnu::used]]
+    void large_text ()
+    {
+        __asm__
+        {
+            .zero 0x8000
+        }
+    }
+
+    //! Very large object in the data section.
     //! Did we correctly position the Multiboot2 request object?
 
     [[gnu::used]]
     constinit
-    char test_data [ 0x8000 ] { -1 };
+    char large_data [ 0x8000 ] { -1 };
 }
 
 //! Multiboot 2 loader.
@@ -42,7 +54,7 @@ namespace multiboot2
         end_request            end;
     };
 
-    // Assumption: multiboot2_start is located at physical address 0x1000
+    // Assumption: multiboot2_start is located at physical address 0x1000.
     //! Did we correctly position the Multiboot2 entry point?
 
     [[gnu::used, gnu::section(".multiboot2.request")]]
@@ -58,7 +70,7 @@ namespace multiboot2
 
     [[gnu::section(".multiboot2.stack")]]
     constinit
-    unsigned char multiboot2_stack [ 0x4000 ] {};
+    unsigned char stack [ 0x4000 ] {};
 
     //! Multiboot2 entry point.
 
@@ -68,7 +80,7 @@ namespace multiboot2
     {
         __asm__
         {
-            mov esp, offset multiboot2_stack + 0x4000
+            mov esp, offset stack + 0x4000
             xor ecx, ecx
             push ecx
             popf
