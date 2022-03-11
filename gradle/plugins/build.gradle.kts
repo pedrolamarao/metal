@@ -1,5 +1,6 @@
 plugins {
     `groovy-gradle-plugin`
+    `kotlin-dsl`
 }
 
 val nokee = "0.4.0-202112012027.ff552c41"
