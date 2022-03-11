@@ -5,12 +5,7 @@ plugins
 
 subprojects 
 {
-    // settings
-
-    apply plugin: 'psys-application'
-    apply plugin: 'br.dev.pedrolamarao.gdb'
-
-    // project
+    apply plugin: 'psys-test'
     
     application
     {
