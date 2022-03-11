@@ -4,6 +4,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.CommandLineArgumentProvider
 import javax.inject.Inject
@@ -67,39 +69,55 @@ abstract class QemuRtcEditor
 
 abstract class QemuSystemEditor : CommandLineArgumentProvider
 {
+    @get:Input @get:Optional
     abstract val accelerators : ListProperty<String>
 
+    @get:Input @get:Optional
     abstract val bios : RegularFileProperty
 
+    @get:Input @get:Optional
     abstract val blockDevices : ListProperty<String>
 
+    @get:Input @get:Optional
     abstract val characterDevices : ListProperty<String>
 
+    @get:Input @get:Optional
     abstract val cpu : Property<String>
 
+    @get:Input @get:Optional
     abstract val debug : Property<String>
 
+    @get:Input @get:Optional
     abstract val debugConsole : Property<String>
 
+    @get:Input @get:Optional
     abstract val debugFile : RegularFileProperty
 
+    @get:Input @get:Optional
     abstract val devices : ListProperty<String>
 
+    @get:Input @get:Optional
     abstract val display : Property<String>
 
+    @get:Input @get:Optional
     abstract val drives : ListProperty<String>
 
+    @get:Input @get:Optional
     abstract val gdb : Property<String>
 
+    @get:Input @get:Optional
     abstract val kernel : RegularFileProperty
 
+    @get:Input @get:Optional
     abstract val machine : Property<String>
 
     @get:Inject
     abstract val objects : ObjectFactory
 
+    @get:Input @get:Optional
     abstract val rtc : Property<String>
 
+    @get:Input @get:Optional
     abstract val stop : Property<Boolean>
 
     init

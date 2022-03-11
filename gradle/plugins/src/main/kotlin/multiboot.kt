@@ -40,6 +40,7 @@ abstract class MultibootCreateImageTask : DefaultTask()
         outputFile.convention( inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${it.asFile.name}/image") } )
     }
 
+    @Internal
     val grub_cfg =
         "default=0\r\n" +
         "timeout=0\r\n" +
@@ -122,6 +123,9 @@ abstract class MultibootTestImageTask : DefaultTask()
     @get:InputFile
     abstract val imageFile : RegularFileProperty
 
+    @Internal
+    val port = ThreadLocalRandom.current().nextInt(20000, 40000)
+
     @get:Nested
     abstract val qemuArgs : QemuSystemEditor
 
@@ -138,16 +142,6 @@ abstract class MultibootTestImageTask : DefaultTask()
         val qemuPath = tools["br.dev.pedrolamarao.psys.qemu.path"]
 
         gdbExecutable.convention( if (gdbPath != null) "${gdbPath}/gdb" else "gdb" )
-        qemuExecutable.convention( if (qemuPath != null) "${qemuPath}/qemu-system-i386" else "qemu-system-i386" )
-    }
-
-    @TaskAction
-    fun action ()
-    {
-        logger.info("${project.path}:${this.name}: executableFile = ${executableFile.get()}")
-        logger.info("${project.path}:${this.name}: imageFile = ${imageFile.get()}")
-
-        val port = ThreadLocalRandom.current().nextInt(20000, 40000)
 
         qemuArgs.apply {
             display.set("none")
@@ -164,6 +158,15 @@ abstract class MultibootTestImageTask : DefaultTask()
             debugConsole.set("chardev:debugcon")
             stop.set(true)
         }
+
+        qemuExecutable.convention( if (qemuPath != null) "${qemuPath}/qemu-system-i386" else "qemu-system-i386" )
+    }
+
+    @TaskAction
+    fun action ()
+    {
+        logger.info("${project.path}:${this.name}: executableFile = ${executableFile.get()}")
+        logger.info("${project.path}:${this.name}: imageFile = ${imageFile.get()}")
 
         val qemuCommand = mutableListOf<String>()
         qemuCommand += qemuExecutable.get()
