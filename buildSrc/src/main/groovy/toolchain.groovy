@@ -1,15 +1,20 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.nativeplatform.toolchain.Clang
 
 class ToolchainRules implements Plugin<Project>
 {
-    private static Provider<String> llvmPath
+    private Provider<String> llvmPath
+
+    private File x86_32_elf_multiboot2_ld
 
     void apply (Project project)
     {
         llvmPath = project.providers.provider { project.rootProject.ext.tools['br.dev.pedrolamarao.psys.llvm.path'] }
+
+        x86_32_elf_multiboot2_ld = project.rootProject.file('multiboot2/x86_32-elf.ld')
 
         project.model
         {
@@ -31,7 +36,7 @@ class ToolchainRules implements Plugin<Project>
         }
     }
 
-    static final host = {
+    final host = {
         assembler.executable = 'clang'
         cCompiler.executable = 'clang'
         cppCompiler.executable = 'clang++'
@@ -40,7 +45,7 @@ class ToolchainRules implements Plugin<Project>
         staticLibArchiver.executable = 'llvm-ar'
     }
 
-    static final multiboot_x86_32 = {
+    final multiboot_x86_32 = {
         assembler.executable = 'clang'
         assembler.withArguments {
             addAll '-target', 'i386-elf', '-gdwarf'
@@ -56,14 +61,13 @@ class ToolchainRules implements Plugin<Project>
         linker.executable = 'clang'
         // #XXX: clang can't link target i386-elf with lld
         linker.withArguments {
-            addAll '-target', 'i386-linux-elf',
-                    '-fuse-ld=lld', '-gdwarf', '-nostdlib',
-                    '-Wl,--entry=multiboot2_start'
+            addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib', '-static',
+                "-Wl,--script=${x86_32_elf_multiboot2_ld}"
         }
         staticLibArchiver.executable = 'llvm-ar'
     }
 
-    static final uefi_x86_64 = {
+    final uefi_x86_64 = {
         assembler.executable = 'clang'
         assembler.withArguments { addAll '-target', 'x86_64-unknown-windows' }
         cCompiler.executable = 'clang'

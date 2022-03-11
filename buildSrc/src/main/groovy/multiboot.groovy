@@ -159,15 +159,19 @@ abstract class TestMultibootImage extends DefaultTask
             .redirectOutput( new File(temporaryDir, 'qemu.out.txt'))
             .start()
 
-        // Handle breakpoint-hit on _test_finish
+        // Handle break at _test_start
+
+        gdb.handle { message -> handleTestStart(gdb, message) }
+
+        // Handle break at _test_finish
 
         gdb.handle { message -> handleTestFinish(gdb, message) }
 
-        // Handle watchpoint-trigger on _test_control
+        // Handle watch on _test_control
 
         gdb.handle { message -> handleTestControl(gdb, message) }
 
-        // Handle watchpoint-trigger on _test_debug
+        // Handle watch on _test_debug
 
         gdb.handle { message -> handleTestDebug(gdb, message) }
 
@@ -179,9 +183,8 @@ abstract class TestMultibootImage extends DefaultTask
             gdb.gdbSet 'output-radix', '10', {}
             gdb.fileExecAndSymbols executableFile.get().toString().replace('\\', '/'), {}
             gdb.targetSelectTcp 'localhost', "${port}", {}
+            gdb.breakInsertAtSymbol '_test_start', { it.hardware() }
             gdb.breakInsertAtSymbol '_test_finish', { it.hardware() }
-            gdb.breakWatch '_test_control', {}
-            gdb.breakWatch '_test_debug', {}
             gdb.execContinue {}
             final complete = qemuProcess.waitFor 5, TimeUnit.SECONDS
             if (! complete) { logger.error "${project.path}:${this.name}: [FAILURE]: timeout" }
@@ -194,6 +197,26 @@ abstract class TestMultibootImage extends DefaultTask
 
         logger.info "${project.path}:${this.name}: QEMU completed with status = ${qemuProcess.exitValue()}"
         logger.info "${project.path}:${this.name}: GDB completed with status = ${gdb.exitValue()}"
+    }
+
+    void handleTestStart (final gdb, final message)
+    {
+        // #XXX: appropriately filter on GdbMiRecord!
+        final content = message.content
+        if (content instanceof String) { return }
+        final properties = content.properties();
+        final reason = properties.get('reason', String)
+        if (reason != 'breakpoint-hit') { return }
+        final frame = properties.get('frame', Object)
+        if (frame == null) { return }
+        final func = frame.get('func', String)
+        if (func != '_test_start') { return }
+        logger.info "${project.path}:${this.name}: [FINISH]"
+        ForkJoinPool.commonPool().submit {
+            gdb.breakWatch '_test_control', {}
+            gdb.breakWatch '_test_debug', {}
+            gdb.execContinue {}
+        }
     }
 
     void handleTestControl (final gdb, final message)

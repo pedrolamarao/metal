@@ -18,7 +18,7 @@ namespace multiboot2
         end_request     end;
     };
 
-    [[gnu::used, gnu::section(".multiboot2")]]
+    [[gnu::used, gnu::section(".multiboot2.request")]]
     constinit
     request_type request =
     {
@@ -36,6 +36,7 @@ namespace multiboot2
 {
     //! Multiboot2 start procedure.
 
+    [[gnu::section(".multiboot2.stack")]]
     constinit
     unsigned char stack [ 0x4000 ] {};
 
@@ -43,7 +44,7 @@ namespace multiboot2
     constexpr unsigned _magic = information_magic;
 
     extern "C"
-    [[gnu::naked]]
+    [[gnu::naked, gnu::section(".multiboot2.start")]]
     void multiboot2_start ()
     {
         __asm__
