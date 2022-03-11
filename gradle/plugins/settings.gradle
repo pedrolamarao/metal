@@ -18,6 +18,10 @@ dependencyResolutionManagement
                 includeGroupByRegex("dev\\.gradleplugins.*")
             }
         }
+        maven {
+            name = 'Sonatype Open Source Snapshot Repository'
+            url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+        }
         gradlePluginPortal()
     }
 }

@@ -1,10 +1,5 @@
 pluginManagement
 {
-    plugins
-    {
-        id 'br.dev.pedrolamarao.gdb' version '1.0.0-SNAPSHOT'
-    }
-
     includeBuild 'gradle/plugins'
 
     repositories
