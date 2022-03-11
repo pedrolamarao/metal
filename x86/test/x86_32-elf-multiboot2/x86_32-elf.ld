@@ -18,3 +18,5 @@ SECTIONS
     .data               : { *(.data*)                :data
     .bss                : { *(.bss*) }               :data
 }
+
+ENTRY(multiboot2_start)

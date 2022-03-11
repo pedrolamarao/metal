@@ -8,7 +8,7 @@ PHDRS
 
 SECTIONS
 {
-    . = ;
+    . = 0x1000;
     .multiboot2.start   : { *(.multiboot2.start) }   :multiboot2
     .multiboot2.request : { *(.multiboot2.request) } :multiboot2
     .multiboot2.stack   : { *(.multiboot2.stack) }   :multiboot2
@@ -18,3 +18,5 @@ SECTIONS
     .data               : { *(.data*)                :data
     .bss                : { *(.bss*) }               :data
 }
+
+ENTRY(multiboot2_start)
