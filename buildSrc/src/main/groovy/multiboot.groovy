@@ -177,14 +177,13 @@ abstract class TestMultibootImage extends DefaultTask
 
         try
         {
-            gdb.gdbSet 'confirm', 'off', {}
             gdb.gdbSet 'mi-async', 'on', {}
+            gdb.gdbSet 'confirm', 'off', {}
             gdb.gdbSet 'osabi', 'none', {}
             gdb.gdbSet 'output-radix', '10', {}
             gdb.fileExecAndSymbols executableFile.get().toString().replace('\\', '/'), {}
             gdb.targetSelectTcp 'localhost', "${port}", {}
-            gdb.breakInsertAtSymbol '_test_start', { it.hardware() }
-            gdb.breakInsertAtSymbol '_test_finish', { it.hardware() }
+            gdb.breakInsertAtSymbol '_test_start', {}
             gdb.execContinue {}
             final complete = qemuProcess.waitFor 5, TimeUnit.SECONDS
             if (! complete) { logger.error "${project.path}:${this.name}: [FAILURE]: timeout" }
@@ -211,8 +210,9 @@ abstract class TestMultibootImage extends DefaultTask
         if (frame == null) { return }
         final func = frame.get('func', String)
         if (func != '_test_start') { return }
-        logger.info "${project.path}:${this.name}: [FINISH]"
+        logger.info "${project.path}:${this.name}: [START]"
         ForkJoinPool.commonPool().submit {
+            gdb.breakInsertAtSymbol '_test_finish', {}
             gdb.breakWatch '_test_control', {}
             gdb.breakWatch '_test_debug', {}
             gdb.execContinue {}
