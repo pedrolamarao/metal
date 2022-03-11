@@ -2,4 +2,5 @@ plugins
 {
     id 'psys-application'
     id 'br.dev.pedrolamarao.gdb'
+    id 'psys-targets'
 }
