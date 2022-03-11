@@ -18,7 +18,7 @@ application
         implementation project(':x86')
     }
 
-    final baseArgs = [ '-std=c++20', '-flto', '-fasm-blocks', '-static' ]
+    final baseArgs = [ '-std=c++20', '-flto', '-fasm-blocks' ]
 
     binaries.configureEach {
         compileTasks.configureEach {
@@ -26,7 +26,6 @@ application
         }
         linkTask.get().with {
             linkerArgs.addAll baseArgs
-            linkerArgs.addAll '-Wl,-Ttext=0x1000'
         }
     }
 }
