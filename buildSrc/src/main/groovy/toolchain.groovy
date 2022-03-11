@@ -10,11 +10,14 @@ class ToolchainRules implements Plugin<Project>
 
     private File x86_32_elf_multiboot2_ld
 
+    private File x86_64_elf_multiboot2_ld
+
     void apply (Project project)
     {
         llvmPath = project.providers.provider { project.rootProject.ext.tools['br.dev.pedrolamarao.psys.llvm.path'] }
 
         x86_32_elf_multiboot2_ld = project.rootProject.file('multiboot2/x86_32-elf.ld')
+        x86_64_elf_multiboot2_ld = project.rootProject.file('multiboot2/x86_64-elf.ld')
 
         project.model
         {
@@ -28,6 +31,9 @@ class ToolchainRules implements Plugin<Project>
                     // multiboot-x86_32
                     target('linux-multiboot-x86_32', multiboot_x86_32)
                     target('windows-multiboot-x86_32', multiboot_x86_32)
+                    // multiboot-x86_64
+                    target('linux-multiboot-x86_64', multiboot_x86_64)
+                    target('windows-multiboot-x86_64', multiboot_x86_64)
                     // uefi-x86_64
                     target('linux-uefi-x86_64', uefi_x86_64)
                     target('windows-uefi-x86_64', uefi_x86_64)
@@ -63,6 +69,28 @@ class ToolchainRules implements Plugin<Project>
         linker.withArguments {
             addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib', '-static',
                 "-Wl,--script=${x86_32_elf_multiboot2_ld}"
+        }
+        staticLibArchiver.executable = 'llvm-ar'
+    }
+
+    final multiboot_x86_64 = {
+        assembler.executable = 'clang'
+        assembler.withArguments {
+            addAll '-target', 'x86_64-elf', '-gdwarf'
+        }
+        cCompiler.executable = 'clang'
+        cCompiler.withArguments {
+            addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
+        }
+        cppCompiler.executable = 'clang++'
+        cppCompiler.withArguments {
+            addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
+        }
+        linker.executable = 'clang'
+        // #XXX: clang can't link target x86_64-elf with lld
+        linker.withArguments {
+            addAll '-target', 'x86_64-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib', '-static',
+                "-Wl,--script=${x86_64_elf_multiboot2_ld}"
         }
         staticLibArchiver.executable = 'llvm-ar'
     }
