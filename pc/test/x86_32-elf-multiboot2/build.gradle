@@ -34,7 +34,7 @@ subprojects
             }
             linkTask.get().with {
                 linkerArgs.addAll baseArgs
-                linkerArgs.addAll "-Wl,--script=${->file('x86_32-elf.ld')}"
+                linkerArgs.addAll "-Wl,--script=${rootProject.file('multiboot2/x86_32-elf.ld')}"
             }
         }
     }
