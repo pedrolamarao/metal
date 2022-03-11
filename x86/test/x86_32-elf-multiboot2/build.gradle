@@ -25,7 +25,7 @@ subprojects
             implementation project(':x86:test')
         }
 
-        final baseArgs = [ '-std=c++20', '-flto', '-fasm-blocks', '-static' ]
+        final baseArgs = [ '-std=c++20', '-flto', '-fasm-blocks' ]
 
         binaries.configureEach {
             compileTasks.configureEach {
@@ -33,7 +33,6 @@ subprojects
             }
             linkTask.get().with {
                 linkerArgs.addAll baseArgs
-                linkerArgs.addAll "-Wl,--script=${rootProject.file('multiboot2/x86_32-elf.ld')}"
             }
         }
     }
