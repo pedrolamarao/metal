@@ -1,8 +1,69 @@
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.CommandLineArgumentProvider
+import javax.inject.Inject
+
+private fun <T> ifPresent (property : Property<T>, action : Action<T>)
+{
+    val value = if (property.isPresent) property.get() else null;
+    if (value != null) action.execute(value)
+}
+
+abstract class QemuDeviceEditor
+{
+    abstract val options : MapProperty<String, String>
+
+    abstract val type : Property<String>
+
+    override fun toString () : String
+    {
+        val list = mutableListOf<String>()
+        list += type.get()
+        options.get().forEach { (key, value) -> list += "${key}=${value}" }
+        return list.joinToString(",")
+    }
+}
+
+abstract class QemuDriveEditor
+{
+    abstract val file : RegularFileProperty
+
+    abstract val format : Property<String>
+
+    abstract val media : Property<String>
+
+    abstract val readOnly : Property<Boolean>
+
+    abstract val type : Property<String>
+
+    override fun toString () : String
+    {
+        val list = mutableListOf<String>()
+        ifPresent(type) { list += "if=${this}" }
+        ifPresent(format) { list += "format=${this}" }
+        ifPresent(media) { list += "media=${this}" }
+        ifPresent(readOnly) { list += "readonly=${this}" }
+        ifPresent(file) { list += "file=${this}" }
+        return list.joinToString(",")
+    }
+}
+
+abstract class QemuRtcEditor
+{
+    abstract val base : Property<String>
+
+    override fun toString () : String
+    {
+        val list = mutableListOf<String>()
+        ifPresent(base) { list += "base=${this}" }
+        return list.joinToString(",")
+    }
+}
 
 abstract class QemuSystemEditor : CommandLineArgumentProvider
 {
@@ -10,9 +71,9 @@ abstract class QemuSystemEditor : CommandLineArgumentProvider
 
     abstract val bios : RegularFileProperty
 
-    abstract val blockDrivers : ListProperty<String>
+    abstract val blockDevices : ListProperty<String>
 
-    abstract val characterDrivers : ListProperty<String>
+    abstract val characterDevices : ListProperty<String>
 
     abstract val cpu : Property<String>
 
@@ -34,6 +95,9 @@ abstract class QemuSystemEditor : CommandLineArgumentProvider
 
     abstract val machine : Property<String>
 
+    @get:Inject
+    abstract val objects : ObjectFactory
+
     abstract val rtc : Property<String>
 
     abstract val stop : Property<Boolean>
@@ -43,10 +107,19 @@ abstract class QemuSystemEditor : CommandLineArgumentProvider
         stop.convention(false)
     }
 
-    private fun <T> ifPresent (property : Property<T>, action : Action<T>)
+    fun characterDevice (type : String, action : Action<in QemuDeviceEditor>)
     {
-        val value = if (property.isPresent) property.get() else null;
-        if (value != null) action.execute(value)
+        val editor = objects.newInstance<QemuDeviceEditor>()
+        editor.type.set(type)
+        action.execute(editor)
+        characterDevices.add(editor.toString())
+    }
+
+    fun rtc (action : Action<in QemuRtcEditor>)
+    {
+        val editor = objects.newInstance<QemuRtcEditor>()
+        action.execute(editor)
+        rtc.set(editor.toString())
     }
 
     override fun asArguments (): Iterable<String>?
@@ -62,8 +135,8 @@ abstract class QemuSystemEditor : CommandLineArgumentProvider
         ifPresent(cpu) { list += arrayOf("-cpu", this) }
         accelerators.get().forEach { list += arrayOf("-accel", it) }
         // drivers
-        characterDrivers.get().forEach { list += arrayOf("-chardev", it) }
-        blockDrivers.get().forEach { list += arrayOf("-blockdev", it) }
+        characterDevices.get().forEach { list += arrayOf("-chardev", it) }
+        blockDevices.get().forEach { list += arrayOf("-blockdev", it) }
         // devices
         ifPresent(debugConsole) { list += arrayOf("-debugcon", this) }
         devices.get().forEach { list += arrayOf("-device", it) }

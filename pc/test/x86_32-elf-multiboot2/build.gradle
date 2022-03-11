@@ -49,7 +49,7 @@ subprojects
         imageFile = createImage.get().outputFile
     }
 
-    def testImage = tasks.register('testImage', TestMultibootImage) {
+    def testImage = tasks.register('testImage', MultibootTestImageTask) {
         group = 'psys'
         executableFile = providers.provider {
             application.binaries
