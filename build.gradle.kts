@@ -9,7 +9,7 @@ extensions.add("tools", tools)
 
 allprojects {
     group = "br.dev.pedrolamarao.psys"
-    version = "0.4.0-SNAPSHOT"
+    version = "0.5.0-SNAPSHOT"
 }
 
 gradle.includedBuilds.forEach {
