@@ -10,7 +10,7 @@ ext.tools = new Properties().tap { it.load( file('tools.properties').newReader()
 allprojects
 {
     group 'br.dev.pedrolamarao.psys'
-    version '0.4.0-SNAPSHOT'
+    version '0.5.0-SNAPSHOT'
 }
 
 // tasks
