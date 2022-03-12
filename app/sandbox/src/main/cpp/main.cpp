@@ -59,6 +59,7 @@ namespace multiboot2
     {
         __asm__
         {
+#if defined(__i386__)
             mov esp, offset stack + 0x4000
             xor ecx, ecx
             push ecx
@@ -70,6 +71,21 @@ namespace multiboot2
             halt:
             hlt
             jmp halt
+#elif defined(__x86_64__)
+            mov rsp, offset stack + 0x4000
+            xor rcx, rcx
+            push rcx
+            popf
+            cmp rax, _magic
+            jne halt
+            push rbx
+            call main
+            halt:
+            hlt
+            jmp halt
+#else
+# error unsupported target
+#endif
         }
     }
 }
