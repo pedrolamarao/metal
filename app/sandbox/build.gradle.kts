@@ -28,8 +28,9 @@ application {
     }
 }
 
-val createImage = project.tasks.register<MultibootCreateImageTask>("createImage") {
+val create = project.tasks.register<MultibootCreateImageTask>("image") {
     group = "psys"
+    description = "creates image"
     dependsOn(project.tasks.assemble)
     inputFile.set(
         project.provider {
@@ -39,7 +40,8 @@ val createImage = project.tasks.register<MultibootCreateImageTask>("createImage"
     )
 }
 
-project.tasks.register<MultibootRunImageTask>("runImage") {
+project.tasks.register<MultibootRunImageTask>("run-image") {
     group = "psys"
-    imageFile.set( createImage.get().outputFile )
+    description = "runs image"
+    imageFile.set( create.flatMap { it.outputFile } )
 }

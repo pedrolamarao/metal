@@ -30,34 +30,5 @@ subprojects
         }
     }
 
-    final createImage = tasks.register('createImage', MultibootCreateImageTask) {
-        group = 'psys'
-        dependsOn assemble
-        inputFile = providers.provider {
-            application.binaries
-                .filter { it.isBuildable() }
-                .map { it.get(0).linkTask.get().linkedFile.get() }
-                .get()
-        }
-    }
-
-    tasks.register('runImage', MultibootRunImageTask) {
-        group = 'psys'
-        imageFile = createImage.get().outputFile
-    }
-
-    def testImage = tasks.register('testImage', MultibootTestImageTask) {
-        group = 'psys'
-        executableFile = providers.provider {
-            application.binaries
-                .filter { it.isBuildable() }
-                .map { it.get(0).linkTask.get().linkedFile.get() }
-                .get()
-        }
-        imageFile = createImage.get().outputFile
-    }
-
-    check.dependsOn testImage
-
     parent.tasks.named('check') { dependsOn check }
 }
