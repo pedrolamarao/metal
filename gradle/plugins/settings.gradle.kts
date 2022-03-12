@@ -1,8 +1,6 @@
-dependencyResolutionManagement
-{
-    repositories
-    {
-        maven {
+dependencyResolutionManagement {
+    repositories {
+        maven() {
             name = "Nokee Release Repository"
             url = uri("https://repo.nokee.dev/release")
             mavenContent {
@@ -10,7 +8,7 @@ dependencyResolutionManagement
                 includeGroupByRegex("dev\\.gradleplugins.*")
             }
         }
-        maven {
+        maven() {
             name = "Nokee Snapshot Repository"
             url = uri("https://repo.nokee.dev/snapshot")
             mavenContent {
@@ -18,9 +16,9 @@ dependencyResolutionManagement
                 includeGroupByRegex("dev\\.gradleplugins.*")
             }
         }
-        maven {
-            name = 'Sonatype Open Source Snapshot Repository'
-            url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+        maven() {
+            name = "Sonatype Open Source Snapshot Repository"
+            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         }
         gradlePluginPortal()
     }
