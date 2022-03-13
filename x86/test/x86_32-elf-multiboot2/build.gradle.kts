@@ -11,7 +11,8 @@ subprojects {
         // #XXX: Nokee can't cross compile to system "none"
         val none = org.gradle.internal.os.OperatingSystem.current().getName()
         targetMachines.addAll(
-            machines.os(none).architecture("-multiboot-x86_32")
+            machines.os(none).architecture("-multiboot-x86_32"),
+            machines.os(none).architecture("-multiboot-x86_64"),
         )
 
         dependencies {
