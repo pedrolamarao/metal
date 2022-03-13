@@ -1,4 +1,7 @@
-Date: 2022-03-12
+Date: 2022-03-13
+
+![ubuntu-latest](https://github.com/pedrolamarao/psys/actions/workflows/ubuntu.yml/badge.svg)
+![windows-latest](https://github.com/pedrolamarao/psys/actions/workflows/windows.yml/badge.svg)
 
 # summary
 
@@ -7,10 +10,6 @@ Welcome to the Psys project!
 Psys is a research project on "bare metal" software engineering.
 
 For more information on this project's mission, ambitions and aims, see [GOAL](doc/GOAL.md).
-
-# quick start
-
-With JDK 11 and LLVM 13 in your `PATH`, do: `./gradlew build`
 
 # prepare
 
@@ -29,7 +28,7 @@ For more information, see [TOOLS](doc/TOOLS.md).
 
 # build
 
-Psys is built using Gradle.
+Psys is built using Gradle, Nokee and a JDK version 11.
 
 To build: `./gradlew build`
 
