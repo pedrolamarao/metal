@@ -16,6 +16,9 @@ namespace x86::_64
   using ps::size4;
   using ps::size8;
 
+  //! Types.
+  //! @{
+
   //! Segment descriptor.
 
   class segment_descriptor : public descriptor
@@ -73,6 +76,35 @@ namespace x86::_64
   };
 
   static_assert(sizeof(segment_descriptor) == 16, "unexpected size of segment_descriptor");
+
+  //! Global descriptor table register.
+
+  struct [[gnu::packed]] global_descriptor_table_register
+  {
+    size2 size;
+    size8 offset;
+  };
+
+  static_assert(sizeof(global_descriptor_table_register) == 10, "unexpected size of global_descriptor_table_register");
+
+  //! @}
+  //! Operators.
+  //! @{
+
+  //! Gets the global descriptor table register
+
+  auto get_global_descriptor_table_register () -> global_descriptor_table_register ;
+
+  //! Sets the global descriptor table register.
+
+  void set_global_descriptor_table_register ( global_descriptor_table_register value );
+
+  //! Sets the global descriptor table register.
+
+  template <unsigned N>
+  void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] );
+
+  //! @}
 }
 
 // Implementation.
@@ -178,4 +210,15 @@ namespace x86::_64
 
   inline
   auto segment_descriptor::is_4kb () const -> bool { return (_32 >> 23) & 1; }
+
+  template <unsigned N>
+  inline
+  void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] )
+  {
+    global_descriptor_table_register value {
+        ((N * sizeof(segment_descriptor)) - 1),
+        reinterpret_cast<ps::size4>(table)
+    };
+    set_global_descriptor_table_register(value);
+  }
 }
