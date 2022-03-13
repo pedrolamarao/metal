@@ -20,6 +20,20 @@ namespace
         ASSERT_FALSE(descriptor.is_4kb());
     }
 
+    TEST(segment_32, flat)
+    {
+        x86::_32::segment_descriptor descriptor { 0, 0xFFFFF, 15, 3, true, true, true, true, };
+        ASSERT_TRUE(descriptor.is_present());
+        ASSERT_FALSE(descriptor.is_system());
+        ASSERT_EQ(3,descriptor.privilege());
+        ASSERT_EQ(15,descriptor.type());
+        ASSERT_EQ(0,descriptor.base());
+        ASSERT_EQ(0xFFFFF,descriptor.limit());
+        ASSERT_TRUE(descriptor.is_available());
+        ASSERT_TRUE(descriptor.is_32bit());
+        ASSERT_TRUE(descriptor.is_4kb());
+    }
+
     TEST(segment_32, max)
     {
         auto descriptor = x86::_32::segment_descriptor::max();
@@ -186,6 +200,20 @@ namespace
         ASSERT_FALSE(descriptor.is_available());
         ASSERT_FALSE(descriptor.is_32bit());
         ASSERT_FALSE(descriptor.is_4kb());
+    }
+
+    TEST(segment_64, flat)
+    {
+        x86::_64::segment_descriptor descriptor { 0, 0xFFFFF, 15, 3, true, true, true, true, };
+        ASSERT_TRUE(descriptor.is_present());
+        ASSERT_FALSE(descriptor.is_system());
+        ASSERT_EQ(3,descriptor.privilege());
+        ASSERT_EQ(15,descriptor.type());
+        ASSERT_EQ(0,descriptor.base());
+        ASSERT_EQ(0xFFFFF,descriptor.limit());
+        ASSERT_TRUE(descriptor.is_available());
+        ASSERT_TRUE(descriptor.is_32bit());
+        ASSERT_TRUE(descriptor.is_4kb());
     }
 
     TEST(segment_64, max)
