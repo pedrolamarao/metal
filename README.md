@@ -1,4 +1,7 @@
-Date: 2021-08-19
+Date: 2022-03-13
+
+![ubuntu-latest](https://github.com/pedrolamarao/psys/actions/workflows/ubuntu.yml/badge.svg)
+![windows-latest](https://github.com/pedrolamarao/psys/actions/workflows/windows.yml/badge.svg)
 
 # summary
 
