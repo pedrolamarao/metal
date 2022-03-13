@@ -7,7 +7,10 @@ library {
 
     // #XXX: Nokee can't cross compile to system "none"
     val os = org.gradle.internal.os.OperatingSystem.current().getName()
-    targetMachines.addAll( machines.os(os).architecture("-multiboot-x86_32") )
+    targetMachines.addAll(
+        machines.os(os).architecture("-multiboot-x86_32"),
+        machines.os(os).architecture("-multiboot-x86_64"),
+    )
 
     dependencies {
         api(project(":psys"))
