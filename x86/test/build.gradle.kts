@@ -24,5 +24,3 @@ library {
         }
     }
 }
-
-tasks.check { dependsOn(":pc:test:x86_32-elf-multiboot2:check") }

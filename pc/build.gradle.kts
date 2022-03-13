@@ -1,12 +1,13 @@
 import dev.nokee.platform.nativebase.NativeBinary
 import dev.nokee.testing.nativebase.NativeTestSuite
-import dev.nokee.testing.nativebase.internal.DefaultNativeTestSuiteComponent
 import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id("psys-component")
 }
 
+//import dev.nokee.testing.nativebase.NativeTestSuite
+//
 library {
     targetLinkages.add(linkages.static)
 
@@ -19,7 +20,9 @@ library {
         machines.windows.x86_64,
     )
 
-    dependencies { api(project(":psys")) }
+    dependencies {
+        api(project(":psys"))
+    }
 
     binaries.configureEach {
         if (this is NativeBinary) {
@@ -40,7 +43,7 @@ testSuites {
             implementation(project(":googletest"))
         }
 
-        if (this is DefaultNativeTestSuiteComponent) {
+        if (this is dev.nokee.testing.nativebase.internal.DefaultNativeTestSuiteComponent) {
             binaries.configureEach {
                 if (this is dev.nokee.platform.nativebase.ExecutableBinary) {
                     compileTasks.configureEach {
@@ -52,6 +55,5 @@ testSuites {
                     }
                 }
             }
-        }
-    }
+        }    }
 }

@@ -4,13 +4,14 @@ plugins {
     `kotlin-dsl`
 }
 
-val nokee = "0.4.0-202112012027.ff552c41"
+val gdb = "1.0.0-SNAPSHOT"
+val nokee = "[0.4.0, 0.5.0)"
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
-    implementation("br.dev.pedrolamarao.gdb:core:1.0.0-SNAPSHOT")
-    implementation("br.dev.pedrolamarao.gdb:gradle:1.0.0-SNAPSHOT")
+    implementation("br.dev.pedrolamarao.gdb:core:${gdb}")
+    implementation("br.dev.pedrolamarao.gdb:gradle:${gdb}")
     implementation("dev.nokee:languageCpp:${nokee}")
     implementation("dev.nokee.cpp-application:dev.nokee.cpp-application.gradle.plugin:${nokee}")
     implementation("dev.nokee.cpp-library:dev.nokee.cpp-library.gradle.plugin:${nokee}")
