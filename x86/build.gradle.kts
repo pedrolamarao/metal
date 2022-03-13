@@ -38,6 +38,8 @@ testSuites {
         testedComponent(library)
 
         dependencies {
+            // #XXX: Nokee does not transitively include main `api` dependencies
+            implementation(project(":psys"))
             implementation(project(":googletest"))
         }
 
