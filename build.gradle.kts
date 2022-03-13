@@ -3,7 +3,7 @@ plugins {
 }
 
 val tools = java.util.Properties()
-tools.load(java.io.FileReader(file("tools.properties")))
+try { tools.load(java.io.FileReader(file("tools.properties"))) } catch (_: Exception) { }
 ext["tools"] = tools
 extensions.add("tools", tools)
 
