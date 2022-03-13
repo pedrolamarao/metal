@@ -82,6 +82,9 @@ namespace x86::_32
     size4 offset;
   };
 
+  constexpr
+  auto operator== ( global_descriptor_table_register, global_descriptor_table_register) -> bool;
+
   static_assert(sizeof(global_descriptor_table_register) == 6, "unexpected size of global_descriptor_table_register");
 
   //! @}
@@ -199,6 +202,12 @@ namespace x86::_32
 
   inline
   auto segment_descriptor::is_4kb () const -> bool { return (_32 >> 23) & 1; }
+
+  constexpr inline
+  auto operator== ( global_descriptor_table_register x, global_descriptor_table_register y ) -> bool
+  {
+    return (x.size == y.size) && (x.offset == y.offset);
+  }
 
   template <unsigned N>
   inline
