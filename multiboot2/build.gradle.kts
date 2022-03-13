@@ -55,5 +55,3 @@ testSuites {
         }
     }
 }
-
-tasks.check { dependsOn(":multiboot2:test:check") }

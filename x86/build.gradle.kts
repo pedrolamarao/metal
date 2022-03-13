@@ -58,5 +58,3 @@ testSuites {
         }
     }
 }
-
-tasks.check { dependsOn(":x86:test:check") }

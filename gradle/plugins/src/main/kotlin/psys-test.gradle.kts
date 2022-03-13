@@ -36,5 +36,3 @@ val test = project.tasks.register<MultibootTestImageTask>("test-image") {
         }
     )
 }
-
-tasks.check { dependsOn(test) }

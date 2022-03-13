@@ -57,5 +57,3 @@ testSuites {
             }
         }    }
 }
-
-tasks.check { dependsOn(":pc:test:check") }
