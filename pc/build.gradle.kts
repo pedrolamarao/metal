@@ -27,7 +27,7 @@ library {
     binaries.configureEach {
         if (this is NativeBinary) {
             compileTasks.configureEach {
-                compilerArgs.addAll("std=c++20", "-flto")
+                compilerArgs.addAll("-std=c++20", "-flto")
             }
         }
     }
