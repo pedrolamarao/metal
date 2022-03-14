@@ -2,13 +2,14 @@
 
 #pragma once
 
-#include <psys/integer.h>
+#include <psys/size.h>
 
 
 //! Declarations
 
 namespace x86
 {
+  using size  = ps::size;
   using size1 = ps::size1;
   using size2 = ps::size2;
   using size4 = ps::size4;

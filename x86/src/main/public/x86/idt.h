@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include <psys/integer.h>
-
 #include <x86/common.h>
 
 #include <x86/_32/interrupt.h>

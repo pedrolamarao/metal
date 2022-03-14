@@ -11,11 +11,6 @@
 
 namespace x86::_64
 {
-  using ps::size;
-  using ps::size2;
-  using ps::size4;
-  using ps::size8;
-
   using x86::descriptor_type;
   using x86::privilege_level;
 

@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include <psys/size.h>
-
+#include <x86/common.h>
 #include <x86/_32/descriptor.h>
 
 

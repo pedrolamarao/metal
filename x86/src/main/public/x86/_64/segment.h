@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include <psys/size.h>
-
+#include <x86/common.h>
 #include <x86/_64/descriptor.h>
 
 
@@ -11,11 +10,6 @@
 
 namespace x86::_64
 {
-  using ps::size;
-  using ps::size2;
-  using ps::size4;
-  using ps::size8;
-
   //! Types.
   //! @{
 

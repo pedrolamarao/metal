@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include <psys/integer.h>
-
 #include <x86/common.h>
 
 #include <x86/_32/segment.h>
@@ -14,10 +12,6 @@
 
 namespace x86
 {
-  using ps::size1;
-  using ps::size2;
-  using ps::size4;
-
   //! Types.
   //! @{
 
