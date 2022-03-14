@@ -40,35 +40,17 @@ namespace x86::_32
       bool is_4kb
     ) ;
 
-    static constexpr
-    auto max () -> segment_descriptor ;
-
     auto base () const -> size4 ;
 
     auto limit () const -> size4 ;
+
+    auto is_accessed () const -> bool ;
 
     auto is_available () const -> bool ;
 
     auto is_32bit () const -> bool ;
 
     auto is_4kb () const -> bool ;
-
-  protected:
-
-      constexpr
-      segment_descriptor (
-        size4 base_16_23,
-        size4 type,
-        size4 privilege,
-        size4 is_present,
-        size4 limit_16_19,
-        size4 is_available,
-        size4 is_32bit,
-        size4 is_4kb,
-        size4 base_24_31,
-        size4 limit_00_15,
-        size4 base_00_15
-      ) ;
 
   };
 
@@ -117,41 +99,6 @@ namespace x86::_32
 
   constexpr inline
   segment_descriptor::segment_descriptor (
-    size4 base_16_23,
-    size4 type,
-    size4 privilege,
-    size4 is_present,
-    size4 limit_16_19,
-    size4 is_available,
-    size4 is_32bit,
-    size4 is_4kb,
-    size4 base_24_31,
-    size4 limit_00_15,
-    size4 base_00_15
-  ) :
-    descriptor {
-      (
-        limit_00_15  << 0
-      | base_00_15   << 16
-      ),
-      (
-        base_16_23   << 0
-      | type         << 8
-      | 1            << 12
-      | privilege    << 13
-      | is_present   << 15
-      | limit_16_19  << 16
-      | is_available << 20
-      | 0            << 21
-      | is_32bit     << 22
-      | is_4kb       << 23
-      | base_24_31   << 24
-      )
-    }
-  { }
-
-  constexpr inline
-  segment_descriptor::segment_descriptor (
     size4 base,
     size4 limit,
     descriptor_type type,
@@ -161,47 +108,51 @@ namespace x86::_32
     bool is_32bit,
     bool is_4kb
   ) :
-    segment_descriptor {
-      (base  >> 16) & 0xFF,
-      size4{type},
-      size4{privilege},
-      size4{is_present},
-      (limit >> 16) & 0xF,
-      size4{is_available},
-      size4{is_32bit},
-      size4{is_4kb},
-      (base  >> 24) & 0xFF,
-      (limit >>  0) & 0xFFFF,
-      (base  >>  0) & 0xFFFF,
+    descriptor {
+      static_cast<size2>(
+        limit & 0xFFFF
+      ),
+      static_cast<size2>(
+        base & 0xFFFF
+      ),
+      static_cast<size2>(
+        (is_present ? 1 : 0) << 15 |
+        size2{privilege} << 13 |
+        1 << 12 |
+        size2{type} << 8 |
+        (base >> 16) & 0x00FF
+      ),
+      static_cast<size2>(
+        (base >> 16) & 0xFF00 |
+        (is_4kb ? 1 : 0) << 7 |
+        (is_32bit ? 1 : 0) << 6 |
+        (is_available ? 1 : 0) << 4 |
+        (limit >> 16) & 0x000F
+      ),
     }
   { }
 
-  constexpr inline
-  auto segment_descriptor::max () -> segment_descriptor {
-    return segment_descriptor { 0xFFFFFFFF, 0xFFFFF, 15, 3, true, true, true, true };
-  }
-
   inline
   auto segment_descriptor::base () const -> size4 {
-    return ((_00 >> 16) & 0x0000FFFF)
-         | ((_32 << 16) & 0x00FF0000)
-         | ((_32      ) & 0xFF000000);
+    return ((size4{_w3} << 16) & 0xFF000000) | ((size4{_w2} << 16) & 0x00FF0000) | (size4{_w1} & 0x0000FFFF);
   }
 
   inline
   auto segment_descriptor::limit () const -> size4 {
-    return (_00 & 0xFFFF0)
-         | (_32 & 0x0000F);
+    return ((size4{_w3} << 16) & 0x000F0000) | (size4{_w0} & 0x0000FFFF);
   }
 
   inline
-  auto segment_descriptor::is_available () const -> bool { return (_32 >> 20) & 1; }
+  auto segment_descriptor::is_accessed () const -> bool { return (_w2 & 1) != 0; }
 
   inline
-  auto segment_descriptor::is_32bit () const -> bool { return (_32 >> 22) & 1; }
+  auto segment_descriptor::is_available () const -> bool { return (_w3 & 0x10) != 0; }
 
   inline
-  auto segment_descriptor::is_4kb () const -> bool { return (_32 >> 23) & 1; }
+  auto segment_descriptor::is_32bit () const -> bool { return (_w3 & 0x40) != 0; }
+
+  inline
+  auto segment_descriptor::is_4kb () const -> bool { return (_w3 & 0x80) != 0; }
 
   constexpr inline
   auto operator== ( global_descriptor_table_register x, global_descriptor_table_register y ) -> bool

@@ -6,24 +6,6 @@
 
 namespace
 {
-    TEST(descriptor_32, zero)
-    {
-        x86::_32::descriptor descriptor {};
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-    }
-
-    TEST(descriptor_32, max)
-    {
-        auto descriptor = x86::_32::descriptor::max();
-        ASSERT_TRUE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
-        ASSERT_EQ(3,descriptor.privilege());
-        ASSERT_EQ(15,descriptor.type());
-    }
-
     TEST(descriptor_32, is_present)
     {
         ps::size1 bytes [8] {
@@ -84,22 +66,28 @@ namespace
         ASSERT_EQ(8,descriptor.type());
     }
 
-    TEST(descriptor_64, zero)
+    TEST(descriptor_32, max)
     {
-        x86::_64::descriptor descriptor {};
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-    }
+        ps::size1 bytes [8] {
+            0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF,
+        };
 
-    TEST(descriptor_64, max)
-    {
-        auto descriptor = x86::_64::descriptor::max();
+        auto& descriptor = reinterpret_cast<x86::_32::descriptor&>(bytes);
+
         ASSERT_TRUE(descriptor.is_present());
         ASSERT_FALSE(descriptor.is_system());
         ASSERT_EQ(3,descriptor.privilege());
         ASSERT_EQ(15,descriptor.type());
+    }
+
+    TEST(descriptor_32, zero)
+    {
+        x86::_32::descriptor descriptor {};
+        ASSERT_FALSE(descriptor.is_present());
+        ASSERT_TRUE(descriptor.is_system());
+        ASSERT_EQ(0,descriptor.privilege());
+        ASSERT_EQ(0,descriptor.type());
     }
 
     TEST(descriptor_64, is_present)
@@ -168,5 +156,31 @@ namespace
         ASSERT_TRUE(descriptor.is_system());
         ASSERT_EQ(0,descriptor.privilege());
         ASSERT_EQ(8,descriptor.type());
+    }
+
+    TEST(descriptor_64, max)
+    {
+        ps::size1 bytes [16] {
+            0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF,
+        };
+
+        auto& descriptor = reinterpret_cast<x86::_64::descriptor&>(bytes);
+
+        ASSERT_TRUE(descriptor.is_present());
+        ASSERT_FALSE(descriptor.is_system());
+        ASSERT_EQ(3,descriptor.privilege());
+        ASSERT_EQ(15,descriptor.type());
+    }
+
+    TEST(descriptor_64, zero)
+    {
+        x86::_64::descriptor descriptor {};
+        ASSERT_FALSE(descriptor.is_present());
+        ASSERT_TRUE(descriptor.is_system());
+        ASSERT_EQ(0,descriptor.privilege());
+        ASSERT_EQ(0,descriptor.type());
     }
 }

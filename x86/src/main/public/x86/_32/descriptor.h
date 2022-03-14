@@ -29,10 +29,7 @@ namespace x86::_32
     descriptor () ;
 
     constexpr
-    descriptor ( size4 q0, size4 q1 ) ;
-
-    static constexpr
-    auto max () -> descriptor ;
+    descriptor ( size2 w0, size2 w1, size2 w3, size2 w4 ) ;
 
     auto is_present () const -> bool ;
 
@@ -44,8 +41,10 @@ namespace x86::_32
 
   protected:
 
-    size4 _00;
-    size4 _32;
+    size2 _w0;
+    size2 _w1;
+    size2 _w2;
+    size2 _w3;
 
   };
 
@@ -59,23 +58,22 @@ namespace x86::_32
   // Descriptor.
 
   constexpr inline
-  descriptor::descriptor () : _00{}, _32{} { } ;
+  descriptor::descriptor () : _w0{}, _w1{}, _w2{}, _w3{} { } ;
 
   constexpr inline
-  descriptor::descriptor ( size4 q0, size4 q1 ) : _00{q0}, _32{q1} { }
-
-  constexpr inline
-  auto descriptor::max () -> descriptor { return descriptor{0xFFFFFFFF,0xFFFFFFFF}; }
-
-  inline
-  auto descriptor::is_present () const -> bool { return ((_32 >> 15) & 1) == 1; }
+  descriptor::descriptor ( size2 w0, size2 w1, size2 w2, size2 w3 ) :
+    _w0{w0}, _w1{w1}, _w2{w2}, _w3{w3}
+  { }
 
   inline
-  auto descriptor::is_system () const -> bool { return ((_32 >> 12) & 1) == 0; }
+  auto descriptor::is_present () const -> bool { return (_w2 & 0x8000) != 0; }
 
   inline
-  auto descriptor::privilege () const -> privilege_level { return (_32 >> 13) & 0b11; }
+  auto descriptor::privilege () const -> privilege_level { return (_w2 >> 13) & 0b11; }
 
   inline
-  auto descriptor::type () const -> descriptor_type { return (_32 >> 8) & 0b1111; }
+  auto descriptor::is_system () const -> bool { return (_w2 & 0x1000) == 0; }
+
+  inline
+  auto descriptor::type () const -> descriptor_type { return (_w2 >> 8) & 0b1111; }
 }
