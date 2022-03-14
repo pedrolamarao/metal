@@ -173,7 +173,7 @@ namespace x86::_64
   {
     global_descriptor_table_register value {
         ((N * sizeof(segment_descriptor)) - 1),
-        reinterpret_cast<ps::size4>(table)
+        reinterpret_cast<ps::size8>(table)
     };
     set_global_descriptor_table_register(value);
   }
