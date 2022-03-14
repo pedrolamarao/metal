@@ -12,8 +12,11 @@
 
 // x86-32 architecture.
 
-namespace x86
+namespace
 {
+    using namespace x86;
+    using namespace x86::_32;
+
     // Segments.
 
     extern segment_descriptor global_descriptor_table [8];
@@ -62,6 +65,7 @@ void main ( multiboot2::information_list & mbi )
 {
     using namespace ps;
     using namespace x86;
+    using namespace x86::_32;
 
     // set the GDT register and set segment registers
 
@@ -160,9 +164,8 @@ void main ( multiboot2::information_list & mbi )
 
 // x86-32 architecture.
 
-namespace x86
+namespace
 {
-
     [[gnu::section(".gdt")]]
     constinit
     segment_descriptor global_descriptor_table [8] =

@@ -16,9 +16,9 @@
 #include <pc/test.h>
 
 
-// x86 architecture.
+// Application interface.
 
-namespace x86
+namespace
 {
     void set_global_descriptor_table_register ();
 
@@ -209,10 +209,13 @@ void main ( multiboot2::information_list & mbi )
     return;
 }
 
-//! x86-32 architecture.
+// Application implementation.
 
-namespace x86
+namespace
 {
+    using namespace x86;
+    using namespace x86::_32;
+
     // Segments.
 
     [[gnu::section(".gdt")]]
