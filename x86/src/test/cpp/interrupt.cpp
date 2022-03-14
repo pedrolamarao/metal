@@ -22,6 +22,7 @@ namespace
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
+        ASSERT_FALSE(descriptor.is_trap());
     }
 
     TEST(interrupt_32, max)
@@ -40,6 +41,7 @@ namespace
         ASSERT_EQ(0xFFFFFFFF,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{0xFFFF},descriptor.segment());
         ASSERT_TRUE(descriptor.is_32bit());
+        ASSERT_TRUE(descriptor.is_trap());
     }
 
     TEST(interrupt_32, offset)
@@ -65,6 +67,7 @@ namespace
         ASSERT_EQ(offset,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
+        ASSERT_FALSE(descriptor.is_trap());
     }
 
     TEST(interrupt_32, segment)
@@ -88,6 +91,7 @@ namespace
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{segment},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
+        ASSERT_FALSE(descriptor.is_trap());
     }
 
     TEST(interrupt_32, is_32bit)
@@ -106,6 +110,26 @@ namespace
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_TRUE(descriptor.is_32bit());
+        ASSERT_FALSE(descriptor.is_trap());
+    }
+
+    TEST(interrupt_32, is_trap)
+    {
+        ps::size1 bytes [8] {
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x01, 0x00, 0x00,
+        };
+
+        auto& descriptor = reinterpret_cast<x86::_32::interrupt_gate_descriptor&>(bytes);
+
+        ASSERT_FALSE(descriptor.is_present());
+        ASSERT_TRUE(descriptor.is_system());
+        ASSERT_EQ(0,descriptor.privilege());
+        ASSERT_EQ(4,descriptor.type());
+        ASSERT_EQ(0,descriptor.offset());
+        ASSERT_EQ(x86::segment_selector{},descriptor.segment());
+        ASSERT_FALSE(descriptor.is_32bit());
+        ASSERT_TRUE(descriptor.is_trap());
     }
 
     TEST(interrupt_64, zero)
@@ -126,6 +150,7 @@ namespace
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
+        ASSERT_FALSE(descriptor.is_trap());
     }
 
     TEST(interrupt_64, max)
@@ -146,6 +171,7 @@ namespace
         ASSERT_EQ(0xFFFFFFFFFFFFFFFF,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{0xFFFF},descriptor.segment());
         ASSERT_TRUE(descriptor.is_32bit());
+        ASSERT_TRUE(descriptor.is_trap());
     }
 
     TEST(interrupt_64, offset)
@@ -177,6 +203,7 @@ namespace
         ASSERT_EQ(offset,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
+        ASSERT_FALSE(descriptor.is_trap());
     }
 
     TEST(interrupt_64, segment)
@@ -202,6 +229,7 @@ namespace
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{segment},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
+        ASSERT_FALSE(descriptor.is_trap());
     }
 
     TEST(interrupt_64, is_32bit)
@@ -222,5 +250,27 @@ namespace
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_TRUE(descriptor.is_32bit());
+        ASSERT_FALSE(descriptor.is_trap());
+    }
+
+    TEST(interrupt_64, is_trap)
+    {
+        ps::size1 bytes [16] {
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x01, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+        };
+
+        auto& descriptor = reinterpret_cast<x86::_64::interrupt_gate_descriptor&>(bytes);
+
+        ASSERT_FALSE(descriptor.is_present());
+        ASSERT_TRUE(descriptor.is_system());
+        ASSERT_EQ(0,descriptor.privilege());
+        ASSERT_EQ(4,descriptor.type());
+        ASSERT_EQ(0,descriptor.offset());
+        ASSERT_EQ(x86::segment_selector{},descriptor.segment());
+        ASSERT_FALSE(descriptor.is_32bit());
+        ASSERT_TRUE(descriptor.is_trap());
     }
 }

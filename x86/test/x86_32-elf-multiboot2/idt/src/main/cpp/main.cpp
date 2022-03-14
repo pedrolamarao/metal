@@ -146,7 +146,7 @@ void main ( multiboot2::information_list & mbi )
 
     _test_control = 21;
 
-    auto expected_idtr = system_table_register {
+    auto expected_idtr = interrupt_descriptor_table_register {
         interrupt_descriptor_table_size * sizeof(interrupt_gate_descriptor),
         reinterpret_cast<size4>(interrupt_descriptor_table)
     };

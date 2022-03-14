@@ -32,11 +32,25 @@ namespace x86::_32
       segment_selector segment,
       size4 offset,
       bool is_present,
+      bool must_cli,
+      privilege_level privilege,
+      bool is_32bit
+    );
+
+    interrupt_gate_descriptor (
+      segment_selector segment,
+      void (* offset)(),
+      bool is_present,
+      bool must_cli,
       privilege_level privilege,
       bool is_32bit
     );
 
     auto is_32bit () const -> bool;
+
+    auto is_trap () const -> bool;
+
+    auto must_cli () const -> bool;
 
     auto offset () const -> size4;
 
@@ -93,6 +107,7 @@ namespace x86::_32
     segment_selector segment,
     size4 offset,
     bool is_present,
+    bool must_cli,
     privilege_level privilege,
     bool is_32bit
   )
@@ -108,7 +123,8 @@ namespace x86::_32
         size2{privilege}     << 13 |
         (is_32bit ? 1 : 0)   << 11 |
         1                    << 10 |
-        1                    <<  9
+        1                    <<  9 |
+        (must_cli ? 0 : 1)
       ),
       static_cast<size2>(
         (offset >> 16) & 0xFFFF
@@ -117,7 +133,25 @@ namespace x86::_32
   { }
 
   inline
+  interrupt_gate_descriptor::interrupt_gate_descriptor (
+    segment_selector segment,
+    void (* offset)(),
+    bool is_present,
+    bool must_cli,
+    privilege_level privilege,
+    bool is_32bit
+  )
+  : interrupt_gate_descriptor { segment, reinterpret_cast<size4>(offset), is_present, must_cli, privilege, is_32bit }
+  { }
+
+  inline
   auto interrupt_gate_descriptor::is_32bit () const -> bool { return (_w2 & 0x400) != 0; }
+
+  inline
+  auto interrupt_gate_descriptor::is_trap () const -> bool { return (_w2 & 0x100) != 0; }
+
+  inline
+  auto interrupt_gate_descriptor::must_cli () const -> bool { return (_w2 & 0x100) == 0; }
 
   inline
   auto interrupt_gate_descriptor::offset () const -> size4 {
