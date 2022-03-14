@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <psys/integer.h>
+#include <psys/size.h>
 
 #include <x86/common.h>
 
@@ -11,7 +11,7 @@
 
 namespace x86::_64
 {
-  using ps::size1;
+  using ps::size;
   using ps::size2;
   using ps::size4;
   using ps::size8;
