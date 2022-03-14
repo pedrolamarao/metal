@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <psys/integer.h>
+#include <psys/size.h>
 
 #include <x86/_64/descriptor.h>
 
@@ -11,7 +11,7 @@
 
 namespace x86::_64
 {
-  using ps::size1;
+  using ps::size;
   using ps::size2;
   using ps::size4;
   using ps::size8;
@@ -148,7 +148,7 @@ namespace x86::_64
   {
     interrupt_descriptor_table_register value {
       N * sizeof(interrupt_gate_descriptor),
-      reinterpret_cast<ps::size8>(table)
+      reinterpret_cast<ps::size>(table)
     };
     set_interrupt_descriptor_table_register(value);
   }

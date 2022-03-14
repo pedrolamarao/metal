@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <psys/integer.h>
+#include <psys/size.h>
 
 #include <x86/_32/descriptor.h>
 
@@ -11,7 +11,7 @@
 
 namespace x86::_32
 {
-  using ps::size1;
+  using ps::size;
   using ps::size2;
   using ps::size4;
 
@@ -141,7 +141,7 @@ namespace x86::_32
     privilege_level privilege,
     bool is_32bit
   )
-  : interrupt_gate_descriptor { segment, reinterpret_cast<size4>(offset), is_present, must_cli, privilege, is_32bit }
+  : interrupt_gate_descriptor { segment, reinterpret_cast<size>(offset), is_present, must_cli, privilege, is_32bit }
   { }
 
   inline
@@ -175,7 +175,7 @@ namespace x86::_32
   {
     interrupt_descriptor_table_register value {
       N * sizeof(interrupt_gate_descriptor),
-      reinterpret_cast<ps::size4>(table)
+      reinterpret_cast<ps::size>(table)
     };
     set_interrupt_descriptor_table_register(value);
   }
