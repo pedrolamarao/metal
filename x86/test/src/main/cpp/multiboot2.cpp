@@ -47,6 +47,7 @@ namespace multiboot2
     [[gnu::naked, gnu::section(".multiboot2.start")]]
     void multiboot2_start ()
     {
+#if defined(__i386__)
         __asm__
         {
             mov esp, offset stack + 0x4000
@@ -63,5 +64,25 @@ namespace multiboot2
             hlt
             jmp halt
         }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            mov rsp, offset stack + 0x4000
+            xor rcx, rcx
+            push rcx
+            popf
+            cmp rax, _magic
+            jne halt
+            call _test_start
+            push rbx
+            call main
+            call _test_finish
+            halt:
+            hlt
+            jmp halt
+        }
+#else
+# error unsupported target
+#endif
     }
 }
