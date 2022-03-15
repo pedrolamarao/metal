@@ -16,9 +16,8 @@ subprojects {
         )
 
         dependencies {
-            implementation(project(":multiboot2"))
+            implementation(project(":psys:multiboot2"))
             implementation(project(":x86"))
-            implementation(project(":x86:test"))
         }
 
         val baseArgs = listOf("-std=c++20", "-flto", "-fasm-blocks")

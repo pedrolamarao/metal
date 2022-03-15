@@ -52,6 +52,7 @@ rootProject.projectDir.resolve("pc/test/x86_32-elf-multiboot2").toPath().apply {
 }
 
 include("psys")
+include("psys:multiboot2")
 
 include("x86")
 rootProject.projectDir.resolve("x86/test/x86_32-elf-multiboot2").toPath().apply {

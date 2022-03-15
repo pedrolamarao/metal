@@ -5,12 +5,15 @@
 
 #include <multiboot2/information.h>
 
-#include <x86/test.h>
+#include <psys/test.h>
 
 
-//! Multiboot2 application procedure.
+namespace app
+{
+    void main ( multiboot2::information_list & response );
+}
 
-void main ( multiboot2::information_list & response )
+void app::main ( multiboot2::information_list & response )
 {
     _test_control = 1;
 

@@ -16,9 +16,8 @@ subprojects {
         )
 
         dependencies {
-            implementation(project(":multiboot2"))
             implementation(project(":pc"))
-            implementation(project(":pc:test"))
+            implementation(project(":psys:multiboot2"))
             implementation(project(":x86"))
         }
 

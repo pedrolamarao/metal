@@ -2,16 +2,14 @@
 
 
 #include <psys/integer.h>
+#include <psys/test.h>
 
 #include <multiboot2/information.h>
 
 #include <x86/gdt.h>
-#include <x86/test.h>
 
 
-// x86-32 architecture.
-
-namespace
+namespace app
 {
     using namespace x86;
     using namespace x86::_32;
@@ -35,11 +33,11 @@ namespace
         // user flat data descriptor
         { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
     };
+
+    void main ( multiboot2::information_list & mbi );
 }
 
-//! Multiboot2 application procedure.
-
-void main ( multiboot2::information_list & mbi )
+void app::main ( multiboot2::information_list & mbi )
 {
     using namespace x86;
     using namespace x86::_32;

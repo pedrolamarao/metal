@@ -13,11 +13,11 @@ application {
     )
 
     dependencies {
-        implementation(project(":multiboot2"))
+        implementation(project(":psys:multiboot2"))
         implementation(project(":x86"))
     }
 
-    val baseArgs = listOf("-std=c++20", "-flto", "-fasm-blocks")
+    val baseArgs = listOf("-std=c++20", "-flto")
 
     binaries.configureEach {
         if (this is ExecutableBinary) {

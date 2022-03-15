@@ -2,6 +2,7 @@
 
 
 #include <psys/integer.h>
+#include <psys/test.h>
 
 #include <multiboot2/information.h>
 
@@ -12,12 +13,9 @@
 #include <x86/port.h>
 
 #include <pc/pic.h>
-#include <pc/test.h>
 
 
-// Application interface.
-
-namespace
+namespace app
 {
     void set_global_descriptor_table_register ();
 
@@ -27,11 +25,11 @@ namespace
     unsigned interrupt_counter {};
 
     void set_interrupt_descriptor_table_register ();
+
+    void main ( multiboot2::information_list & mbi );
 }
 
-// Multiboot2 application procedure.
-
-void main ( multiboot2::information_list & mbi )
+void app::main ( multiboot2::information_list & mbi )
 {
     using namespace x86;
 
@@ -111,9 +109,7 @@ void main ( multiboot2::information_list & mbi )
     return;
 }
 
-//! Application implementation.
-
-namespace
+namespace app
 {
     using namespace x86;
     using namespace x86::_32;
