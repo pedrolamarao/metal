@@ -103,11 +103,11 @@ namespace
         {
             mov esp, offset stack + 0x4000
             xor ecx, ecx
-            push ecx
+            push rcx
             popf
             cmp eax, _magic
             jne finish
-            push ebx
+            push rbx
             call app::main
           finish:
             cli
