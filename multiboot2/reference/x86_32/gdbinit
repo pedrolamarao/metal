@@ -4,5 +4,4 @@ set output-radix 16
 file elf
 target remote localhost:12345
 hbreak _start
-break main
 continue

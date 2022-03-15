@@ -1,12 +1,14 @@
-= Multiboot2 i386 Reference
+= Multiboot2 x86_64 Reference
 
 This is a reference project for a Multiboot2 application.
+
+The application pushes "PSYS" to QEMU debubcon at port 0xE9.
 
 Compile and link ELF image with LLVM:
 
 [source,shell]
 ----
-clang -target i386-linux-elf -fuse-ld=lld -nostdlib "-Wl,-Ttext=0x1000" -o elf start.s
+clang -target x86_64-linux-elf -fuse-ld=lld -nostdlib "-Wl,-Ttext=0x1000" -o elf multiboot2.s
 ----
 
 Inspect ELF image:
@@ -27,13 +29,13 @@ Run GRUB image with QEMU:
 
 [source,shell]
 ----
-qemu-system-i386 -machine q35 -debugcon vc -kernel grub
+qemu-system-x86_64 -machine q35 -debugcon vc -kernel grub
 ----
 
 Debug GRUB image with QEMU and GDB:
 
 [source,shell]
 ----
-qemu-system-i386w -machine q35 -debugcon vc -kernel grub -gdb tcp:localhost:12345 -S
+qemu-system-x86_64w -machine q35 -debugcon vc -kernel grub -gdb tcp:localhost:12345 -S
 gdb -x gdbinit
 ----

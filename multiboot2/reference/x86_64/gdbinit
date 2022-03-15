@@ -1,0 +1,7 @@
+set confirm off
+set osabi none
+set output-radix 16
+file elf
+target remote localhost:12345
+hbreak _start
+continue
