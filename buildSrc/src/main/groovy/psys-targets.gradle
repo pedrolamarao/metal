@@ -6,9 +6,7 @@ final x86_64_elf_multiboot2_ld = rootProject.file('multiboot2/x86_64-elf.ld')
 final host = {
     assembler.executable = 'clang'
     cCompiler.executable = 'clang'
-    cCompiler.withArguments { addAll '-Wno-deprecated-type' }
     cppCompiler.executable = 'clang++'
-    cppCompiler.withArguments { addAll '-Wno-deprecated-type' }
     linker.executable = 'clang'
     linker.withArguments { '-fuse-ld=lld' }
     staticLibArchiver.executable = 'llvm-ar'
@@ -21,11 +19,11 @@ final multiboot_x86_32 = {
     }
     cCompiler.executable = 'clang'
     cCompiler.withArguments {
-        addAll '-target', 'i386-elf', '-ffreestanding', '-gdwarf', '-nostdinc', '-Wno-deprecated-type'
+        addAll '-target', 'i386-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
     cppCompiler.executable = 'clang++'
     cppCompiler.withArguments {
-        addAll '-target', 'i386-elf', '-ffreestanding', '-gdwarf', '-nostdinc', '-Wno-deprecated-type'
+        addAll '-target', 'i386-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
     linker.executable = 'clang'
     // #XXX: clang can't link target i386-elf with lld
@@ -43,11 +41,11 @@ final multiboot_x86_64 = {
     }
     cCompiler.executable = 'clang'
     cCompiler.withArguments {
-        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc', '-Wno-deprecated-type'
+        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
     cppCompiler.executable = 'clang++'
     cppCompiler.withArguments {
-        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc', '-Wno-deprecated-type'
+        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
     linker.executable = 'clang'
     // #XXX: clang can't link target x86_64-elf with lld
@@ -64,12 +62,12 @@ final uefi_x86_64 = {
     cCompiler.executable = 'clang'
     cCompiler.withArguments {
         addAll '-target', 'x86_64-unknown-windows',
-                '-ffreestanding', '-fshort-wchar', '-nostdinc', '-Wno-deprecated-type'
+                '-ffreestanding', '-fshort-wchar', '-nostdinc'
     }
     cppCompiler.executable = 'clang++'
     cppCompiler.withArguments {
         addAll '-target', 'x86_64-unknown-windows',
-            '-ffreestanding', '-fshort-wchar', '-nostdinc', '-Wno-deprecated-type'
+            '-ffreestanding', '-fshort-wchar', '-nostdinc'
     }
     linker.executable = 'clang'
     // #XXX: clang can't link target i386-elf with lld
