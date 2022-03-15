@@ -1,0 +1,39 @@
+= Multiboot2 i386 Reference
+
+This is a reference project for a Multiboot2 application.
+
+Compile and link ELF image with LLVM:
+
+[source,shell]
+----
+clang -target i386-linux-elf -fuse-ld=lld -nostdlib "-Wl,-Ttext=0x1000" -o elf start.s
+----
+
+Inspect ELF image:
+
+[source,shell]
+----
+llvm-objdump -D elf
+----
+
+Create GRUB standalone image:
+
+[source,shell]
+----
+grub-mkstandalone -O i386-pc -o grub --themes="" --fonts="" --locales="" --install-modules="configfile memdisk multiboot2 normal" "/boot/grub/grub.cfg=grub.cfg" "/program=elf"
+----
+
+Run GRUB image with QEMU:
+
+[source,shell]
+----
+qemu-system-i386 -machine q35 -debugcon vc -kernel grub
+----
+
+Debug GRUB image with QEMU and GDB:
+
+[source,shell]
+----
+qemu-system-i386w -machine q35 -debugcon vc -kernel grub -gdb tcp:localhost:12345 -S
+gdb -x gdbinit
+----
