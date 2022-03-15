@@ -1,3 +1,4 @@
+set architecture i386:x86-64
 set confirm off
 set osabi none
 set output-radix 16
