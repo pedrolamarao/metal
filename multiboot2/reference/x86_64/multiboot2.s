@@ -16,13 +16,13 @@ multiboot2_request:
 .globl _start
 _start:
   // set stack
-  mov $(stack + 0x4000), %rsp
+  mov $(stack + 0x4000), %esp
   // reset EFLAGS
-  xor %rcx, %rcx
+  xor %ecx, %ecx
   push %rcx
   popf
   // validate multiboot2
-  cmp $MULTIBOOT2_RESPONSE_MAGIC, %rax
+  cmp $MULTIBOOT2_RESPONSE_MAGIC, %eax
   jne .Lfinish
   // call main
   call main
