@@ -105,7 +105,7 @@ namespace
             xor ecx, ecx
             push rcx
             popf
-            cmp eax, _magic
+            cmp eax, 0x36D76289 // #XXX: clang assembles _magic into a %rip relative address which doesn't work
             jne finish
             push rbx
             call app::main
