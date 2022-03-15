@@ -7,32 +7,34 @@ plugins {
 
 apply(plugin ="psys-targets")
 
-val create = project.tasks.register<MultibootCreateImageTask>("image") {
+val testAll = project.tasks.register("test") {
     group = "psys"
-    description = "creates image"
-    dependsOn(project.tasks.assemble)
-    inputFile.set(
-        project.provider {
-            val executable = application.binaries.get().stream().findAny().get() as ExecutableBinary
-            executable.linkTask.get().linkedFile.get()
-        }
-    )
 }
 
-val run = project.tasks.register<MultibootRunImageTask>("run-image") {
-    group = "psys"
-    description = "runs image"
-    imageFile.set( create.flatMap { it.outputFile } )
-}
-
-val test = project.tasks.register<MultibootTestImageTask>("test-image") {
-    group = "psys"
-    description = "tests image"
-    imageFile.set( create.flatMap { it.outputFile } )
-    executableFile.set(
-        project.provider {
-            val executable = application.binaries.get().stream().findAny().get() as ExecutableBinary
-            executable.linkTask.get().linkedFile.get()
+project.afterEvaluate {
+    application.binaries.get().forEach { binary ->
+        if (binary is ExecutableBinary) {
+            val name = binary.linkTask.name
+            val executable = binary.linkTask.flatMap { it.linkedFile }
+            val create = project.tasks.register<MultibootCreateImageTask>("image-${name}") {
+                group = "psys"
+                description = "creates image"
+                inputFile.set(executable);
+            }
+            val image = create.flatMap { it.outputFile }
+            project.tasks.register<MultibootRunImageTask>("run-${name}") {
+                group = "psys"
+                description = "runs image"
+                imageFile.set(image)
+            }
+            val test = project.tasks.register<MultibootTestImageTask>("test-${name}") {
+                group = "psys"
+                description = "tests image"
+                gdbArchitecture.set("i386:x86-64")
+                imageFile.set(image)
+                executableFile.set(executable)
+            }
+            testAll { dependsOn(test) }
         }
-    )
+    }
 }

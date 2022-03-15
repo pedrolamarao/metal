@@ -2,17 +2,18 @@
 
 
 #include <psys/integer.h>
+#include <psys/test.h>
 
 #include <multiboot2/information.h>
 
 #include <x86/gdt.h>
-#include <x86/test.h>
 
 
-// x86-32 architecture.
-
-namespace x86
+namespace app
 {
+    using namespace x86;
+    using namespace x86::_32;
+
     constexpr unsigned global_descriptor_table_size = 6;
 
     [[gnu::section(".gdt")]]
@@ -32,13 +33,14 @@ namespace x86
         // user flat data descriptor
         { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
     };
+
+    void main ( multiboot2::information_list & mbi );
 }
 
-//! Multiboot2 application procedure.
-
-void main ( multiboot2::information_list & mbi )
+void app::main ( multiboot2::information_list & mbi )
 {
     using namespace x86;
+    using namespace x86::_32;
 
     // test: data structures
 
@@ -80,12 +82,6 @@ void main ( multiboot2::information_list & mbi )
         return;
     }
 
-    _test_control = 7;
-    if (segment.is_64bit()) {
-        _test_control = 0;
-        return;
-    }
-
     _test_control = 8;
     if (! segment.is_32bit()) {
         _test_control = 0;
@@ -116,18 +112,18 @@ void main ( multiboot2::information_list & mbi )
 
     _test_control = 20;
 
-    const x86::system_table_register expected_gdtr {
-        ((x86::global_descriptor_table_size * sizeof(x86::segment_descriptor)) - 1),
-        reinterpret_cast<ps::size4>(x86::global_descriptor_table)
-    };
-
-    x86::set_global_descriptor_table_register(x86::global_descriptor_table);
+    set_global_descriptor_table_register(global_descriptor_table);
 
     // test: did we successfully update the GDT register?
 
     _test_control = 21;
 
-    auto const actual_gdtr = x86::get_global_descriptor_table_register();
+    const global_descriptor_table_register expected_gdtr {
+        ((global_descriptor_table_size * sizeof(segment_descriptor)) - 1),
+        halt_cast<size4>(global_descriptor_table)
+    };
+
+    auto const actual_gdtr = get_global_descriptor_table_register();
 
     if (actual_gdtr != expected_gdtr) {
         _test_debug = expected_gdtr.size;

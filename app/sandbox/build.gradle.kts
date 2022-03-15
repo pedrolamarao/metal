@@ -7,14 +7,17 @@ plugins {
 application {
     // #XXX: Nokee can't cross compile to system "none"
     val none = org.gradle.internal.os.OperatingSystem.current().getName()
-    targetMachines.add( machines.os(none).architecture("-multiboot-x86_32") )
+    targetMachines.addAll(
+        machines.os(none).architecture("-multiboot-x86_32"),
+        machines.os(none).architecture("-multiboot-x86_64")
+    )
 
     dependencies {
-        implementation(project(":multiboot2"))
+        implementation(project(":psys:multiboot2"))
         implementation(project(":x86"))
     }
 
-    val baseArgs = listOf("-std=c++20", "-flto", "-fasm-blocks")
+    val baseArgs = listOf("-std=c++20", "-flto")
 
     binaries.configureEach {
         if (this is ExecutableBinary) {
@@ -28,20 +31,18 @@ application {
     }
 }
 
-val create = project.tasks.register<MultibootCreateImageTask>("image") {
-    group = "psys"
-    description = "creates image"
-    dependsOn(project.tasks.assemble)
-    inputFile.set(
-        project.provider {
-            val executable = application.binaries.get().stream().findAny().get() as ExecutableBinary
-            executable.linkTask.get().linkedFile.get()
+afterEvaluate {
+    application.binaries.get().forEach { binary ->
+        if (binary is ExecutableBinary) {
+            val name = binary.linkTask.name
+            val create = project.tasks.register<MultibootCreateImageTask>("image-${name}") {
+                group = "psys"
+                inputFile.set( binary.linkTask.flatMap { it.linkedFile })
+            }
+            project.tasks.register<MultibootRunImageTask>("run-image-${name}") {
+                group = "psys"
+                imageFile.set( create.flatMap { it.outputFile } )
+            }
         }
-    )
-}
-
-project.tasks.register<MultibootRunImageTask>("run-image") {
-    group = "psys"
-    description = "runs image"
-    imageFile.set( create.flatMap { it.outputFile } )
+    }
 }

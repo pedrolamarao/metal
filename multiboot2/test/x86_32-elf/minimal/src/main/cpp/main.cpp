@@ -74,10 +74,19 @@ namespace multiboot2
     {
         __asm__
         {
+#if defined(__i386__)
             mov esp, offset stack + 0x4000
             xor ecx, ecx
             push ecx
             popf
+#elif defined(__x86_64__)
+            mov rsp, offset stack + 0x4000
+            xor rcx, rcx
+            push rcx
+            popf
+#else
+# error unsupported target
+#endif
             call _test_start
             call test
             call _test_finish

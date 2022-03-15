@@ -2,6 +2,7 @@
 
 
 #include <psys/integer.h>
+#include <psys/test.h>
 
 #include <multiboot2/information.h>
 
@@ -12,12 +13,9 @@
 #include <x86/port.h>
 
 #include <pc/pic.h>
-#include <pc/test.h>
 
 
-// x86-32 architecture.
-
-namespace x86
+namespace app
 {
     void set_global_descriptor_table_register ();
 
@@ -27,11 +25,11 @@ namespace x86
     unsigned interrupt_counter {};
 
     void set_interrupt_descriptor_table_register ();
+
+    void main ( multiboot2::information_list & mbi );
 }
 
-// Multiboot2 application procedure.
-
-void main ( multiboot2::information_list & mbi )
+void app::main ( multiboot2::information_list & mbi )
 {
     using namespace x86;
 
@@ -111,10 +109,11 @@ void main ( multiboot2::information_list & mbi )
     return;
 }
 
-//! x86-32 architecture.
-
-namespace x86
+namespace app
 {
+    using namespace x86;
+    using namespace x86::_32;
+
     // Segments.
 
     [[gnu::section(".gdt")]]

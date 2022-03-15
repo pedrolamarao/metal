@@ -1,14 +1,15 @@
-// Copyright (C) 2012,2013,2014,2015,2016,2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2012,2013,2014,2015,2016,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
-#include <psys/integer.h>
+#include <psys/size.h>
 
 
 //! Declarations
 
 namespace x86
 {
+  using size  = ps::size;
   using size1 = ps::size1;
   using size2 = ps::size2;
   using size4 = ps::size4;
@@ -24,47 +25,6 @@ namespace x86
   //! Privilege level.
 
   using privilege_level = unsigned _ExtInt(2);
-
-  //! Descriptor.
-
-  class descriptor
-  {
-  public:
-
-    constexpr
-    descriptor () ;
-
-    constexpr
-    descriptor ( size4 low, size4 high ) ;
-
-    auto is_present () const -> bool ;
-
-    auto is_system () const -> bool ;
-
-    auto privilege () const -> privilege_level ;
-
-    auto type () const -> descriptor_type ;
-
-  protected:
-
-    size4 _low;
-    size4 _high;
-
-  };
-
-  static_assert(sizeof(descriptor) == 8, "unexpected size of descriptor");
-
-  //! System table register.
-
-  struct [[gnu::packed]] system_table_register
-  {
-    size2 size;
-    size4 offset;
-  };
-
-  static_assert(sizeof(system_table_register) == 6, "unexpected size of system_table_register");
-
-  bool operator== (system_table_register x, system_table_register y);
 
   //! Segment selector.
 
@@ -101,6 +61,15 @@ namespace x86
 
     void halt ();
 
+    template <typename T, typename U>
+    auto halt_cast (U* address)
+    {
+      auto offset = reinterpret_cast<size>(address);
+      auto narrow = static_cast<T>(offset);
+      if (narrow != offset) { while (true) halt(); }
+      return narrow;
+    }
+
     void pause ();
 
     //! @}
@@ -110,38 +79,6 @@ namespace x86
 
 namespace x86
 {
-  // Descriptor.
-
-  constexpr inline
-  descriptor::descriptor () : _low{}, _high{} { } ;
-
-  constexpr inline
-  descriptor::descriptor ( size4 low, size4 high ) : _low{low}, _high{high} { }
-
-  inline
-  auto descriptor::is_present () const -> bool { return (_high >> 15) & 0b1; }
-
-  inline
-  auto descriptor::is_system () const -> bool { return ((_high >> 12) & 0b1) == 0; }
-
-  inline
-  auto descriptor::privilege () const -> privilege_level { return (_high >> 13) & 0b11; }
-
-  inline
-  auto descriptor::type () const -> descriptor_type { return (_high >> 8) & 0b1111; }
-
-  inline
-  bool operator== ( system_table_register x, system_table_register y )
-  {
-    return x.size == y.size && x.offset == y.offset;
-  }
-
-  inline
-  bool operator!= ( system_table_register x, system_table_register y )
-  {
-    return x.size != y.size || x.offset != y.offset;
-  }
-
   constexpr inline
   segment_selector::segment_selector () : _value{}
   { }

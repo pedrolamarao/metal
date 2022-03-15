@@ -2,18 +2,19 @@
 
 
 #include <psys/integer.h>
+#include <psys/test.h>
 
 #include <multiboot2/information.h>
 
 #include <x86/gdt.h>
 #include <x86/idt.h>
-#include <x86/test.h>
 
 
-// x86-32 architecture.
-
-namespace x86
+namespace app
 {
+    using namespace x86;
+    using namespace x86::_32;;
+
     [[gnu::section(".gdt")]]
     constinit
     segment_descriptor global_descriptor_table [6] =
@@ -59,14 +60,15 @@ namespace x86
             iretd
         }
     }
+
+    void main ( multiboot2::information_list & mbi );
 }
 
-// Multiboot2 application procedure.
-
-void main ( multiboot2::information_list & mbi )
+void app::main ( multiboot2::information_list & mbi )
 {
     using namespace ps;
     using namespace x86;
+    using namespace x86::_32;
 
     // set the GDT register and set segment registers
 
@@ -114,7 +116,7 @@ void main ( multiboot2::information_list & mbi )
     }
 
     _test_control = 14;
-    if (descriptor.offset() != reinterpret_cast<size4>(interrupt_handler)) {
+    if (descriptor.offset() != halt_cast<size4>(interrupt_handler)) {
         _test_debug = descriptor.offset();
         _test_control = 0;
         return;
@@ -142,9 +144,9 @@ void main ( multiboot2::information_list & mbi )
 
     _test_control = 21;
 
-    auto expected_idtr = system_table_register {
+    auto expected_idtr = interrupt_descriptor_table_register {
         interrupt_descriptor_table_size * sizeof(interrupt_gate_descriptor),
-        reinterpret_cast<size4>(interrupt_descriptor_table)
+        halt_cast<size4>(interrupt_descriptor_table)
     };
 
     auto actual_idtr = get_interrupt_descriptor_table_register();

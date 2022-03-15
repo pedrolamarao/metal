@@ -91,7 +91,7 @@ abstract class MultibootRunImageTask : DefaultTask()
     {
         val tools = project.rootProject.extensions["tools"] as java.util.Properties
         val path = tools["br.dev.pedrolamarao.psys.qemu.path"]
-        qemuExecutable.convention( if (path != null) "${path}/qemu-system-i386" else "qemu-system-i386" )
+        qemuExecutable.convention( if (path != null) "${path}/qemu-system-x86_64" else "qemu-system-x86_64" )
 
         qemuArgs.debugConsole.convention("vc")
         qemuArgs.kernel.convention(imageFile)
@@ -116,6 +116,9 @@ abstract class MultibootTestImageTask : DefaultTask()
 {
     @get:InputFile
     abstract val executableFile : RegularFileProperty
+
+    @get:Input @get:Optional
+    abstract val gdbArchitecture : Property<String>
 
     @get:Input
     abstract val gdbExecutable : Property<String>
@@ -159,7 +162,7 @@ abstract class MultibootTestImageTask : DefaultTask()
             stop.set(true)
         }
 
-        qemuExecutable.convention( if (qemuPath != null) "${qemuPath}/qemu-system-i386" else "qemu-system-i386" )
+        qemuExecutable.convention( if (qemuPath != null) "${qemuPath}/qemu-system-x86_64" else "qemu-system-x86_64" )
     }
 
     @TaskAction
@@ -190,8 +193,9 @@ abstract class MultibootTestImageTask : DefaultTask()
 
         try
         {
-            gdb.gdbSet("mi-async", "on") {}
+            if (gdbArchitecture.isPresent) gdb.gdbSet("architecture", gdbArchitecture.get()) {}
             gdb.gdbSet("confirm", "off") {}
+            gdb.gdbSet("mi-async", "on") {}
             gdb.gdbSet("osabi", "none") {}
             gdb.gdbSet("output-radix", "10") {}
             gdb.fileExecAndSymbols(executableFile.get().toString().replace("\\", "/")) {}

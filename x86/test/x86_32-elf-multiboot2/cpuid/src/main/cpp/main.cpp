@@ -1,16 +1,19 @@
 // Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #include <psys/integer.h>
+#include <psys/test.h>
 
 #include <multiboot2/information.h>
 
 #include <x86/cpuid.h>
-#include <x86/test.h>
 
 
-//! Multiboot2 application procedure.
+namespace app
+{
+    void main ( multiboot2::information_list & mbi );
+}
 
-void main ( multiboot2::information_list & mbi )
+void app::main ( multiboot2::information_list & mbi )
 {
     _test_control = 1;
 

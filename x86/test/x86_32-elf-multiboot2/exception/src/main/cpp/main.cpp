@@ -2,18 +2,19 @@
 
 
 #include <psys/integer.h>
+#include <psys/test.h>
 
 #include <multiboot2/information.h>
 
 #include <x86/gdt.h>
 #include <x86/idt.h>
-#include <x86/test.h>
 
 
-// x86-32 architecture.
-
-namespace x86
+namespace app
 {
+    using namespace x86;
+    using namespace x86::_32;
+
     // Segments.
 
     extern segment_descriptor global_descriptor_table [8];
@@ -54,14 +55,15 @@ namespace x86
 
     unsigned __x86_interrupt_FF_counter {};
     void __x86_interrupt_FF ();
+
+    void main ( multiboot2::information_list & mbi );
 }
 
-// Multiboot2 application procedure.
-
-void main ( multiboot2::information_list & mbi )
+void app::main ( multiboot2::information_list & mbi )
 {
     using namespace ps;
     using namespace x86;
+    using namespace x86::_32;
 
     // set the GDT register and set segment registers
 
@@ -158,10 +160,10 @@ void main ( multiboot2::information_list & mbi )
     return;
 }
 
-// x86-32 architecture.
-
-namespace x86
+namespace app
 {
+    using namespace x86;
+    using namespace x86::_32;
 
     [[gnu::section(".gdt")]]
     constinit
