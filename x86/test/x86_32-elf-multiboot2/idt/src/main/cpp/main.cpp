@@ -118,7 +118,7 @@ void main ( multiboot2::information_list & mbi )
     }
 
     _test_control = 14;
-    if (descriptor.offset() != reinterpret_cast<size4>(interrupt_handler)) {
+    if (descriptor.offset() != halt_cast<size4>(interrupt_handler)) {
         _test_debug = descriptor.offset();
         _test_control = 0;
         return;
@@ -148,7 +148,7 @@ void main ( multiboot2::information_list & mbi )
 
     auto expected_idtr = interrupt_descriptor_table_register {
         interrupt_descriptor_table_size * sizeof(interrupt_gate_descriptor),
-        reinterpret_cast<size4>(interrupt_descriptor_table)
+        halt_cast<size4>(interrupt_descriptor_table)
     };
 
     auto actual_idtr = get_interrupt_descriptor_table_register();

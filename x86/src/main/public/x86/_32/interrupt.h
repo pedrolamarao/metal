@@ -136,7 +136,7 @@ namespace x86::_32
     privilege_level privilege,
     bool is_32bit
   )
-  : interrupt_gate_descriptor { segment, reinterpret_cast<size>(offset), is_present, must_cli, privilege, is_32bit }
+  : interrupt_gate_descriptor { segment, halt_cast<size4>(offset), is_present, must_cli, privilege, is_32bit }
   { }
 
   inline
@@ -170,7 +170,7 @@ namespace x86::_32
   {
     interrupt_descriptor_table_register value {
       N * sizeof(interrupt_gate_descriptor),
-      reinterpret_cast<ps::size>(table)
+      halt_cast<size4>(table)
     };
     set_interrupt_descriptor_table_register(value);
   }

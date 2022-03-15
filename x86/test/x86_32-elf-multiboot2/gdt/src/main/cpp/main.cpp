@@ -122,7 +122,7 @@ void main ( multiboot2::information_list & mbi )
 
     const global_descriptor_table_register expected_gdtr {
         ((global_descriptor_table_size * sizeof(segment_descriptor)) - 1),
-        reinterpret_cast<ps::size4>(global_descriptor_table)
+        halt_cast<size4>(global_descriptor_table)
     };
 
     auto const actual_gdtr = get_global_descriptor_table_register();
