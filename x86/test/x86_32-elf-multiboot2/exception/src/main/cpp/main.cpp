@@ -25,36 +25,36 @@ namespace app
 
     extern interrupt_gate_descriptor interrupt_descriptor_table [256];
 
-    extern "C" void __raise_DE ();
-    unsigned __x86_interrupt_00_counter {};
-    void __x86_interrupt_00 ();
+    void raise_DE ();
+    unsigned interrupt_00_counter {};
+    void interrupt_00 ();
 
-    void __raise_BP ();
-    unsigned __x86_interrupt_03_counter {};
-    void __x86_interrupt_03 ();
+    void raise_BP ();
+    unsigned interrupt_03_counter {};
+    void interrupt_03 ();
 
-    void __raise_OF ();
-    unsigned __x86_interrupt_04_counter {};
-    void __x86_interrupt_04 ();
+    void raise_OF ();
+    unsigned interrupt_04_counter {};
+    void interrupt_04 ();
 
-    extern "C" void __raise_BR ();
-    unsigned __x86_interrupt_05_counter {};
-    void __x86_interrupt_05 ();
+    void raise_BR ();
+    unsigned interrupt_05_counter {};
+    void interrupt_05 ();
 
-    extern "C" void __raise_UD ();
-    unsigned __x86_interrupt_06_counter {};
-    void __x86_interrupt_06 ();
+    void raise_UD ();
+    unsigned interrupt_06_counter {};
+    void interrupt_06 ();
 
-    extern "C" void __raise_NP ();
-    unsigned __x86_interrupt_0B_counter {};
-    void __x86_interrupt_0B ();
+    void raise_NP ();
+    unsigned interrupt_0B_counter {};
+    void interrupt_0B ();
 
-    extern "C" void __raise_GP ();
-    unsigned __x86_interrupt_0D_counter {};
-    void __x86_interrupt_0D ();
+    void raise_GP ();
+    unsigned interrupt_0D_counter {};
+    void interrupt_0D ();
 
-    unsigned __x86_interrupt_FF_counter {};
-    void __x86_interrupt_FF ();
+    unsigned interrupt_FF_counter {};
+    void interrupt_FF ();
 
     void main ( multiboot2::information_list & mbi );
 }
@@ -80,24 +80,24 @@ void app::main ( multiboot2::information_list & mbi )
     auto interrupt_selector = segment_selector(2, false, 0);
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table[i] = { interrupt_selector, __x86_interrupt_FF, true, true, 0, true };
+        interrupt_descriptor_table[i] = { interrupt_selector, interrupt_FF, true, true, 0, true };
     }
 
-    interrupt_descriptor_table[0x00] = { interrupt_selector, __x86_interrupt_00, true, true, 0, true };
-    interrupt_descriptor_table[0x03] = { interrupt_selector, __x86_interrupt_03, true, true, 0, true };
-    interrupt_descriptor_table[0x04] = { interrupt_selector, __x86_interrupt_04, true, true, 0, true };
-    interrupt_descriptor_table[0x05] = { interrupt_selector, __x86_interrupt_05, true, true, 0, true };
-    interrupt_descriptor_table[0x06] = { interrupt_selector, __x86_interrupt_06, true, true, 0, true };
-    interrupt_descriptor_table[0x0B] = { interrupt_selector, __x86_interrupt_0B, true, true, 0, true };
-    interrupt_descriptor_table[0x0D] = { interrupt_selector, __x86_interrupt_0D, true, true, 0, true };
+    interrupt_descriptor_table[0x00] = { interrupt_selector, interrupt_00, true, true, 0, true };
+    interrupt_descriptor_table[0x03] = { interrupt_selector, interrupt_03, true, true, 0, true };
+    interrupt_descriptor_table[0x04] = { interrupt_selector, interrupt_04, true, true, 0, true };
+    interrupt_descriptor_table[0x05] = { interrupt_selector, interrupt_05, true, true, 0, true };
+    interrupt_descriptor_table[0x06] = { interrupt_selector, interrupt_06, true, true, 0, true };
+    interrupt_descriptor_table[0x0B] = { interrupt_selector, interrupt_0B, true, true, 0, true };
+    interrupt_descriptor_table[0x0D] = { interrupt_selector, interrupt_0D, true, true, 0, true };
 
     set_interrupt_descriptor_table_register(interrupt_descriptor_table);
 
     // test: exception 00: division error
 
     _test_control = 1000;
-    __raise_DE();
-    if (__x86_interrupt_00_counter == 0) {
+    raise_DE();
+    if (interrupt_00_counter == 0) {
         _test_control = 0;
         return;
     }
@@ -105,8 +105,8 @@ void app::main ( multiboot2::information_list & mbi )
     // test: exception 03: breakpoint
 
     _test_control = 1003;
-    __raise_BP();
-    if (__x86_interrupt_03_counter == 0) {
+    raise_BP();
+    if (interrupt_03_counter == 0) {
         _test_control = 0;
         return;
     }
@@ -114,8 +114,8 @@ void app::main ( multiboot2::information_list & mbi )
     // test: exception 04: integer overflow
 
     _test_control = 1004;
-    __raise_OF();
-    if (__x86_interrupt_04_counter == 0) {
+    raise_OF();
+    if (interrupt_04_counter == 0) {
         _test_control = 0;
         return;
     }
@@ -123,8 +123,8 @@ void app::main ( multiboot2::information_list & mbi )
     // test: exception 05: bound range exceeded
 
     _test_control = 1005;
-    __raise_BR();
-    if (__x86_interrupt_05_counter == 0) {
+    raise_BR();
+    if (interrupt_05_counter == 0) {
         _test_control = 0;
         return;
     }
@@ -132,8 +132,8 @@ void app::main ( multiboot2::information_list & mbi )
     // test: exception 06: undefined instruction
 
     _test_control = 1006;
-    __raise_UD();
-    if (__x86_interrupt_06_counter == 0) {
+    raise_UD();
+    if (interrupt_06_counter == 0) {
         _test_control = 0;
         return;
     }
@@ -141,8 +141,8 @@ void app::main ( multiboot2::information_list & mbi )
     // test: exception 0B: segment not present
 
     _test_control = 1000 + 0x0B;
-    __raise_NP();
-    if (__x86_interrupt_0B_counter == 0) {
+    raise_NP();
+    if (interrupt_0B_counter == 0) {
         _test_control = 0;
         return;
     }
@@ -150,8 +150,8 @@ void app::main ( multiboot2::information_list & mbi )
     // test: exception 0D: general protection fault
 
     _test_control = 1000 + 0x0D;
-    __raise_GP();
-    if (__x86_interrupt_0D_counter == 0) {
+    raise_GP();
+    if (interrupt_0D_counter == 0) {
         _test_control = 0;
         return;
     }
@@ -204,11 +204,11 @@ namespace app
     // If the handler can't solve the fault, the program must terminate.
     // If the handler solves the fault, the program must retry the instruction.
 
-    // In these tests, all faults are solved by rewriting the program.
+    // In these tests, all faults are "solved" by rewriting the program.
     // Offending instructions are rewritten with NOPs.
-    // It is assumed safe to write four NOPs into "bad" locations.
+    // It is assumed safe to write `size` NOPs into "bad" locations.
 
-    [[gnu::naked]] void __raise_DE_bad ()
+    [[gnu::naked]] void raise_DE_bad ()
     {
 #if defined(__i386__)
         __asm__
@@ -243,7 +243,7 @@ namespace app
 #endif
     }
 
-    [[gnu::naked]] void __raise_DE ()
+    [[gnu::naked]] void raise_DE ()
     {
 #if defined(__i386__)
         __asm__
@@ -252,7 +252,7 @@ namespace app
             push eax
             // prepare zero divisor
             mov eax, 0
-            jmp __raise_DE_bad
+            jmp raise_DE_bad
         }
 #elif defined(__x86_64__)
         __asm__
@@ -261,14 +261,14 @@ namespace app
             push rax
             // prepare zero divisor
             mov rax, 0
-            jmp __raise_DE_bad
+            jmp raise_DE_bad
         }
 #else
 # error unsupported target
 #endif
     }
 
-    [[gnu::naked]] void __x86_interrupt_00 ()
+    [[gnu::naked]] void interrupt_00 ()
     {
 #if defined(__i386__)
         __asm__
@@ -277,9 +277,9 @@ namespace app
             push eax
             // "fix" caller: rewrite with NOPS
             mov eax, 0x90909090
-            mov __raise_DE_bad, eax
+            mov raise_DE_bad, eax
             // increment interrupt counter
-            inc __x86_interrupt_00_counter
+            inc interrupt_00_counter
             // restore
             pop eax
             iretd
@@ -290,9 +290,9 @@ namespace app
             push rax
             // "fix" caller: rewrite with NOPS
             mov rax, 0x9090909090909090
-            mov __raise_DE_bad, rax
+            mov raise_DE_bad, rax
             // increment interrupt counter
-            inc __x86_interrupt_00_counter
+            inc interrupt_00_counter
             // restore
             pop rax
             iretd
@@ -302,24 +302,24 @@ namespace app
         }
     }
 
-    void __raise_BP ()
+    void raise_BP ()
     {
         // `int3` raises BP
 
         __asm__ volatile ( "int3" : : : );
     }
 
-    [[gnu::naked]] void __x86_interrupt_03 ()
+    [[gnu::naked]] void interrupt_03 ()
     {
         __asm__
         {
              // increment interrupt counter
-             inc __x86_interrupt_03_counter
+             inc interrupt_03_counter
              iretd
         }
     }
 
-    void __raise_OF ()
+    void raise_OF ()
     {
 #if defined(__i386__)
         // increment 0x7F overflows, `into` raises OF
@@ -333,17 +333,17 @@ namespace app
 #endif
     }
 
-    [[gnu::naked]] void __x86_interrupt_04 ()
+    [[gnu::naked]] void interrupt_04 ()
     {
         __asm__
         {
              // increment interrupt counter
-             inc __x86_interrupt_04_counter
+             inc interrupt_04_counter
              iretd
         }
     }
 
-    [[gnu::naked]] void __raise_BR_bad ()
+    [[gnu::naked]] void raise_BR_bad ()
     {
 #if defined(__i386__)
         __asm__
@@ -378,7 +378,7 @@ namespace app
 #endif
     }
 
-    [[gnu::naked]] void __raise_BR ()
+    [[gnu::naked]] void raise_BR ()
     {
 #if defined(__i386__)
         __asm__
@@ -391,7 +391,7 @@ namespace app
             mov eax, 0
             push eax
             mov eax, 4
-            jmp __raise_BR_bad
+            jmp raise_BR_bad
         }
 #elif defined(__x86_64__)
         __asm__
@@ -405,7 +405,7 @@ namespace app
 #endif
     }
 
-    [[gnu::naked]] void __x86_interrupt_05 ()
+    [[gnu::naked]] void interrupt_05 ()
     {
         __asm__
         {
@@ -414,9 +414,9 @@ namespace app
             push eax
             // "fix" caller: rewrite with NOPS
             mov eax, 0x90909090
-            mov __raise_BR_bad, eax
+            mov raise_BR_bad, eax
             // increment interrupt counter
-            inc __x86_interrupt_05_counter
+            inc interrupt_05_counter
             // restore
             pop eax
             iretd
@@ -425,9 +425,9 @@ namespace app
             push rax
             // "fix" caller: rewrite with NOPS
             mov rax, 0x9090909090909090
-            mov __raise_BR_bad, rax
+            mov raise_BR_bad, rax
             // increment interrupt counter
-            inc __x86_interrupt_05_counter
+            inc interrupt_05_counter
             // restore
             pop rax
             iretd
@@ -437,7 +437,7 @@ namespace app
         }
     }
 
-    [[gnu::naked]] void __raise_UD_bad ()
+    [[gnu::naked]] void raise_UD_bad ()
     {
         __asm__
         {
@@ -454,15 +454,15 @@ namespace app
         }
     }
 
-    [[gnu::naked]] void __raise_UD ()
+    [[gnu::naked]] void raise_UD ()
     {
         __asm__
         {
-            jmp __raise_UD_bad
+            jmp raise_UD_bad
         }
     }
 
-    [[gnu::naked]] void __x86_interrupt_06 ()
+    [[gnu::naked]] void interrupt_06 ()
     {
         __asm__
         {
@@ -471,9 +471,9 @@ namespace app
             push eax
             // "fix" caller: rewrite with NOPS
             mov eax, 0x90909090
-            mov __raise_UD_bad, eax
+            mov raise_UD_bad, eax
             // increment interrupt counter
-            inc __x86_interrupt_06_counter
+            inc interrupt_06_counter
             // restore
             pop eax
             iretd
@@ -482,9 +482,9 @@ namespace app
             push rax
             // "fix" caller: rewrite with NOPS
             mov rax, 0x9090909090909090
-            mov __raise_UD_bad, rax
+            mov raise_UD_bad, rax
             // increment interrupt counter
-            inc __x86_interrupt_06_counter
+            inc interrupt_06_counter
             // restore
             pop rax
             iretd
@@ -494,7 +494,7 @@ namespace app
         }
     }
 
-    [[gnu::naked]] void __raise_NP_bad ()
+    [[gnu::naked]] void raise_NP_bad ()
     {
 #if defined(__i386__)
         __asm__
@@ -531,7 +531,7 @@ namespace app
 #endif
     }
 
-    [[gnu::naked]] void __raise_NP ()
+    [[gnu::naked]] void raise_NP ()
     {
 #if defined(__i386__)
         __asm__
@@ -541,7 +541,7 @@ namespace app
             push gs
             // prepare segment selector for non-present data segment
             mov ax, 0x30
-            jmp __raise_NP_bad
+            jmp raise_NP_bad
         }
 #elif defined(__x86_64__)
         __asm__
@@ -551,14 +551,14 @@ namespace app
             push gs
             // prepare segment selector for non-present data segment
             mov ax, 0x30
-            jmp __raise_NP_bad
+            jmp raise_NP_bad
         }
 #else
 # error unsupported target
 #endif
     }
 
-    [[gnu::naked]] void __x86_interrupt_0B ()
+    [[gnu::naked]] void interrupt_0B ()
     {
 #if defined(__i386__)
         __asm__
@@ -567,9 +567,9 @@ namespace app
             push eax
             // "fix" caller: rewrite with NOPS
             mov eax, 0x90909090
-            mov __raise_NP_bad, eax
+            mov raise_NP_bad, eax
             // increment interrupt counter
-            inc __x86_interrupt_0B_counter
+            inc interrupt_0B_counter
             // discard error code from stack
             add esp, 4
             // restore
@@ -583,9 +583,9 @@ namespace app
             push rax
             // "fix" caller: rewrite with NOPS
             mov rax, 0x9090909090909090
-            mov __raise_NP_bad, rax
+            mov raise_NP_bad, rax
             // increment interrupt counter
-            inc __x86_interrupt_0B_counter
+            inc interrupt_0B_counter
             // discard error code from stack
             add rsp, 4
             // restore
@@ -597,7 +597,7 @@ namespace app
 #endif
     }
 
-    [[gnu::naked]] void __raise_GP_bad ()
+    [[gnu::naked]] void raise_GP_bad ()
     {
 #if defined(__i386__)
         __asm__
@@ -634,7 +634,7 @@ namespace app
 #endif
     }
 
-    [[gnu::naked]] void __raise_GP ()
+    [[gnu::naked]] void raise_GP ()
     {
 #if defined(__i386__)
         __asm__
@@ -644,7 +644,7 @@ namespace app
             push gs
             // prepare segment selector for non-readable code segment
             mov ax, 0x38
-            jmp __raise_GP_bad
+            jmp raise_GP_bad
         }
 #elif defined(__x86_64__)
         __asm__
@@ -654,14 +654,14 @@ namespace app
             push gs
             // prepare segment selector for non-readable code segment
             mov ax, 0x38
-            jmp __raise_GP_bad
+            jmp raise_GP_bad
         }
 #else
 # error unsupported target
 #endif
     }
 
-    [[gnu::naked]] void __x86_interrupt_0D ()
+    [[gnu::naked]] void interrupt_0D ()
     {
         __asm__
         {
@@ -670,9 +670,9 @@ namespace app
             push eax
             // "fix" caller: rewrite with NOPS
             mov eax, 0x90909090
-            mov __raise_GP_bad, eax
+            mov raise_GP_bad, eax
             // increment interrupt counter
-            inc __x86_interrupt_0D_counter
+            inc interrupt_0D_counter
             // discard error code from stack
             add esp, 4
             // restore
@@ -683,9 +683,9 @@ namespace app
             push rax
             // "fix" caller: rewrite with NOPS
             mov rax, 0x9090909090909090
-            mov __raise_GP_bad, rax
+            mov raise_GP_bad, rax
             // increment interrupt counter
-            inc __x86_interrupt_0D_counter
+            inc interrupt_0D_counter
             // discard error code from stack
             add rsp, 4
             // restore
@@ -697,12 +697,12 @@ namespace app
         }
     }
 
-    [[gnu::naked]] void __x86_interrupt_FF ()
+    [[gnu::naked]] void interrupt_FF ()
     {
         __asm__
         {
              // increment interrupt counter
-             inc __x86_interrupt_FF_counter
+             inc interrupt_FF_counter
              iretd
         }
     }
