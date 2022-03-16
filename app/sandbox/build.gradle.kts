@@ -5,11 +5,13 @@ plugins {
 }
 
 application {
-    // #XXX: Nokee can't cross compile to system "none"
-    val none = org.gradle.internal.os.OperatingSystem.current().getName()
     targetMachines.addAll(
-        machines.os(none).architecture("-multiboot-x86_32"),
-        machines.os(none).architecture("-multiboot-x86_64")
+        // #XXX: build on any for x86_32-elf-multiboot2
+        machines.linux.architecture("-multiboot-x86_32"),
+        machines.windows.architecture("-multiboot-x86_32"),
+        // #XXX: build on any for x86_32-elf-multiboot2
+        machines.linux.architecture("-multiboot-x86_64"),
+        machines.windows.architecture("-multiboot-x86_64"),
     )
 
     dependencies {

@@ -7,12 +7,12 @@ namespace x86::_64
     auto get_global_descriptor_table_register () -> global_descriptor_table_register
     {
         global_descriptor_table_register value;
-        __asm__ ( "sgdtl %0" : "=m"(value) : : );
+        __asm__ ( "sgdt %0" : "=m"(value) : : );
         return value;
     }
 
     void set_global_descriptor_table_register ( global_descriptor_table_register value )
     {
-        __asm__ ( "lgdtl %0" : : "m"(value) : );
+        __asm__ ( "lgdt %0" : : "m"(value) : );
     }
 }

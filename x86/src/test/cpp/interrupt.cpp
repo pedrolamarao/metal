@@ -125,7 +125,7 @@ namespace
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
         ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(4,descriptor.type());
+        ASSERT_EQ(1,descriptor.type());
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
@@ -267,7 +267,7 @@ namespace
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
         ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(4,descriptor.type());
+        ASSERT_EQ(1,descriptor.type());
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
