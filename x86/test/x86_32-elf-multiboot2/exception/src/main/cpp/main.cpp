@@ -210,6 +210,7 @@ namespace app
 
     [[gnu::naked]] void __raise_DE_bad ()
     {
+#if defined(__i386__)
         __asm__
         {
             // divide zero by zero
@@ -217,33 +218,87 @@ namespace app
             nop
             nop
             nop
-            // restore registers
+            // restore
             pop eax
             ret
         }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // divide zero by zero
+            div rax, rax
+            nop
+            nop
+            nop
+            nop
+            nop
+            nop
+            nop
+            // restore
+            pop rax
+            ret
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __raise_DE ()
     {
+#if defined(__i386__)
         __asm__
         {
-            // save registers
+            // save
             push eax
             // prepare zero divisor
             mov eax, 0
             jmp __raise_DE_bad
         }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // save
+            push rax
+            // prepare zero divisor
+            mov rax, 0
+            jmp __raise_DE_bad
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __x86_interrupt_00 ()
     {
+#if defined(__i386__)
         __asm__
         {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_DE_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_00_counter
-             iretd
+            // save
+            push eax
+            // "fix" caller: rewrite with NOPS
+            mov eax, 0x90909090
+            mov __raise_DE_bad, eax
+            // increment interrupt counter
+            inc __x86_interrupt_00_counter
+            // restore
+            pop eax
+            iretd
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // save
+            push rax
+            // "fix" caller: rewrite with NOPS
+            mov rax, 0x9090909090909090
+            mov __raise_DE_bad, rax
+            // increment interrupt counter
+            inc __x86_interrupt_00_counter
+            // restore
+            pop rax
+            iretd
+#else
+# error unsupported target
+#endif
         }
     }
 
@@ -266,10 +321,16 @@ namespace app
 
     void __raise_OF ()
     {
+#if defined(__i386__)
         // increment 0x7F overflows, `into` raises OF
-
         unsigned char value { 0x7F };
         __asm__ volatile ( "incb %0 \n into" : : "r"(value) : );
+#elif defined(__x86_64__)
+        // #TODO
+        __asm__ volatile ( "cli \n hlt" : : : );
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __x86_interrupt_04 ()
@@ -284,6 +345,7 @@ namespace app
 
     [[gnu::naked]] void __raise_BR_bad ()
     {
+#if defined(__i386__)
         __asm__
         {
             // assert index 4 in bounds [0, 1]
@@ -292,17 +354,36 @@ namespace app
             nop
             nop
             add esp, 8
-            // restore registers
+            // restore
             pop eax
             ret
         }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // #TODO
+            nop
+            nop
+            nop
+            nop
+            nop
+            nop
+            nop
+            nop
+            cli
+            hlt
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __raise_BR ()
     {
+#if defined(__i386__)
         __asm__
         {
-            // save registers
+            // save
             push eax
             // prepare bounds [0, 1] and index 4
             mov eax, 1
@@ -312,17 +393,47 @@ namespace app
             mov eax, 4
             jmp __raise_BR_bad
         }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // #TODO
+            cli
+            hlt
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __x86_interrupt_05 ()
     {
         __asm__
         {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_BR_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_05_counter
-             iretd
+#if defined(__i386__)
+            // save
+            push eax
+            // "fix" caller: rewrite with NOPS
+            mov eax, 0x90909090
+            mov __raise_BR_bad, eax
+            // increment interrupt counter
+            inc __x86_interrupt_05_counter
+            // restore
+            pop eax
+            iretd
+#elif defined(__x86_64__)
+            // save
+            push rax
+            // "fix" caller: rewrite with NOPS
+            mov rax, 0x9090909090909090
+            mov __raise_BR_bad, rax
+            // increment interrupt counter
+            inc __x86_interrupt_05_counter
+            // restore
+            pop rax
+            iretd
+#else
+# error unsupported target
+#endif
         }
     }
 
@@ -332,6 +443,10 @@ namespace app
         {
             // `ud2` raises UD
             ud2
+            nop
+            nop
+            nop
+            nop
             nop
             nop
             nop
@@ -351,103 +466,234 @@ namespace app
     {
         __asm__
         {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_UD_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_06_counter
-             iretd
+#if defined(__i386__)
+            // save
+            push eax
+            // "fix" caller: rewrite with NOPS
+            mov eax, 0x90909090
+            mov __raise_UD_bad, eax
+            // increment interrupt counter
+            inc __x86_interrupt_06_counter
+            // restore
+            pop eax
+            iretd
+#elif defined(__x86_64__)
+            // save
+            push rax
+            // "fix" caller: rewrite with NOPS
+            mov rax, 0x9090909090909090
+            mov __raise_UD_bad, rax
+            // increment interrupt counter
+            inc __x86_interrupt_06_counter
+            // restore
+            pop rax
+            iretd
+#else
+# error unsupported target
+#endif
         }
     }
 
     [[gnu::naked]] void __raise_NP_bad ()
     {
+#if defined(__i386__)
         __asm__
         {
-            // store non-present data segment into GS raises `NP`
+            // store non-present data segment into GS
             mov gs, ax
             nop
             nop
             nop
-            // restore registers
+            // restore
             pop gs
             pop eax
             ret
         }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // store non-present data segment into GS
+            mov gs, ax
+            nop
+            nop
+            nop
+            nop
+            nop
+            nop
+            nop
+            // restore
+            pop gs
+            pop rax
+            ret
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __raise_NP ()
     {
+#if defined(__i386__)
         __asm__
         {
-            // save registers
+            // save
             push eax
             push gs
             // prepare segment selector for non-present data segment
             mov ax, 0x30
             jmp __raise_NP_bad
         }
-
-        // save GS before leaving
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // save
+            push rax
+            push gs
+            // prepare segment selector for non-present data segment
+            mov ax, 0x30
+            jmp __raise_NP_bad
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __x86_interrupt_0B ()
     {
+#if defined(__i386__)
         __asm__
         {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_NP_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_0B_counter
-             // discard error code from stack
-             add esp, 4
-             iretd
+            // save
+            push eax
+            // "fix" caller: rewrite with NOPS
+            mov eax, 0x90909090
+            mov __raise_NP_bad, eax
+            // increment interrupt counter
+            inc __x86_interrupt_0B_counter
+            // discard error code from stack
+            add esp, 4
+            // restore
+            pop eax
+            iretd
         }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // save
+            push rax
+            // "fix" caller: rewrite with NOPS
+            mov rax, 0x9090909090909090
+            mov __raise_NP_bad, rax
+            // increment interrupt counter
+            inc __x86_interrupt_0B_counter
+            // discard error code from stack
+            add rsp, 4
+            // restore
+            pop rax
+            iretd
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __raise_GP_bad ()
     {
+#if defined(__i386__)
         __asm__
         {
-            // storing non-readable code segment into GS raises `GP`
+            // store non-readable code segment into GS
             mov gs, ax
             nop
             nop
             nop
-            // restore register
+            // restore
             pop gs
             pop eax
             ret
         }
-
-        // restore GS before leaving
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // store non-readable code segment into GS
+            mov gs, ax
+            nop
+            nop
+            nop
+            nop
+            nop
+            nop
+            nop
+            // restore
+            pop gs
+            pop rax
+            ret
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __raise_GP ()
     {
+#if defined(__i386__)
         __asm__
         {
-            // save registers
+            // save
             push eax
             push gs
             // prepare segment selector for non-readable code segment
             mov ax, 0x38
             jmp __raise_GP_bad
         }
-
-        // save GS before leaving
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // save
+            push rax
+            push gs
+            // prepare segment selector for non-readable code segment
+            mov ax, 0x38
+            jmp __raise_GP_bad
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void __x86_interrupt_0D ()
     {
         __asm__
         {
-             // "fix" caller: rewrite with NOPS
-             mov __raise_GP_bad, 0x90909090
-             // increment interrupt counter
-             inc __x86_interrupt_0D_counter
-             // discard error code from stack
-             add esp, 4
-             iretd
+#if defined(__i386__)
+            // save
+            push eax
+            // "fix" caller: rewrite with NOPS
+            mov eax, 0x90909090
+            mov __raise_GP_bad, eax
+            // increment interrupt counter
+            inc __x86_interrupt_0D_counter
+            // discard error code from stack
+            add esp, 4
+            // restore
+            pop eax
+            iretd
+#elif defined(__x86_64__)
+            // save
+            push rax
+            // "fix" caller: rewrite with NOPS
+            mov rax, 0x9090909090909090
+            mov __raise_GP_bad, rax
+            // increment interrupt counter
+            inc __x86_interrupt_0D_counter
+            // discard error code from stack
+            add rsp, 4
+            // restore
+            pop rax
+            iretd
+#else
+# error unsupported target
+#endif
         }
     }
 
