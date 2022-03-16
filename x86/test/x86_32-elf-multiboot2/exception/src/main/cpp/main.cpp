@@ -283,6 +283,7 @@ namespace app
             // restore
             pop eax
             iretd
+        }
 #elif defined(__x86_64__)
         __asm__
         {
@@ -296,10 +297,10 @@ namespace app
             // restore
             pop rax
             iretd
+        }
 #else
 # error unsupported target
 #endif
-        }
     }
 
     void raise_BP ()
@@ -407,9 +408,9 @@ namespace app
 
     [[gnu::naked]] void interrupt_05 ()
     {
+#if defined(__i386__)
         __asm__
         {
-#if defined(__i386__)
             // save
             push eax
             // "fix" caller: rewrite with NOPS
@@ -420,7 +421,10 @@ namespace app
             // restore
             pop eax
             iretd
+        }
 #elif defined(__x86_64__)
+        __asm__
+        {
             // save
             push rax
             // "fix" caller: rewrite with NOPS
@@ -431,10 +435,10 @@ namespace app
             // restore
             pop rax
             iretd
+        }
 #else
 # error unsupported target
 #endif
-        }
     }
 
     [[gnu::naked]] void raise_UD_bad ()
@@ -464,9 +468,9 @@ namespace app
 
     [[gnu::naked]] void interrupt_06 ()
     {
+#if defined(__i386__)
         __asm__
         {
-#if defined(__i386__)
             // save
             push eax
             // "fix" caller: rewrite with NOPS
@@ -477,7 +481,10 @@ namespace app
             // restore
             pop eax
             iretd
+        }
 #elif defined(__x86_64__)
+        __asm__
+        {
             // save
             push rax
             // "fix" caller: rewrite with NOPS
@@ -488,10 +495,10 @@ namespace app
             // restore
             pop rax
             iretd
+        }
 #else
 # error unsupported target
 #endif
-        }
     }
 
     [[gnu::naked]] void raise_NP_bad ()
@@ -663,9 +670,9 @@ namespace app
 
     [[gnu::naked]] void interrupt_0D ()
     {
+#if defined(__i386__)
         __asm__
         {
-#if defined(__i386__)
             // save
             push eax
             // "fix" caller: rewrite with NOPS
@@ -678,7 +685,10 @@ namespace app
             // restore
             pop eax
             iretd
+        }
 #elif defined(__x86_64__)
+        __asm__
+        {
             // save
             push rax
             // "fix" caller: rewrite with NOPS
@@ -691,10 +701,10 @@ namespace app
             // restore
             pop rax
             iretd
+        }
 #else
 # error unsupported target
 #endif
-        }
     }
 
     [[gnu::naked]] void interrupt_FF ()
