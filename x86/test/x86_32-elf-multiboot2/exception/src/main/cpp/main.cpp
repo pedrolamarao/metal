@@ -210,26 +210,26 @@ namespace app
 
     [[gnu::naked]] void __raise_DE_bad ()
     {
-        // divide zero by zero
-
         __asm__
         {
+            // divide zero by zero
             div eax, eax
             nop
             nop
             nop
-            popad
+            // restore registers
+            pop eax
             ret
         }
     }
 
     [[gnu::naked]] void __raise_DE ()
     {
-        // prepare zero divisor
-
         __asm__
         {
-            pushad
+            // save registers
+            push eax
+            // prepare zero divisor
             mov eax, 0
             jmp __raise_DE_bad
         }
@@ -284,27 +284,27 @@ namespace app
 
     [[gnu::naked]] void __raise_BR_bad ()
     {
-        // `bound` index 4 bounds [0, 1] raises BR
-
         __asm__
         {
+            // assert index 4 in bounds [0, 1]
             bound eax, [esp]
             nop
             nop
             nop
             add esp, 8
-            popad
+            // restore registers
+            pop eax
             ret
         }
     }
 
     [[gnu::naked]] void __raise_BR ()
     {
-        // prepare bounds [0, 1] and index 4
-
         __asm__
         {
-            pushad
+            // save registers
+            push eax
+            // prepare bounds [0, 1] and index 4
             mov eax, 1
             push eax
             mov eax, 0
@@ -328,15 +328,13 @@ namespace app
 
     [[gnu::naked]] void __raise_UD_bad ()
     {
-        // `ud2` raises UD
-
         __asm__
         {
+            // `ud2` raises UD
             ud2
             nop
             nop
             nop
-            popad
             ret
         }
     }
@@ -345,7 +343,6 @@ namespace app
     {
         __asm__
         {
-            pushad
             jmp __raise_UD_bad
         }
     }
@@ -364,31 +361,29 @@ namespace app
 
     [[gnu::naked]] void __raise_NP_bad ()
     {
-        // storing non-present data segment into GS raises `NP`
-
         __asm__
         {
-            mov gs, bx
-            nop
-            nop
-            nop
+            // store non-present data segment into GS raises `NP`
             mov gs, ax
-            popad
+            nop
+            nop
+            nop
+            // restore registers
+            pop gs
+            pop eax
             ret
         }
-
-        // restore GS before leaving
     }
 
     [[gnu::naked]] void __raise_NP ()
     {
-        // prepare segment selector for non-present data segment
-
         __asm__
         {
-            pushad
-            mov ax, gs
-            mov bx, 0x30
+            // save registers
+            push eax
+            push gs
+            // prepare segment selector for non-present data segment
+            mov ax, 0x30
             jmp __raise_NP_bad
         }
 
@@ -411,16 +406,16 @@ namespace app
 
     [[gnu::naked]] void __raise_GP_bad ()
     {
-        // storing non-readable code segment into GS raises `GP`
-
         __asm__
         {
-            mov gs, bx
-            nop
-            nop
-            nop
+            // storing non-readable code segment into GS raises `GP`
             mov gs, ax
-            popad
+            nop
+            nop
+            nop
+            // restore register
+            pop gs
+            pop eax
             ret
         }
 
@@ -429,13 +424,13 @@ namespace app
 
     [[gnu::naked]] void __raise_GP ()
     {
-        // prepare segment selector for non-readable code segment
-
         __asm__
         {
-            pushad
-            mov ax, gs
-            mov bx, 0x38
+            // save registers
+            push eax
+            push gs
+            // prepare segment selector for non-readable code segment
+            mov ax, 0x38
             jmp __raise_GP_bad
         }
 
