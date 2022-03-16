@@ -264,12 +264,29 @@ namespace app
     {
         __asm__
         {
-            pushad
+#if defined(__i386__)
+            // save
+            push eax
+            // handle
             inc master_pic_counter
             mov al, 0x20
             out 0x20, al
-            popad
+            // restore
+            pop eax
             iretd
+#elif defined(__x86_64__)
+            // save
+            push rax
+            // handle
+            inc master_pic_counter
+            mov al, 0x20
+            out 0x20, al
+            // restore
+            pop rax
+            iretd
+#else
+# error unsupported target
+#endif
         }
     }
 
@@ -277,13 +294,31 @@ namespace app
     {
         __asm__
         {
-            pushad
+#if defined(__i386__)
+            // save
+            push eax
+            // handle
             inc slave_pic_counter
             mov al, 0x20
             out 0xA0, al
             out 0x20, al
-            popad
+            // restore
+            pop eax
             iretd
+#elif defined(__x86_64__)
+            // save
+            push rax
+            // handle
+            inc slave_pic_counter
+            mov al, 0x20
+            out 0xA0, al
+            out 0x20, al
+            // restore
+            pop rax
+            iretd
+#else
+# error unsupported target
+#endif
         }
     }
 

@@ -164,28 +164,66 @@ namespace app
 
     [[gnu::naked]] void master_pic_handler ()
     {
+#if defined(__i386__)
         __asm__
         {
-            pushad
+            // save registers
+            push eax
+            // handle
             inc master_pic_counter
             mov al, 0x20
             out 0x20, al
-            popad
+            // restore registers
+            pop eax
             iretd
         }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // save registers
+            push rax
+            // handle
+            inc master_pic_counter
+            mov al, 0x20
+            out 0x20, al
+            // restore registers
+            pop rax
+            iretd
+        }
+#else
+# error unsupported target
+#endif
     }
 
     [[gnu::naked]] void slave_pic_handler ()
     {
         __asm__
         {
-            pushad
+#if defined(__i386__)
+            // save registers
+            push eax
+            // handle
             inc slave_pic_counter
             mov al, 0x20
             out 0xA0, al
             out 0x20, al
-            popad
+            // restore registers
+            pop eax
             iretd
+#elif defined(__x86_64__)
+            // save registers
+            push rax
+            // handle
+            inc slave_pic_counter
+            mov al, 0x20
+            out 0xA0, al
+            out 0x20, al
+            // restore registers
+            pop rax
+            iretd
+#else
+# error unsupported target
+#endif
         }
     }
 
