@@ -43,12 +43,12 @@ namespace
     constinit
     unsigned char stack [ 0x4000 ] {};
 
-    // #XXX: Clang cannot assemble cmp with _ExtInt.
-    constexpr unsigned _magic = information_magic;
-
-    void start_x86_32 ();
-
-    void start_x86_64 ();
+    [[gnu::section(".multiboot2.start")]]
+    void main ( ps::size4 magic, multiboot2::information_list & response )
+    {
+        if (magic != information_magic) return;
+        app::main(response);
+    }
 
     extern "C"
     [[gnu::naked, gnu::section(".multiboot2.start"), gnu::used]]
@@ -57,18 +57,6 @@ namespace
         __asm__
         {
 #if defined(__i386__)
-            jmp start_x86_32
-#elif defined(__x86_64__)
-            jmp start_x86_64
-#else
-# error unsupported target
-#endif
-        }
-    }
-
-    [[gnu::naked, gnu::section(".multiboot2.start")]]
-    void start_x86_32 ()
-    {
         __asm__
         {
             // set stack
@@ -77,14 +65,35 @@ namespace
             xor ecx, ecx
             push ecx
             popf
-            // validate multiboot2
-            cmp eax, _magic
-            jne finish
             // mark test start
             call _test_start
-            // call application
+            // call C++
             push ebx
-            call app::main
+            push eax
+            call main
+            // mark test finish
+            call _test_finish
+            // finish
+            cli
+          halt:
+            hlt
+            jmp halt
+        }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            // set stack
+            mov esp, offset stack + 0x4000
+            // reset eflags
+            xor ecx, ecx
+            push rcx
+            popf
+            // mark test start
+            call _test_start
+            // call C++
+            push rbx
+            push rax
+            call main
             // mark test finish
             call _test_finish
             // finish
@@ -94,26 +103,9 @@ namespace
             hlt
             jmp halt
         }
-    }
-
-    [[gnu::naked, gnu::section(".multiboot2.start")]]
-    void start_x86_64 ()
-    {
-        __asm__
-        {
-            mov esp, offset stack + 0x4000
-            xor ecx, ecx
-            push rcx
-            popf
-            cmp eax, 0x36D76289 // #XXX: clang assembles _magic into a %rip relative address which doesn't work
-            jne finish
-            push rbx
-            call app::main
-          finish:
-            cli
-          halt:
-            hlt
-            jmp halt
+#else
+# error unsupported target
+#endif
         }
     }
 }
