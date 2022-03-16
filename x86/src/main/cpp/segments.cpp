@@ -17,9 +17,9 @@ namespace x86
     {
         unsigned int const _value { size2 { value } };
         __asm__ (
-            "pushl %0   \n"
-            "pushl $%=f \n"
-            "lretl      \n"
+            "push %0   \n"
+            "push $%=f \n"
+            "lret      \n"
             "%=:        \n"
             :
             : "mr"(_value)
@@ -29,16 +29,16 @@ namespace x86
 
     void set_data_segment_register ( segment_selector value )
     {
-        __asm__ ( "movw %%ds, %0" : : "mr"(value) : );
+        __asm__ ( "mov %%ds, %0" : : "mr"(value) : );
     }
 
     void set_stack_segment_register ( segment_selector value )
     {
-        __asm__ ( "movw %%ss, %0" : : "mr"(value) : );
+        __asm__ ( "mov %%ss, %0" : : "mr"(value) : );
     }
 
     void set_extra_segment_registers ( segment_selector value )
     {
-        __asm__ ( "movw %%ds, %0" : : "mr"(value) : );
+        __asm__ ( "mov %%ds, %0" : : "mr"(value) : );
     }
 }
