@@ -1,23 +1,23 @@
 import dev.nokee.platform.nativebase.NativeBinary
 import dev.nokee.testing.nativebase.NativeTestSuite
-import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id("psys-component")
 }
 
-//import dev.nokee.testing.nativebase.NativeTestSuite
-//
 library {
     targetLinkages.add(linkages.static)
 
-    // #XXX: Nokee can't cross compile to system "none"
-    val none = OperatingSystem.current().getName()
     targetMachines.addAll(
-        machines.os(none).architecture("-multiboot-x86_32"),
-        machines.os(none).architecture("-multiboot-x86_64"),
+        // #XXX: build on any for same
         machines.linux.x86_64,
         machines.windows.x86_64,
+        // #XXX: build on any for x86_32-elf-multiboot2
+        machines.linux.architecture("-multiboot-x86_32"),
+        machines.windows.architecture("-multiboot-x86_32"),
+        // #XXX: build on any for x86_32-elf-multiboot2
+        machines.linux.architecture("-multiboot-x86_64"),
+        machines.windows.architecture("-multiboot-x86_64"),
     )
 
     dependencies {
@@ -34,7 +34,7 @@ library {
 }
 
 testSuites {
-    register("test", NativeTestSuite::class.java).get().apply {
+    register("test", NativeTestSuite::class.java) {
         testedComponent(library)
 
         dependencies {
