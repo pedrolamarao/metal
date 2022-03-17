@@ -15,7 +15,7 @@ namespace
 
         port (address_type address) { }
 
-        data_type read () { return data_type{} }
+        data_type read () { return data_type{}; }
 
         void write (data_type value) { }
 

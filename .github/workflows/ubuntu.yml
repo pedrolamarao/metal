@@ -1,9 +1,9 @@
-name: "ubuntu-latest"
+name: "ubuntu"
 on: [pull_request]
 jobs:
   build:
-    name: "Build"
-    runs-on: ubuntu-latest
+    name: "build"
+    runs-on: ubuntu-18.04
     timeout-minutes: 10
     steps:
       - name: "Checkout"
@@ -15,10 +15,11 @@ jobs:
         with:
           java-version: "11"
           distribution: "temurin"
-      - name: "Set up LLVM 13"
+      - name: "Install LLVM 13"
         uses: KyleMayes/install-llvm-action@v1.5.1
         with:
-          version: "13"
+          ubuntu-version: 18.04
+          version: 13
       - name: "Build with Gradle"
         uses: gradle/gradle-build-action@v2.1.3
         with:
