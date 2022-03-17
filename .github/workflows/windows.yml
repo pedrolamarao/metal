@@ -1,8 +1,8 @@
-name: "windows-latest"
+name: "windows"
 on: [pull_request]
 jobs:
   build:
-    name: "Build"
+    name: "build"
     runs-on: windows-latest
     timeout-minutes: 10
     steps:

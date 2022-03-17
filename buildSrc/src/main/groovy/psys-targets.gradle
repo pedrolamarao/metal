@@ -3,12 +3,20 @@ final llvmPath = providers.provider { rootProject.ext.tools['br.dev.pedrolamarao
 final x86_32_elf_multiboot2_ld = rootProject.file('multiboot2/x86_32-elf.ld')
 final x86_64_elf_multiboot2_ld = rootProject.file('multiboot2/x86_64-elf.ld')
 
-final host = {
+final linux_host = {
     assembler.executable = 'clang'
     cCompiler.executable = 'clang'
     cppCompiler.executable = 'clang++'
-    linker.executable = 'clang'
-    linker.withArguments { '-fuse-ld=lld' }
+    linker.executable = 'clang++'
+    linker.withArguments { addAll '-lpthread' }
+    staticLibArchiver.executable = 'llvm-ar'
+}
+
+final windows_host = {
+    assembler.executable = 'clang'
+    cCompiler.executable = 'clang'
+    cppCompiler.executable = 'clang++'
+    linker.executable = 'clang++'
     staticLibArchiver.executable = 'llvm-ar'
 }
 
@@ -25,7 +33,7 @@ final multiboot_x86_32 = {
     cppCompiler.withArguments {
         addAll '-target', 'i386-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
-    linker.executable = 'clang'
+    linker.executable = 'clang++'
     // #XXX: clang can't link target i386-elf with lld
     linker.withArguments {
         addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib', '-static',
@@ -47,7 +55,7 @@ final multiboot_x86_64 = {
     cppCompiler.withArguments {
         addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
-    linker.executable = 'clang'
+    linker.executable = 'clang++'
     // #XXX: clang can't link target x86_64-elf with lld
     linker.withArguments {
         addAll '-target', 'x86_64-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib', '-static',
@@ -69,7 +77,7 @@ final uefi_x86_64 = {
         addAll '-target', 'x86_64-unknown-windows',
             '-ffreestanding', '-fshort-wchar', '-nostdinc'
     }
-    linker.executable = 'clang'
+    linker.executable = 'clang++'
     // #XXX: clang can't link target i386-elf with lld
     linker.withArguments {
         addAll '-target', 'x86_64-unknown-windows', '-fuse-ld=lld',
@@ -85,7 +93,8 @@ project.model
         llvm_host(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.eachPlatform(host)
+            it.target("linuxx86-64", linux_host)
+            it.target("windowsx86-64", windows_host)
         }
         llvm_x86_32_multiboot(Clang)
         {
