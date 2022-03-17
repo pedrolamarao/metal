@@ -1,16 +1,14 @@
 // Copyright (C) 2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #include <psys/integer.h>
-
-#include <multiboot2/header.h>
-#include <multiboot2/information.h>
+#include <psys/start.h>
 
 #include <x86/port.h>
 
 
-namespace app
+namespace psys
 {
-    void main ( multiboot2::information_list & response )
+    void main ()
     {
         // Look for this output in QEMU debugcon!
 

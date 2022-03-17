@@ -1,4 +1,4 @@
-// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <multiboot2/header.h>
@@ -7,46 +7,21 @@
 #include <psys/test.h>
 
 
-//! Test.
+//! Test ELF entry tag.
 
 namespace
 {
-    //! Uninteresting test procedure.
-    //! Did we correctly define the Multiboot2 entry point?
-
     [[gnu::used]]
-    void test ()
+    void test ( ps::size magic )
     {
         _test_control = 1;
+        if (magic != multiboot2::information_magic) _test_control = 0;
         _test_control = -1;
     }
-
-    //! Very large object in the text section.
-    //! Did we correctly position the Multiboot2 request object?
-
-    [[gnu::used]]
-    void large_text ()
-    {
-        __asm__
-        {
-            .zero 0x8000
-        }
-    }
-
-    //! Very large object in the data section.
-    //! Did we correctly position the Multiboot2 request object?
-
-    [[gnu::used]]
-    constinit
-    char large_data [ 0x8000 ] { -1 };
 }
-
-//! Multiboot 2 loader.
 
 namespace multiboot2
 {
-    //! Multiboot2 request.
-
     struct request_type
     {
         header_prologue        prologue;
@@ -54,8 +29,7 @@ namespace multiboot2
         end_request            end;
     };
 
-    // Assumption: multiboot2_start is located at physical address 0x1000.
-    //! Did we correctly position the Multiboot2 entry point?
+    // Assumption: custom entry point is located at physical address 0x1000.
 
     [[gnu::used, gnu::section(".multiboot2.request")]]
     constinit
@@ -66,39 +40,78 @@ namespace multiboot2
         { },
     };
 
-    //! Multiboot2 entry point stack.
-
     [[gnu::section(".multiboot2.stack")]]
     constinit
     unsigned char stack [ 0x4000 ] {};
 
-    //! Multiboot2 entry point.
-
     extern "C"
-    [[gnu::naked, gnu::section(".multiboot2.start")]]
-    void multiboot2_start ()
+    [[gnu::naked, gnu::section(".multiboot2.start"), gnu::used]]
+    void multiboot2_custom ()
     {
+#if defined(__i386__)
         __asm__
         {
-#if defined(__i386__)
             mov esp, offset stack + 0x4000
             xor ecx, ecx
             push ecx
             popf
+            call _test_start
+            push eax
+            call test
+            call _test_finish
+            cli
+        loop:
+            hlt
+            jmp loop
+        }
 #elif defined(__x86_64__)
+        __asm__
+        {
             mov rsp, offset stack + 0x4000
             xor rcx, rcx
             push rcx
             popf
+            call _test_start
+            push rax
+            call test
+            call _test_finish
+            cli
+        loop:
+            hlt
+            jmp loop
+        }
 #else
 # error unsupported target
 #endif
-            call _test_start
-            call test
-            call _test_finish
-            __multiboot2_halt:
+    }
+
+    // Incorrect entry point.
+
+    extern "C"
+    [[gnu::naked, gnu::section(".multiboot2.start"), gnu::used]]
+    void multiboot2_start ()
+    {
+        __asm__
+        {
+            cli
+        loop:
             hlt
-            jmp __multiboot2_halt
+            jmp loop
+        }
+    }
+
+    // Incorrect entry point.
+
+    extern "C"
+    [[gnu::naked, gnu::section(".multiboot2.start"), gnu::used]]
+    void _start ()
+    {
+        __asm__
+        {
+            cli
+        loop:
+            hlt
+            jmp loop
         }
     }
 }

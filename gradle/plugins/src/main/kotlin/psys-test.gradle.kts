@@ -21,7 +21,6 @@ project.afterEvaluate {
                 description = "creates image"
                 inputFile.set(executable)
             }
-            project.tasks.assemble { dependsOn(create) }
             val image = create.flatMap { it.outputFile }
             project.tasks.register<MultibootRunImageTask>("run-image-${name}") {
                 group = "psys"

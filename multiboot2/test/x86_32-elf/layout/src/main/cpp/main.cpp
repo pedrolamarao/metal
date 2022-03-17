@@ -1,12 +1,13 @@
 // Copyright (C) 2020,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
+
 #include <multiboot2/header.h>
 #include <multiboot2/information.h>
 
 #include <psys/test.h>
 
 
-//! Minimal test.
+//! Test image layout.
 
 namespace
 {
@@ -17,14 +18,32 @@ namespace
         if (magic != multiboot2::information_magic) _test_control = 0;
         _test_control = -1;
     }
+
+    // Very large object in the text section.
+
+    [[gnu::used]]
+    void large_text ()
+    {
+        __asm__
+        {
+            .zero 0x8000
+        }
+    }
+
+    // Very large object in the data section.
+
+    [[gnu::used]]
+    constinit
+    char large_data [ 0x8000 ] { -1 };
 }
 
 namespace multiboot2
 {
     struct request_type
     {
-        header_prologue prologue;
-        end_request     end;
+        header_prologue        prologue;
+        entry_address_request  address;
+        end_request            end;
     };
 
     [[gnu::used, gnu::section(".multiboot2.request")]]
@@ -34,6 +53,10 @@ namespace multiboot2
         { architecture_type::x86, sizeof(request), },
         { },
     };
+
+    [[gnu::section(".multiboot2.stack")]]
+    constinit
+    unsigned char stack [ 0x4000 ] {};
 
     // Incorrect entry point.
 
@@ -48,10 +71,6 @@ namespace multiboot2
             jmp halt
         }
     }
-
-    [[gnu::section(".multiboot2.stack")]]
-    constinit
-    unsigned char stack [ 0x4000 ] {};
 
     extern "C"
     [[gnu::naked, gnu::section(".multiboot2.start")]]

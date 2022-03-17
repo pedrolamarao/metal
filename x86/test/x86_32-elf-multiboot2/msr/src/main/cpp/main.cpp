@@ -2,9 +2,8 @@
 
 
 #include <psys/integer.h>
+#include <psys/start.h>
 #include <psys/test.h>
-
-#include <multiboot2/information.h>
 
 #include <x86/cpuid.h>
 #include <x86/gdt.h>
@@ -12,12 +11,7 @@
 #include <x86/msr.h>
 
 
-namespace app
-{
-    void main ( multiboot2::information_list & mbi );
-}
-
-void app::main ( multiboot2::information_list & mbi )
+void psys::main ()
 {
     using namespace x86;
 

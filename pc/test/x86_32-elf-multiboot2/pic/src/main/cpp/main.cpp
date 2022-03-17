@@ -1,10 +1,9 @@
-// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <psys/integer.h>
+#include <psys/start.h>
 #include <psys/test.h>
-
-#include <multiboot2/information.h>
 
 #include <x86/cpuid.h>
 #include <x86/gdt.h>
@@ -15,7 +14,7 @@
 #include <pc/pic.h>
 
 
-namespace app
+namespace
 {
     void set_global_descriptor_table_register ();
 
@@ -25,11 +24,9 @@ namespace app
     unsigned interrupt_counter {};
 
     void set_interrupt_descriptor_table_register ();
-
-    void main ( multiboot2::information_list & mbi );
 }
 
-void app::main ( multiboot2::information_list & mbi )
+void psys::main ()
 {
     using namespace x86;
 
@@ -109,7 +106,7 @@ void app::main ( multiboot2::information_list & mbi )
     return;
 }
 
-namespace app
+namespace
 {
     using namespace x86;
     using namespace x86::_32;

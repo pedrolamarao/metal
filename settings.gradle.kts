@@ -36,6 +36,7 @@ include("acpi")
 include("googletest")
 
 include("multiboot2")
+include("multiboot2:start")
 rootProject.projectDir.resolve("multiboot2/test/x86_32-elf").toPath().apply {
     Files.list(this).forEach {
         if (Files.isDirectory(it))
@@ -52,7 +53,7 @@ rootProject.projectDir.resolve("pc/test/x86_32-elf-multiboot2").toPath().apply {
 }
 
 include("psys")
-include("psys:multiboot2")
+include("psys:start")
 
 include("x86")
 rootProject.projectDir.resolve("x86/test/x86_32-elf-multiboot2").toPath().apply {

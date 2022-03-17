@@ -17,7 +17,7 @@ subprojects {
         )
 
         dependencies {
-            implementation(project(":psys:multiboot2"))
+            implementation(project(":psys:start"))
             implementation(project(":x86"))
         }
 

@@ -1,22 +1,16 @@
-// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <psys/integer.h>
+#include <psys/start.h>
 #include <psys/test.h>
-
-#include <multiboot2/information.h>
 
 #include <x86/port.h>
 
 #include <pc/cmos.h>
 
 
-namespace app
-{
-    void main ( multiboot2::information_list & mbi );
-}
-
-void app::main ( multiboot2::information_list & mbi )
+void psys::main ()
 {
     pc::cmos<x86::port> cmos { 0x70, 0x71 };
     
