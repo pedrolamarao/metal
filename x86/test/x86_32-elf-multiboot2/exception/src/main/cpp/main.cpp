@@ -2,15 +2,14 @@
 
 
 #include <psys/integer.h>
+#include <psys/start.h>
 #include <psys/test.h>
-
-#include <multiboot2/information.h>
 
 #include <x86/gdt.h>
 #include <x86/idt.h>
 
 
-namespace app
+namespace
 {
     using namespace x86;
     using namespace x86::_32;
@@ -55,11 +54,9 @@ namespace app
 
     unsigned interrupt_FF_counter {};
     void interrupt_FF ();
-
-    void main ( multiboot2::information_list & mbi );
 }
 
-void app::main ( multiboot2::information_list & mbi )
+void psys::main ()
 {
     using namespace ps;
     using namespace x86;
@@ -160,7 +157,7 @@ void app::main ( multiboot2::information_list & mbi )
     return;
 }
 
-namespace app
+namespace
 {
     using namespace x86;
     using namespace x86::_32;

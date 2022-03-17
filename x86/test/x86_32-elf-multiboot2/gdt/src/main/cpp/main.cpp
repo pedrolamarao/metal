@@ -2,14 +2,13 @@
 
 
 #include <psys/integer.h>
+#include <psys/start.h>
 #include <psys/test.h>
-
-#include <multiboot2/information.h>
 
 #include <x86/gdt.h>
 
 
-namespace app
+namespace
 {
     using namespace x86;
     using namespace x86::_32;
@@ -33,11 +32,9 @@ namespace app
         // user flat data descriptor
         { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
     };
-
-    void main ( multiboot2::information_list & mbi );
 }
 
-void app::main ( multiboot2::information_list & mbi )
+void psys::main ()
 {
     using namespace x86;
     using namespace x86::_32;

@@ -2,26 +2,13 @@
 
 
 #include <psys/integer.h>
-
-#include <multiboot2/information.h>
-
+#include <psys/start.h>
 #include <psys/test.h>
 
 
-namespace app
-{
-    void main ( multiboot2::information_list & response );
-}
-
-void app::main ( multiboot2::information_list & response )
+void psys::main ()
 {
     _test_control = 1;
-
-    if ((& response) == nullptr) {
-        _test_control = 0;
-        return;
-    }
-
     _test_control = -1;
     return;
 }

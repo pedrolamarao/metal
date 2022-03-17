@@ -18,8 +18,7 @@ library {
     )
 
     dependencies {
-        api(project(":psys"))
-        api(project("::multiboot2"))
+        api(project(":multiboot2"))
     }
 
     binaries.configureEach {
