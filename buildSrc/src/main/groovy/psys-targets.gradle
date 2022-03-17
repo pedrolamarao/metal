@@ -3,7 +3,16 @@ final llvmPath = providers.provider { rootProject.ext.tools['br.dev.pedrolamarao
 final x86_32_elf_multiboot2_ld = rootProject.file('multiboot2/x86_32-elf.ld')
 final x86_64_elf_multiboot2_ld = rootProject.file('multiboot2/x86_64-elf.ld')
 
-final host = {
+final linux_host = {
+    assembler.executable = 'clang'
+    cCompiler.executable = 'clang'
+    cppCompiler.executable = 'clang++'
+    linker.executable = 'clang++'
+    linker.withArguments { addAll '-lpthread' }
+    staticLibArchiver.executable = 'llvm-ar'
+}
+
+final windows_host = {
     assembler.executable = 'clang'
     cCompiler.executable = 'clang'
     cppCompiler.executable = 'clang++'
@@ -84,7 +93,8 @@ project.model
         llvm_host(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.eachPlatform(host)
+            it.target("linuxx86-64", linux_host)
+            it.target("windowsx86-64", windows_host)
         }
         llvm_x86_32_multiboot(Clang)
         {
