@@ -8,7 +8,6 @@ final host = {
     cCompiler.executable = 'clang'
     cppCompiler.executable = 'clang++'
     linker.executable = 'clang'
-    linker.withArguments { '-fuse-ld=lld' }
     staticLibArchiver.executable = 'llvm-ar'
 }
 
