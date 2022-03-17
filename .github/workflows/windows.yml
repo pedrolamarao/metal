@@ -1,4 +1,4 @@
-name: "windows-latest"
+name: "windows"
 on: [pull_request]
 jobs:
   build:
