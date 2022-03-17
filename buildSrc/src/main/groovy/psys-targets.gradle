@@ -3,20 +3,20 @@ final llvmPath = providers.provider { rootProject.ext.tools['br.dev.pedrolamarao
 final x86_32_elf_multiboot2_ld = rootProject.file('multiboot2/x86_32-elf.ld')
 final x86_64_elf_multiboot2_ld = rootProject.file('multiboot2/x86_64-elf.ld')
 
-final linux_host = {
+final llvm = {
+    assembler.executable = 'clang'
+    cCompiler.executable = 'clang'
+    cppCompiler.executable = 'clang++'
+    linker.executable = 'clang++'
+    staticLibArchiver.executable = 'llvm-ar'
+}
+
+final llvm_linux = {
     assembler.executable = 'clang'
     cCompiler.executable = 'clang'
     cppCompiler.executable = 'clang++'
     linker.executable = 'clang++'
     linker.withArguments { addAll '-lpthread' }
-    staticLibArchiver.executable = 'llvm-ar'
-}
-
-final windows_host = {
-    assembler.executable = 'clang'
-    cCompiler.executable = 'clang'
-    cppCompiler.executable = 'clang++'
-    linker.executable = 'clang++'
     staticLibArchiver.executable = 'llvm-ar'
 }
 
@@ -93,24 +93,34 @@ project.model
         llvm_host(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target("linuxx86-64", linux_host)
-            it.target("windowsx86-64", windows_host)
+            final os = System.getProperty("os.name")
+            if (os.containsIgnoreCase("linux")) {
+                rootProject.logger.lifecycle("oops")
+                it.target("linuxx86-64", llvm_linux)
+            }
+            else {
+                it.target("windowsx86-64", llvm)
+            }
+
         }
         llvm_x86_32_multiboot(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
+            it.target('host-multiboot-x86_32', multiboot_x86_32)
             it.target('linux-multiboot-x86_32', multiboot_x86_32)
             it.target('windows-multiboot-x86_32', multiboot_x86_32)
         }
         llvm_x86_64_multiboot(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
+            it.target('host-multiboot-x86_64', multiboot_x86_64)
             it.target('linux-multiboot-x86_64', multiboot_x86_64)
             it.target('windows-multiboot-x86_64', multiboot_x86_64)
         }
         llvm_x86_64_uefi(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
+            it.target('host-uefi-x86_64', uefi_x86_64)
             it.target('linux-uefi-x86_64', uefi_x86_64)
             it.target('windows-uefi-x86_64', uefi_x86_64)
         }
