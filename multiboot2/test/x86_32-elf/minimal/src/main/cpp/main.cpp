@@ -11,9 +11,10 @@
 namespace
 {
     [[gnu::used]]
-    void test ()
+    void test ( ps::size magic )
     {
         _test_control = 1;
+        if (magic != multiboot2::information_magic) _test_control = 0;
         _test_control = -1;
     }
 }
@@ -56,22 +57,15 @@ namespace multiboot2
     [[gnu::naked, gnu::section(".multiboot2.start")]]
     void multiboot2_start ()
     {
+#if defined(__i386__)
         __asm__
         {
-#if defined(__i386__)
             mov esp, offset stack + 0x4000
             xor ecx, ecx
             push ecx
             popf
-#elif defined(__x86_64__)
-            mov rsp, offset stack + 0x4000
-            xor rcx, rcx
-            push rcx
-            popf
-#else
-# error unsupported target
-#endif
             call _test_start
+            push eax
             call test
             call _test_finish
             cli
@@ -79,6 +73,25 @@ namespace multiboot2
             hlt
             jmp loop
         }
+#elif defined(__x86_64__)
+        __asm__
+        {
+            mov rsp, offset stack + 0x4000
+            xor rcx, rcx
+            push rcx
+            popf
+            call _test_start
+            push rax
+            call test
+            call _test_finish
+            cli
+        loop:
+            hlt
+            jmp loop
+        }
+#else
+# error unsupported target
+#endif
     }
 
     // Incorrect entry point.
