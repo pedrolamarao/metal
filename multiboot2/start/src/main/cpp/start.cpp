@@ -65,14 +65,10 @@ namespace multiboot2
             xor ecx, ecx
             push rcx
             popf
-            // mark test start
-            call _test_start
             // call C++
             push rbx
             push rax
             call main
-            // mark test finish
-            call _test_finish
             // finish
           finish:
             cli
