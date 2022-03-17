@@ -7,7 +7,7 @@
 #include <psys/test.h>
 
 
-//! Test ELF entry tag.
+//! Test image layout.
 
 namespace
 {
@@ -17,6 +17,23 @@ namespace
         _test_control = 1;
         _test_control = -1;
     }
+
+    // Very large object in the text section.
+
+    [[gnu::used]]
+    void large_text ()
+    {
+        __asm__
+        {
+            .zero 0x8000
+        }
+    }
+
+    // Very large object in the data section.
+
+    [[gnu::used]]
+    constinit
+    char large_data [ 0x8000 ] { -1 };
 }
 
 namespace multiboot2
@@ -28,14 +45,11 @@ namespace multiboot2
         end_request            end;
     };
 
-    // Assumption: custom entry point is located at physical address 0x1000.
-
     [[gnu::used, gnu::section(".multiboot2.request")]]
     constinit
     request_type request =
     {
         { architecture_type::x86, sizeof(request), },
-        { tag_type::entry, 0, sizeof(entry_address_request), 0x1000 },
         { },
     };
 
@@ -43,9 +57,23 @@ namespace multiboot2
     constinit
     unsigned char stack [ 0x4000 ] {};
 
+    // Incorrect entry point.
+
+    [[gnu::used, gnu::section(".multiboot2.start")]]
+    void _first ()
+    {
+        __asm__
+        {
+            cli
+        halt:
+            hlt
+            jmp halt
+        }
+    }
+
     extern "C"
-    [[gnu::naked, gnu::section(".multiboot2.start"), gnu::used]]
-    void multiboot2_custom ()
+    [[gnu::naked, gnu::section(".multiboot2.start")]]
+    void multiboot2_start ()
     {
         __asm__
         {
@@ -65,21 +93,6 @@ namespace multiboot2
             call _test_start
             call test
             call _test_finish
-            cli
-        loop:
-            hlt
-            jmp loop
-        }
-    }
-
-    // Incorrect entry point.
-
-    extern "C"
-    [[gnu::naked, gnu::section(".multiboot2.start"), gnu::used]]
-    void multiboot2_start ()
-    {
-        __asm__
-        {
             cli
         loop:
             hlt

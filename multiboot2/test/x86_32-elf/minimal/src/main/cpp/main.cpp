@@ -1,4 +1,4 @@
-// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #include <multiboot2/header.h>
 #include <multiboot2/information.h>
@@ -6,46 +6,20 @@
 #include <psys/test.h>
 
 
-//! Test.
+//! Minimal test.
 
 namespace
 {
-    //! Uninteresting test procedure.
-    //! Did we correctly define the Multiboot2 entry point?
-
     [[gnu::used]]
     void test ()
     {
         _test_control = 1;
         _test_control = -1;
     }
-
-    //! Very large object in the text section.
-    //! Did we correctly position the Multiboot2 request object?
-
-    [[gnu::used]]
-    void large_text ()
-    {
-        __asm__
-        {
-            .zero 0x8000
-        }
-    }
-
-    //! Very large initialized data.
-    //! Did we correctly position the Multiboot2 request object?
-
-    [[gnu::used]]
-    constinit
-    char large_data [ 0x8000 ] { -1 };
 }
-
-//! Multiboot 2 loader.
 
 namespace multiboot2
 {
-    //! Multiboot2 request.
-
     struct request_type
     {
         header_prologue prologue;
@@ -60,13 +34,23 @@ namespace multiboot2
         { },
     };
 
-    //! Multiboot2 entry point stack.
+    // Incorrect entry point.
+
+    [[gnu::used, gnu::section(".multiboot2.start")]]
+    void _first ()
+    {
+        __asm__
+        {
+            cli
+        halt:
+            hlt
+            jmp halt
+        }
+    }
 
     [[gnu::section(".multiboot2.stack")]]
     constinit
     unsigned char stack [ 0x4000 ] {};
-
-    //! Multiboot2 entry point.
 
     extern "C"
     [[gnu::naked, gnu::section(".multiboot2.start")]]
@@ -90,9 +74,25 @@ namespace multiboot2
             call _test_start
             call test
             call _test_finish
-            __multiboot2_halt:
+            cli
+        loop:
             hlt
-            jmp __multiboot2_halt
+            jmp loop
+        }
+    }
+
+    // Incorrect entry point.
+
+    extern "C"
+    [[gnu::naked, gnu::section(".multiboot2.start"), gnu::used]]
+    void _start ()
+    {
+        __asm__
+        {
+            cli
+        loop:
+            hlt
+            jmp loop
         }
     }
 }
