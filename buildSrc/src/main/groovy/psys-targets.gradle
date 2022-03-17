@@ -86,23 +86,23 @@ project.model
             if (llvmPath.isPresent()) { it.path(llvmPath) }
             it.eachPlatform(host)
         }
-//        llvm_x86_32_multiboot(Clang)
-//        {
-//            if (llvmPath.isPresent()) { it.path(llvmPath) }
-//            it.target('linux-multiboot-x86_32', multiboot_x86_32)
-//            it.target('windows-multiboot-x86_32', multiboot_x86_32)
-//        }
-//        llvm_x86_64_multiboot(Clang)
-//        {
-//            if (llvmPath.isPresent()) { it.path(llvmPath) }
-//            it.target('linux-multiboot-x86_64', multiboot_x86_64)
-//            it.target('windows-multiboot-x86_64', multiboot_x86_64)
-//        }
-//        llvm_x86_64_uefi(Clang)
-//        {
-//            if (llvmPath.isPresent()) { it.path(llvmPath) }
-//            it.target('linux-uefi-x86_64', uefi_x86_64)
-//            it.target('windows-uefi-x86_64', uefi_x86_64)
-//        }
+        llvm_x86_32_multiboot(Clang)
+        {
+            if (llvmPath.isPresent()) { it.path(llvmPath) }
+            it.target('linux-multiboot-x86_32', multiboot_x86_32)
+            it.target('windows-multiboot-x86_32', multiboot_x86_32)
+        }
+        llvm_x86_64_multiboot(Clang)
+        {
+            if (llvmPath.isPresent()) { it.path(llvmPath) }
+            it.target('linux-multiboot-x86_64', multiboot_x86_64)
+            it.target('windows-multiboot-x86_64', multiboot_x86_64)
+        }
+        llvm_x86_64_uefi(Clang)
+        {
+            if (llvmPath.isPresent()) { it.path(llvmPath) }
+            it.target('linux-uefi-x86_64', uefi_x86_64)
+            it.target('windows-uefi-x86_64', uefi_x86_64)
+        }
     }
 }
