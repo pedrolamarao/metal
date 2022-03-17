@@ -7,7 +7,7 @@ plugins {
 
 apply(plugin ="psys-targets")
 
-val testAll = project.tasks.register("test") {
+val testAll = project.tasks.register("test-image") {
     group = "psys"
 }
 
@@ -19,15 +19,16 @@ project.afterEvaluate {
             val create = project.tasks.register<MultibootCreateImageTask>("image-${name}") {
                 group = "psys"
                 description = "creates image"
-                inputFile.set(executable);
+                inputFile.set(executable)
             }
+            project.tasks.assemble { dependsOn(create) }
             val image = create.flatMap { it.outputFile }
-            project.tasks.register<MultibootRunImageTask>("run-${name}") {
+            project.tasks.register<MultibootRunImageTask>("run-image-${name}") {
                 group = "psys"
                 description = "runs image"
                 imageFile.set(image)
             }
-            val test = project.tasks.register<MultibootTestImageTask>("test-${name}") {
+            val test = project.tasks.register<MultibootTestImageTask>("test-image-${name}") {
                 group = "psys"
                 description = "tests image"
                 gdbArchitecture.set("i386:x86-64")
