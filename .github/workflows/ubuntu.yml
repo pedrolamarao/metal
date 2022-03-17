@@ -1,9 +1,9 @@
-name: "ubuntu-latest"
+name: "ubuntu"
 on: [pull_request]
 jobs:
   build:
     name: "Build"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
     timeout-minutes: 10
     steps:
       - name: "Checkout"
@@ -19,7 +19,7 @@ jobs:
         uses: KyleMayes/install-llvm-action@v1.5.1
         with:
           version: 13
-          ubuntu-version: 20.04
+          ubuntu-version: 18.04
       - name: "Build with Gradle"
         uses: gradle/gradle-build-action@v2.1.3
         with:
