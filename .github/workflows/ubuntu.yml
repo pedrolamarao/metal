@@ -19,6 +19,8 @@ jobs:
         uses: KyleMayes/install-llvm-action@v1.5.1
         with:
           version: "13"
+      - name: "Set up PATH"
+        run: echo "$LLVM_PATH" >> $GITHUB_PATH
       - name: "Build with Gradle"
         uses: gradle/gradle-build-action@v2.1.3
         with:
