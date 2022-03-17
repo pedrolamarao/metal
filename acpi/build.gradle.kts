@@ -14,11 +14,9 @@ library {
         machines.linux.x86_64,
         machines.windows.x86_64,
         // #XXX: build on any for x86_32-elf-multiboot2
-        machines.linux.architecture("-multiboot-x86_32"),
-        machines.windows.architecture("-multiboot-x86_32"),
-        // #XXX: build on any for x86_32-elf-multiboot2
-        machines.linux.architecture("-multiboot-x86_64"),
-        machines.windows.architecture("-multiboot-x86_64"),
+        machines.os("host").architecture("-multiboot-x86_32"),
+        // #XXX: build on any for x86_64-elf-multiboot2
+        machines.os("host").architecture("-multiboot-x86_64"),
     )
 
     dependencies { api(project(":psys")) }
