@@ -33,6 +33,14 @@ namespace
         // user flat data descriptor
         { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
     };
+
+    // #TODO: appropriately align this object
+    constinit
+    short_page_table_entry page_table [ 2048 ] {};
+
+    // #TODO: appropriately align this object
+    constinit
+    short_small_page_directory_entry page_directory [ 2048 ] {};
 }
 
 void psys::main ()
@@ -40,11 +48,75 @@ void psys::main ()
     using namespace x86;
     using namespace x86::_32;
 
+    // Smoke test paging operators.
+
+    _test_control = 1;
+    get_short_paging_control_register();
+
+    _test_control = 2;
+    get_long_paging_control_register();
+
+    // Set flat segmentation.
+
+    _test_control = 3;
+    set_global_descriptor_table_register(global_descriptor_table);
+    set_code_segment_register( segment_selector(2, false, 0) );
+    set_code_segment_register( segment_selector(2, false, 0) );
+    set_data_segment_register( segment_selector(2, false, 0) );
+    set_stack_segment_register( segment_selector(3, false, 0) );
+    set_extra_segment_registers( segment_selector(3, false, 0) );
+
+    // Verify we can set the paging control register with zero.
+
     _test_control = 10;
-    auto short_cr3 = get_short_paging_control_register();
+    set_paging_control_register( short_paging_control { 0, 0, 0 } );
+
+    _test_control = 11;
+    auto control = get_short_paging_control_register();
+
+    _test_control = 12;
+    if (control.write_through() != 0) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 13;
+    if (control.cache() != 0) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 14;
+    if (control.address() != 0) {
+        _test_control = 0;
+        return;
+    }
+
+    // Verify we can set the paging control register with non-zero.
 
     _test_control = 20;
-    auto long_cr3 = get_long_paging_control_register();
+    set_paging_control_register( short_paging_control { 1, 1, 1 } );
+
+    _test_control = 21;
+    control = get_short_paging_control_register();
+
+    _test_control = 22;
+    if (control.write_through() != 1) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 23;
+    if (control.cache() != 1) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = 24;
+    if (control.address() != 0x1000) {
+        _test_control = 0;
+        return;
+    }
 
     _test_control = -1;
     return;

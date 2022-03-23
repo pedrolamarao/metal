@@ -16,19 +16,24 @@ namespace x86::_32
 
     class short_page_table_entry
     {
-        size4 _present       : 1;
-        size4 _writable      : 1;
-        size4 _user          : 1;
-        size4 _write_through : 1;
-        size4 _cache         : 1;
-        size4 _accessed      : 1;
-        size4 _dirty         : 1;
-        size4 _attribute     : 1;
-        size4 _global        : 1;
-        size4 _available     : 3;
-        size4 _address       : 20;
+        size4 _present       : 1 {};
+        size4 _writable      : 1 {};
+        size4 _user          : 1 {};
+        size4 _write_through : 1 {};
+        size4 _cache         : 1 {};
+        size4 _accessed      : 1 {};
+        size4 _dirty         : 1 {};
+        size4 _attribute     : 1 {};
+        size4 _global        : 1 {};
+        size4 _available     : 3 {};
+        size4 _address       : 20 {};
         
     public:
+
+        //! Default constructor.
+
+        constexpr
+        short_page_table_entry () = default;
 
         //! Field constructor.
 
@@ -98,17 +103,22 @@ namespace x86::_32
 
     class short_small_page_directory_entry
     {
-        size4 _present       : 1;
-        size4 _writable      : 1;
-        size4 _user          : 1;
-        size4 _write_through : 1;
-        size4 _cache         : 1;
-        size4 _accessed      : 1;
-        size4 _zero          : 3 = 0;
-        size4 _available     : 3;
-        size4 _address       : 20;
+        size4 _present       : 1  {};
+        size4 _writable      : 1  {};
+        size4 _user          : 1  {};
+        size4 _write_through : 1  {};
+        size4 _cache         : 1  {};
+        size4 _accessed      : 1  {};
+        size4 _zero          : 3  { 0 };
+        size4 _available     : 3  {};
+        size4 _address       : 20 {};
 
     public:
+
+        //! Default constructor.
+
+        constexpr
+        short_small_page_directory_entry () = default;
 
         //! Field constructor.
 
@@ -1006,6 +1016,26 @@ namespace x86::_32
         _available{available},
         _address{address}
     { }
+
+    inline
+    short_paging_control::short_paging_control (
+        unsigned _ExtInt(1) write_through,
+        unsigned _ExtInt(1) cache,
+        unsigned _ExtInt(20) address
+    ) :
+        _write_through{write_through},
+        _cache{cache},
+        _address{address}
+    { }
+
+    inline
+    auto short_paging_control::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto short_paging_control::cache () const -> bool { return _cache; }
+
+    inline
+    auto short_paging_control::address () const -> size { return _address << 12; }
 
     inline
     auto page_directory_pointer_entry::present () const -> bool { return _present; }
