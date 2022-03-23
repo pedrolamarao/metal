@@ -1,0 +1,426 @@
+// Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+
+#pragma once
+
+#include <x86/common.h>
+
+
+// Interface.
+
+namespace x86::_32
+{
+    //! Types.
+    //! @{
+
+    //! Page table 32 bit entry for 4 KiB pages.
+
+    class small_page_table_short_entry
+    {
+        unsigned _present       : 1;
+        unsigned _writable      : 1;
+        unsigned _user          : 1;
+        unsigned _write_through : 1;
+        unsigned _cache         : 1;
+        unsigned _accessed      : 1;
+        unsigned _dirty         : 1;
+        unsigned _attribute     : 1;
+        unsigned _global        : 1;
+        unsigned _available     : 3;
+        unsigned _address       : 20;
+        
+    public:
+
+        //! Field constructor.
+
+        constexpr
+        small_page_table_short_entry (
+            unsigned _ExtInt(1)  present,
+            unsigned _ExtInt(1)  writable,
+            unsigned _ExtInt(1)  user,
+            unsigned _ExtInt(1)  write_through,
+            unsigned _ExtInt(1)  cache,
+            unsigned _ExtInt(1)  accessed,
+            unsigned _ExtInt(1)  dirty,
+            unsigned _ExtInt(1)  attribute,
+            unsigned _ExtInt(1)  global,
+            unsigned _ExtInt(3)  available,
+            unsigned _ExtInt(20) address
+        );
+
+        //! Page is present in memory.
+
+        auto present () const -> bool;
+
+        //! Page is writable.
+
+        auto writable () const -> bool;
+
+        //! Page is accessible by user (i.e. DPL 0).
+
+        auto user () const -> bool;
+
+        //! Page has write through.
+
+        auto write_through () const -> bool;
+
+        //! Page has cache.
+
+        auto cache () const -> bool;
+
+        //! Page was accessed.
+
+        auto accessed () const -> bool;
+
+        //! Page is dirty.
+
+        auto dirty () const -> bool;
+
+        //! Page attribute high bit.
+
+        auto attribute () const -> unsigned _ExtInt(1);
+
+        //! Page is global.
+
+        auto global () const -> bool;
+
+        //! Bits available to software.
+
+        auto available () const -> unsigned _ExtInt(3);
+
+        //! Page base address.
+
+        auto address () const -> size4;
+    };
+
+    static_assert(sizeof(small_page_table_short_entry) == 4, "unexpected size of small_page_table_short_entry");
+
+    //! Page directory 32 bit entry for 4 KiB pages.
+
+    class small_page_directory_short_entry
+    {
+        unsigned _present       : 1;
+        unsigned _writable      : 1;
+        unsigned _user          : 1;
+        unsigned _write_through : 1;
+        unsigned _cache         : 1;
+        unsigned _accessed      : 1;
+        unsigned _dirty         : 1;
+        unsigned _large         : 1;
+        unsigned _global        : 1;
+        unsigned _available     : 3;
+        unsigned _address       : 20;
+
+    public:
+
+        //! Field constructor.
+
+        constexpr
+        small_page_directory_short_entry (
+            unsigned _ExtInt(1)  present,
+            unsigned _ExtInt(1)  writable,
+            unsigned _ExtInt(1)  user,
+            unsigned _ExtInt(1)  write_through,
+            unsigned _ExtInt(1)  cache,
+            unsigned _ExtInt(1)  accessed,
+            unsigned _ExtInt(3)  available,
+            unsigned _ExtInt(20) address
+        );
+
+        //! Page table is present in memory.
+
+        auto present () const -> bool;
+
+        //! Page table is writable.
+
+        auto writable () const -> bool;
+
+        //! Page table is accessible by user (i.e. DPL 0).
+
+        auto user () const -> bool;
+
+        //! Page table has write-through.
+
+        auto write_through () const -> bool;
+
+        //! Page table has cache.
+
+        auto cache () const -> bool;
+
+        //! Page table was accessed.
+
+        auto accessed () const -> bool;
+
+        //! Bits available to software.
+
+        auto available () const -> unsigned _ExtInt(3);
+
+        //! Page table address.
+
+        auto address () const -> size4;
+    };
+
+    static_assert(sizeof(small_page_directory_short_entry) == 4, "unexpected size of small_page_directory_short_entry");
+
+    //! Page directory 32 bit entry for 4 MiB pages.
+
+    class large_page_directory_short_entry
+    {
+        unsigned _present       : 1;
+        unsigned _writable      : 1;
+        unsigned _user          : 1;
+        unsigned _write_through : 1;
+        unsigned _cache         : 1;
+        unsigned _accessed      : 1;
+        unsigned _dirty         : 1;
+        unsigned _large         : 1;
+        unsigned _global        : 1;
+        unsigned _available     : 3;
+        unsigned _attribute     : 1;
+        unsigned _address_high  : 8;
+        unsigned _ignored       : 1;
+        unsigned _address_low   : 10;
+
+    public:
+
+        //! Field constructor.
+
+        constexpr
+        large_page_directory_short_entry (
+            unsigned _ExtInt(1)  present,
+            unsigned _ExtInt(1)  writable,
+            unsigned _ExtInt(1)  user,
+            unsigned _ExtInt(1)  write_through,
+            unsigned _ExtInt(1)  cache,
+            unsigned _ExtInt(1)  accessed,
+            unsigned _ExtInt(1)  dirty,
+            unsigned _ExtInt(1)  global,
+            unsigned _ExtInt(3)  available,
+            unsigned _ExtInt(1)  attribute,
+            unsigned _ExtInt(8)  address_high,
+            unsigned _ExtInt(10) address_low
+        );
+
+        //! Page is present in memory.
+
+        auto present () const -> bool;
+
+        //! Page is writable.
+
+        auto writable () const -> bool;
+
+        //! Page is accessible by user (i.e. DPL 0).
+
+        auto user () const -> bool;
+
+        //! Page has write-through.
+
+        auto write_through () const -> bool;
+
+        //! Page has cache.
+
+        auto cache () const -> bool;
+
+        //! Page was accessed.
+
+        auto accessed () const -> bool;
+
+        //! Page is dirty.
+
+        auto dirty () const -> bool;
+
+        //! Page is global.
+
+        auto global () const -> bool;
+
+        //! Bits available to software.
+
+        auto available () const -> unsigned _ExtInt(3);
+
+        //! Page attribute high bit.
+
+        auto attribute () const -> unsigned _ExtInt(1);
+
+        //! Page base address.
+
+        auto address () const -> size8;
+    };
+
+    static_assert(sizeof(large_page_directory_short_entry) == 4, "unexpected size of large_page_directory_short_entry");
+}
+
+// Implementation.
+
+namespace x86::_32
+{
+    inline constexpr
+    small_page_table_short_entry::small_page_table_short_entry (
+        unsigned _ExtInt(1)  present,
+        unsigned _ExtInt(1)  writable,
+        unsigned _ExtInt(1)  user,
+        unsigned _ExtInt(1)  write_through,
+        unsigned _ExtInt(1)  cache,
+        unsigned _ExtInt(1)  accessed,
+        unsigned _ExtInt(1)  dirty,
+        unsigned _ExtInt(1)  attribute,
+        unsigned _ExtInt(1)  global,
+        unsigned _ExtInt(3)  available,
+        unsigned _ExtInt(20) address
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _dirty{dirty},
+        _attribute{attribute},
+        _global{global},
+        _available{available},
+        _address{address}
+    { }
+
+    inline
+    auto small_page_table_short_entry::present () const -> bool { return _present; }
+
+    inline
+    auto small_page_table_short_entry::writable () const -> bool { return _writable; }
+
+    inline
+    auto small_page_table_short_entry::user () const -> bool { return _user; }
+
+    inline
+    auto small_page_table_short_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto small_page_table_short_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto small_page_table_short_entry::accessed () const -> bool { return _accessed; }
+
+    inline
+    auto small_page_table_short_entry::dirty () const -> bool { return _dirty; }
+
+    inline
+    auto small_page_table_short_entry::attribute () const -> unsigned _ExtInt(1) { return _attribute; }
+
+    inline
+    auto small_page_table_short_entry::global () const -> bool { return _global; }
+
+    inline
+    auto small_page_table_short_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+
+    inline
+    auto small_page_table_short_entry::address () const -> size4 { return _address << 12; }
+
+    inline constexpr
+    small_page_directory_short_entry::small_page_directory_short_entry (
+        unsigned _ExtInt(1)  present,
+        unsigned _ExtInt(1)  writable,
+        unsigned _ExtInt(1)  user,
+        unsigned _ExtInt(1)  write_through,
+        unsigned _ExtInt(1)  cache,
+        unsigned _ExtInt(1)  accessed,
+        unsigned _ExtInt(3)  available,
+        unsigned _ExtInt(20) address
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _dirty{0},
+        _large{0},
+        _global{0},
+        _available{available},
+        _address{address}
+    { }
+
+    inline
+    auto small_page_directory_short_entry::present () const -> bool { return _present; }
+
+    inline
+    auto small_page_directory_short_entry::writable () const -> bool { return _writable; }
+
+    inline
+    auto small_page_directory_short_entry::user () const -> bool { return _user; }
+
+    inline
+    auto small_page_directory_short_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto small_page_directory_short_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto small_page_directory_short_entry::accessed () const -> bool { return _accessed; }
+
+    inline
+    auto small_page_directory_short_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+
+    inline
+    auto small_page_directory_short_entry::address () const -> size4 { return _address << 12; }
+
+    inline constexpr
+    large_page_directory_short_entry::large_page_directory_short_entry (
+        unsigned _ExtInt(1)  present,
+        unsigned _ExtInt(1)  writable,
+        unsigned _ExtInt(1)  user,
+        unsigned _ExtInt(1)  write_through,
+        unsigned _ExtInt(1)  cache,
+        unsigned _ExtInt(1)  accessed,
+        unsigned _ExtInt(1)  dirty,
+        unsigned _ExtInt(1)  global,
+        unsigned _ExtInt(3)  available,
+        unsigned _ExtInt(1)  attribute,
+        unsigned _ExtInt(8)  address_high,
+        unsigned _ExtInt(10) address_low
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _dirty{dirty},
+        _large{1},
+        _global{global},
+        _available{available},
+        _attribute{attribute},
+        _address_high{address_high},
+        _address_low{address_low}
+    { }
+
+    inline
+    auto large_page_directory_short_entry::present () const -> bool { return _present; }
+
+    inline
+    auto large_page_directory_short_entry::writable () const -> bool { return _writable; }
+
+    inline
+    auto large_page_directory_short_entry::user () const -> bool { return _user; }
+
+    inline
+    auto large_page_directory_short_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto large_page_directory_short_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto large_page_directory_short_entry::accessed () const -> bool { return _accessed; }
+
+    inline
+    auto large_page_directory_short_entry::dirty () const -> bool { return _dirty; }
+
+    inline
+    auto large_page_directory_short_entry::global () const -> bool { return _global; }
+
+    inline
+    auto large_page_directory_short_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+
+    inline
+    auto large_page_directory_short_entry::attribute () const -> unsigned _ExtInt(1) { return _attribute; }
+
+    inline
+    auto large_page_directory_short_entry::address () const -> size8
+    { return (size8{_address_high} << 32) | (size8{_address_low} << 22); }
+}
