@@ -1365,4 +1365,377 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
         ASSERT_TRUE(fields.executable());
     }
+    
+    // small_page_directory_extended_entry
+
+    TEST(small_page_directory_extended_entry, zero)
+    {
+        size8 memory = 0;
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.writable());
+        ASSERT_FALSE(reference.user());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_FALSE(reference.accessed());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+        ASSERT_FALSE(reference.executable());
+
+        auto fields = small_page_directory_extended_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.writable());
+        ASSERT_FALSE(fields.user());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_FALSE(fields.accessed());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+        ASSERT_FALSE(fields.executable());
+    }
+
+    TEST(small_page_directory_extended_entry, present)
+    {
+        size8 memory = 1;
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_TRUE(reference.present());
+        ASSERT_FALSE(reference.writable());
+        ASSERT_FALSE(reference.user());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_FALSE(reference.accessed());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+        ASSERT_FALSE(reference.executable());
+
+        auto fields = small_page_directory_extended_entry { 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+        ASSERT_TRUE(fields.present());
+        ASSERT_FALSE(fields.writable());
+        ASSERT_FALSE(fields.user());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_FALSE(fields.accessed());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+        ASSERT_FALSE(fields.executable());
+    }
+
+    TEST(small_page_directory_extended_entry, writable)
+    {
+        size8 memory = 1 << 1;
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_TRUE(reference.writable());
+        ASSERT_FALSE(reference.user());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_FALSE(reference.accessed());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+        ASSERT_FALSE(reference.executable());
+
+        auto fields = small_page_directory_extended_entry { 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_TRUE(fields.writable());
+        ASSERT_FALSE(fields.user());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_FALSE(fields.accessed());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+        ASSERT_FALSE(fields.executable());
+    }
+
+    TEST(small_page_directory_extended_entry, user)
+    {
+        size8 memory = 1 << 2;
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.writable());
+        ASSERT_TRUE(reference.user());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_FALSE(reference.accessed());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+        ASSERT_FALSE(reference.executable());
+
+        auto fields = small_page_directory_extended_entry { 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.writable());
+        ASSERT_TRUE(fields.user());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_FALSE(fields.accessed());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+        ASSERT_FALSE(fields.executable());
+    }
+
+    TEST(small_page_directory_extended_entry, write_through)
+    {
+        size8 memory = 1 << 3;
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.writable());
+        ASSERT_FALSE(reference.user());
+        ASSERT_TRUE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_FALSE(reference.accessed());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+        ASSERT_FALSE(reference.executable());
+
+        auto fields = small_page_directory_extended_entry { 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.writable());
+        ASSERT_FALSE(fields.user());
+        ASSERT_TRUE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_FALSE(fields.accessed());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+        ASSERT_FALSE(fields.executable());
+    }
+
+    TEST(small_page_directory_extended_entry, cache)
+    {
+        size8 memory = 1 << 4;
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.writable());
+        ASSERT_FALSE(reference.user());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_TRUE(reference.cache());
+        ASSERT_FALSE(reference.accessed());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+        ASSERT_FALSE(reference.executable());
+
+        auto fields = small_page_directory_extended_entry { 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.writable());
+        ASSERT_FALSE(fields.user());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_TRUE(fields.cache());
+        ASSERT_FALSE(fields.accessed());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+        ASSERT_FALSE(fields.executable());
+    }
+
+    TEST(small_page_directory_extended_entry, accessed)
+    {
+        size8 memory = 1 << 5;
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.writable());
+        ASSERT_FALSE(reference.user());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_TRUE(reference.accessed());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+        ASSERT_FALSE(reference.executable());
+        
+        auto fields = small_page_directory_extended_entry { 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.writable());
+        ASSERT_FALSE(fields.user());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_TRUE(fields.accessed());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+        ASSERT_FALSE(fields.executable());
+    }
+
+    TEST(small_page_directory_extended_entry, available)
+    {
+        size8 memory = 3 << 9;
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.writable());
+        ASSERT_FALSE(reference.user());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_FALSE(reference.accessed());
+        ASSERT_EQ(3,reference.available());
+        ASSERT_EQ(0,reference.address());
+        ASSERT_FALSE(reference.executable());
+
+        auto fields = small_page_directory_extended_entry { 0, 0, 0, 0, 0, 0, 3, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.writable());
+        ASSERT_FALSE(fields.user());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_FALSE(fields.accessed());
+        ASSERT_EQ(3,fields.available());
+        ASSERT_EQ(0,fields.address());
+        ASSERT_FALSE(fields.executable());
+    }
+
+    TEST(small_page_directory_extended_entry, address)
+    {
+        size8 memory = 0xFEDCBA9876000;
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.writable());
+        ASSERT_FALSE(reference.user());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_FALSE(reference.accessed());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0xFEDCBA9876000,reference.address());
+        ASSERT_FALSE(reference.executable());
+
+        auto fields = small_page_directory_extended_entry { 0, 0, 0, 0, 0, 0, 0, 0xFEDCBA9876, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.writable());
+        ASSERT_FALSE(fields.user());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_FALSE(fields.accessed());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0xFEDCBA9876000,fields.address());
+        ASSERT_FALSE(fields.executable());
+    }
+
+    TEST(small_page_directory_extended_entry, executable)
+    {
+        size8 memory = size8{1} << 63;
+
+        auto& reference = reinterpret_cast<small_page_directory_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.writable());
+        ASSERT_FALSE(reference.user());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_FALSE(reference.accessed());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+        ASSERT_TRUE(reference.executable());
+
+        auto fields = small_page_directory_extended_entry { 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.writable());
+        ASSERT_FALSE(fields.user());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_FALSE(fields.accessed());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+        ASSERT_TRUE(fields.executable());
+    }
+    
+    // small_page_directory_pointer_extended_entry
+
+    TEST(small_page_directory_pointer_extended_entry, zero)
+    {
+        size8 memory = 0;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+
+        auto fields = small_page_directory_pointer_extended_entry { 0, 0, 0, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+    }
+
+    TEST(small_page_directory_pointer_extended_entry, present)
+    {
+        size8 memory = 1;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_extended_entry&>(memory);
+        ASSERT_TRUE(reference.present());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+
+        auto fields = small_page_directory_pointer_extended_entry { 1, 0, 0, 0, 0 };
+        ASSERT_TRUE(fields.present());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+    }
+
+    TEST(small_page_directory_pointer_extended_entry, write_through)
+    {
+        size8 memory = 1 << 3;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_TRUE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+
+        auto fields = small_page_directory_pointer_extended_entry { 0, 1, 0, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_TRUE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+    }
+
+    TEST(small_page_directory_pointer_extended_entry, cache)
+    {
+        size8 memory = 1 << 4;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_TRUE(reference.cache());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0,reference.address());
+
+        auto fields = small_page_directory_pointer_extended_entry { 0, 0, 1, 0, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_TRUE(fields.cache());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0,fields.address());
+    }
+
+    TEST(small_page_directory_pointer_extended_entry, available)
+    {
+        size8 memory = 3 << 9;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_EQ(3,reference.available());
+        ASSERT_EQ(0,reference.address());
+
+        auto fields = small_page_directory_pointer_extended_entry { 0, 0, 0, 3, 0 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_EQ(3,fields.available());
+        ASSERT_EQ(0,fields.address());
+    }
+
+    TEST(small_page_directory_pointer_extended_entry, address)
+    {
+        size8 memory = 0xFEDCBA9876000;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_extended_entry&>(memory);
+        ASSERT_FALSE(reference.present());
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_EQ(0,reference.available());
+        ASSERT_EQ(0xFEDCBA9876000,reference.address());
+
+        auto fields = small_page_directory_pointer_extended_entry { 0, 0, 0, 0, 0xFEDCBA9876 };
+        ASSERT_FALSE(fields.present());
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_EQ(0,fields.available());
+        ASSERT_EQ(0xFEDCBA9876000,fields.address());
+    }
 }
