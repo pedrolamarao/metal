@@ -1026,6 +1026,21 @@ namespace x86::_32
     { }
 
     inline
+    auto page_directory_pointer_entry::present () const -> bool { return _present; }
+
+    inline
+    auto page_directory_pointer_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto page_directory_pointer_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto page_directory_pointer_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+
+    inline
+    auto page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
+
+    inline
     short_paging_control::short_paging_control (
         unsigned _ExtInt(1) write_through,
         unsigned _ExtInt(1) cache,
@@ -1044,19 +1059,4 @@ namespace x86::_32
 
     inline
     auto short_paging_control::address () const -> size4 { return size4{_address} << 12; }
-
-    inline
-    auto page_directory_pointer_entry::present () const -> bool { return _present; }
-
-    inline
-    auto page_directory_pointer_entry::write_through () const -> bool { return _write_through; }
-
-    inline
-    auto page_directory_pointer_entry::cache () const -> bool { return _cache; }
-
-    inline
-    auto page_directory_pointer_entry::available () const -> unsigned _ExtInt(3) { return _available; }
-
-    inline
-    auto page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
 }
