@@ -336,9 +336,9 @@ namespace x86::_32
 
     static_assert(sizeof(long_small_page_table_entry) == 8, "unexpected size of long_small_page_table_entry");
 
-    //! Page directory 64 bit entry for 4 KiB pages.
+    //! 64 bit, 4 KiB page directory entry.
 
-    class small_page_directory_extended_entry
+    class long_small_page_directory_entry
     {
         size8 _present       :  1;
         size8 _writable      :  1;
@@ -357,7 +357,7 @@ namespace x86::_32
         //! Field constructor.
 
         constexpr
-        small_page_directory_extended_entry (
+        long_small_page_directory_entry (
             unsigned _ExtInt(1)  present,
             unsigned _ExtInt(1)  writable,
             unsigned _ExtInt(1)  user,
@@ -406,7 +406,7 @@ namespace x86::_32
         auto executable () const -> bool;
     };
 
-    static_assert(sizeof(small_page_directory_extended_entry) == 8, "unexpected size of small_page_directory_extended_entry");
+    static_assert(sizeof(long_small_page_directory_entry) == 8, "unexpected size of long_small_page_directory_entry");
 
     //! Page directory pointer 64 bit entry for 4 KiB pages.
 
@@ -699,7 +699,7 @@ namespace x86::_32
     auto long_small_page_table_entry::executable () const -> bool { return _executable; }
 
     inline constexpr
-    small_page_directory_extended_entry::small_page_directory_extended_entry (
+    long_small_page_directory_entry::long_small_page_directory_entry (
         unsigned _ExtInt(1)  present,
         unsigned _ExtInt(1)  writable,
         unsigned _ExtInt(1)  user,
@@ -722,31 +722,31 @@ namespace x86::_32
     { }
 
     inline
-    auto small_page_directory_extended_entry::present () const -> bool { return _present; }
+    auto long_small_page_directory_entry::present () const -> bool { return _present; }
 
     inline
-    auto small_page_directory_extended_entry::writable () const -> bool { return _writable; }
+    auto long_small_page_directory_entry::writable () const -> bool { return _writable; }
 
     inline
-    auto small_page_directory_extended_entry::user () const -> bool { return _user; }
+    auto long_small_page_directory_entry::user () const -> bool { return _user; }
 
     inline
-    auto small_page_directory_extended_entry::write_through () const -> bool { return _write_through; }
+    auto long_small_page_directory_entry::write_through () const -> bool { return _write_through; }
 
     inline
-    auto small_page_directory_extended_entry::cache () const -> bool { return _cache; }
+    auto long_small_page_directory_entry::cache () const -> bool { return _cache; }
 
     inline
-    auto small_page_directory_extended_entry::accessed () const -> bool { return _accessed; }
+    auto long_small_page_directory_entry::accessed () const -> bool { return _accessed; }
 
     inline
-    auto small_page_directory_extended_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto long_small_page_directory_entry::available () const -> unsigned _ExtInt(3) { return _available; }
 
     inline
-    auto small_page_directory_extended_entry::address () const -> size8 { return _address << 12; }
+    auto long_small_page_directory_entry::address () const -> size8 { return _address << 12; }
 
     inline
-    auto small_page_directory_extended_entry::executable () const -> bool { return _executable; }
+    auto long_small_page_directory_entry::executable () const -> bool { return _executable; }
 
     inline constexpr
     small_page_directory_pointer_extended_entry::small_page_directory_pointer_extended_entry (
