@@ -104,9 +104,7 @@ namespace x86::_32
         size4 _write_through : 1;
         size4 _cache         : 1;
         size4 _accessed      : 1;
-        size4 _dirty         : 1;
-        size4 _large         : 1;
-        size4 _global        : 1;
+        size4 _zero          : 3 = 0;
         size4 _available     : 3;
         size4 _address       : 20;
 
@@ -172,12 +170,12 @@ namespace x86::_32
         size4 _cache         : 1;
         size4 _accessed      : 1;
         size4 _dirty         : 1;
-        size4 _large         : 1;
+        size4 _large         : 1 = 1;
         size4 _global        : 1;
         size4 _available     : 3;
         size4 _attribute     : 1;
         size4 _address_high  : 8;
-        size4 _ignored       : 1;
+        size4 _zero          : 1 = 0;
         size4 _address_low   : 10;
 
     public:
@@ -539,9 +537,6 @@ namespace x86::_32
         _write_through{write_through},
         _cache{cache},
         _accessed{accessed},
-        _dirty{0},
-        _large{0},
-        _global{0},
         _available{available},
         _address{address}
     { }
@@ -592,7 +587,6 @@ namespace x86::_32
         _cache{cache},
         _accessed{accessed},
         _dirty{dirty},
-        _large{1},
         _global{global},
         _available{available},
         _attribute{attribute},
