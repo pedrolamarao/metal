@@ -545,7 +545,99 @@ namespace x86::_32
     };
 
     static_assert(sizeof(page_directory_pointer_entry) == 8, "unexpected size of page_directory_pointer_entry");
-    
+
+    //! Short (i.e. non PAE) paging control.
+
+    class short_paging_control
+    {
+        size4 _zero_0        : 3 = 0;
+        size4 _write_through : 1;
+        size4 _cache         : 1;
+        size4 _zero_1        : 7 = 0;
+        size4 _address       : 20;
+
+    public:
+
+        //! Default constructor.
+
+        short_paging_control () = default;
+
+        //! Field constructor.
+
+        short_paging_control (
+            unsigned _ExtInt(1) write_through,
+            unsigned _ExtInt(1) cache,
+            unsigned _ExtInt(20) address
+        );
+
+        //! Paging has write-through.
+
+        auto write_through () const -> bool;
+
+        //! Paging has cache.
+
+        auto cache () const -> bool;
+
+        //! Page directory pointer address.
+
+        auto address () const -> size4;
+
+    };
+
+    static_assert(sizeof(short_paging_control) == 4, "unexpected size of short_paging_control");
+
+    //! Long (i.e. PAE) paging control.
+
+    class long_paging_control
+    {
+        size4 _zero_0        : 3 = 0;
+        size4 _write_through : 1;
+        size4 _cache         : 1;
+        size4 _address       : 27;
+
+    public:
+
+        //! Default constructor.
+
+        long_paging_control () = default;
+
+        //! Field constructor.
+
+        long_paging_control (
+            unsigned _ExtInt(1) write_through,
+            unsigned _ExtInt(1) cache,
+            unsigned _ExtInt(26) address
+        );
+
+        //! Paging has write-through.
+
+        auto write_through () const -> bool;
+
+        //! Paging has cache.
+
+        auto cache () const -> bool;
+
+        //! Page directory pointer address.
+
+        auto address () const -> size4;
+
+    };
+
+    static_assert(sizeof(long_paging_control) == 4, "unexpected size of long_paging_control");
+
+    //! @}
+
+    //! Operators.
+    //! @{
+
+    auto get_short_paging_control_register () -> short_paging_control;
+
+    auto get_long_paging_control_register () -> long_paging_control;
+
+    void set_paging_control_register (short_paging_control value);
+
+    void set_paging_control_register (long_paging_control value);
+
     //! @}
 }
 
