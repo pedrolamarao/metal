@@ -12,9 +12,9 @@ namespace x86::_32
     //! Types.
     //! @{
 
-    //! 32 bit, 4 KiB page table entry.
+    //! 32 bit page table entry.
 
-    class short_small_page_table_entry
+    class short_page_table_entry
     {
         size4 _present       : 1;
         size4 _writable      : 1;
@@ -33,7 +33,7 @@ namespace x86::_32
         //! Field constructor.
 
         constexpr
-        short_small_page_table_entry (
+        short_page_table_entry (
             unsigned _ExtInt(1)  present,
             unsigned _ExtInt(1)  writable,
             unsigned _ExtInt(1)  user,
@@ -92,7 +92,7 @@ namespace x86::_32
         auto address () const -> size4;
     };
 
-    static_assert(sizeof(short_small_page_table_entry) == 4, "unexpected size of short_small_page_table_entry");
+    static_assert(sizeof(short_page_table_entry) == 4, "unexpected size of short_page_table_entry");
 
     //! 32 bit, 4 KiB page directory entry.
 
@@ -247,7 +247,7 @@ namespace x86::_32
 
     //! 64 bit, 4 KiB page table entry.
 
-    class long_small_page_table_entry
+    class long_page_table_entry
     {
         size8 _present       :  1;
         size8 _writable      :  1;
@@ -268,7 +268,7 @@ namespace x86::_32
         //! Field constructor.
 
         constexpr
-        long_small_page_table_entry (
+        long_page_table_entry (
             unsigned _ExtInt(1)  present,
             unsigned _ExtInt(1)  writable,
             unsigned _ExtInt(1)  user,
@@ -332,7 +332,7 @@ namespace x86::_32
         auto executable () const -> bool;
     };
 
-    static_assert(sizeof(long_small_page_table_entry) == 8, "unexpected size of long_small_page_table_entry");
+    static_assert(sizeof(long_page_table_entry) == 8, "unexpected size of long_page_table_entry");
 
     //! 64 bit, 4 KiB page directory entry.
 
@@ -554,7 +554,7 @@ namespace x86::_32
 namespace x86::_32
 {
     inline constexpr
-    short_small_page_table_entry::short_small_page_table_entry (
+    short_page_table_entry::short_page_table_entry (
         unsigned _ExtInt(1)  present,
         unsigned _ExtInt(1)  writable,
         unsigned _ExtInt(1)  user,
@@ -581,37 +581,37 @@ namespace x86::_32
     { }
 
     inline
-    auto short_small_page_table_entry::present () const -> bool { return _present; }
+    auto short_page_table_entry::present () const -> bool { return _present; }
 
     inline
-    auto short_small_page_table_entry::writable () const -> bool { return _writable; }
+    auto short_page_table_entry::writable () const -> bool { return _writable; }
 
     inline
-    auto short_small_page_table_entry::user () const -> bool { return _user; }
+    auto short_page_table_entry::user () const -> bool { return _user; }
 
     inline
-    auto short_small_page_table_entry::write_through () const -> bool { return _write_through; }
+    auto short_page_table_entry::write_through () const -> bool { return _write_through; }
 
     inline
-    auto short_small_page_table_entry::cache () const -> bool { return _cache; }
+    auto short_page_table_entry::cache () const -> bool { return _cache; }
 
     inline
-    auto short_small_page_table_entry::accessed () const -> bool { return _accessed; }
+    auto short_page_table_entry::accessed () const -> bool { return _accessed; }
 
     inline
-    auto short_small_page_table_entry::dirty () const -> bool { return _dirty; }
+    auto short_page_table_entry::dirty () const -> bool { return _dirty; }
 
     inline
-    auto short_small_page_table_entry::attribute () const -> unsigned _ExtInt(1) { return _attribute; }
+    auto short_page_table_entry::attribute () const -> unsigned _ExtInt(1) { return _attribute; }
 
     inline
-    auto short_small_page_table_entry::global () const -> bool { return _global; }
+    auto short_page_table_entry::global () const -> bool { return _global; }
 
     inline
-    auto short_small_page_table_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto short_page_table_entry::available () const -> unsigned _ExtInt(3) { return _available; }
 
     inline
-    auto short_small_page_table_entry::address () const -> size4 { return size4{_address} << 12; }
+    auto short_page_table_entry::address () const -> size4 { return size4{_address} << 12; }
 
     inline constexpr
     short_small_page_directory_entry::short_small_page_directory_entry (
@@ -721,7 +721,7 @@ namespace x86::_32
     auto short_large_page_directory_entry::address () const -> size8 { return (size8{_address_high} << 32) | (size8{_address_low} << 22); }
 
     inline constexpr
-    long_small_page_table_entry::long_small_page_table_entry (
+    long_page_table_entry::long_page_table_entry (
         unsigned _ExtInt(1)  present,
         unsigned _ExtInt(1)  writable,
         unsigned _ExtInt(1)  user,
@@ -750,40 +750,40 @@ namespace x86::_32
     { }
 
     inline
-    auto long_small_page_table_entry::present () const -> bool { return _present; }
+    auto long_page_table_entry::present () const -> bool { return _present; }
 
     inline
-    auto long_small_page_table_entry::writable () const -> bool { return _writable; }
+    auto long_page_table_entry::writable () const -> bool { return _writable; }
 
     inline
-    auto long_small_page_table_entry::user () const -> bool { return _user; }
+    auto long_page_table_entry::user () const -> bool { return _user; }
 
     inline
-    auto long_small_page_table_entry::write_through () const -> bool { return _write_through; }
+    auto long_page_table_entry::write_through () const -> bool { return _write_through; }
 
     inline
-    auto long_small_page_table_entry::cache () const -> bool { return _cache; }
+    auto long_page_table_entry::cache () const -> bool { return _cache; }
 
     inline
-    auto long_small_page_table_entry::accessed () const -> bool { return _accessed; }
+    auto long_page_table_entry::accessed () const -> bool { return _accessed; }
 
     inline
-    auto long_small_page_table_entry::dirty () const -> bool { return _dirty; }
+    auto long_page_table_entry::dirty () const -> bool { return _dirty; }
 
     inline
-    auto long_small_page_table_entry::attribute () const -> unsigned _ExtInt(1) { return _attribute; }
+    auto long_page_table_entry::attribute () const -> unsigned _ExtInt(1) { return _attribute; }
 
     inline
-    auto long_small_page_table_entry::global () const -> bool { return _global; }
+    auto long_page_table_entry::global () const -> bool { return _global; }
 
     inline
-    auto long_small_page_table_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto long_page_table_entry::available () const -> unsigned _ExtInt(3) { return _available; }
 
     inline
-    auto long_small_page_table_entry::address () const -> size8 { return size8{_address} << 12; }
+    auto long_page_table_entry::address () const -> size8 { return size8{_address} << 12; }
 
     inline
-    auto long_small_page_table_entry::executable () const -> bool { return _executable; }
+    auto long_page_table_entry::executable () const -> bool { return _executable; }
 
     inline constexpr
     long_small_page_directory_entry::long_small_page_directory_entry (
