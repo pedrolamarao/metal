@@ -5,12 +5,12 @@
 
 namespace x86::_32
 {
-    // small_page_table_short_entry
+    // short_small_page_table_entry
 
-    TEST(small_page_table_short_entry, zero)
+    TEST(short_small_page_table_entry, zero)
     {
         size4 memory = 0;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -23,7 +23,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
 
-        auto fields = small_page_table_short_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_small_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -37,10 +37,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, present)
+    TEST(short_small_page_table_entry, present)
     {
         size4 memory = 1;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_TRUE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -53,7 +53,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
 
-        auto fields = small_page_table_short_entry { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_small_page_table_entry { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         ASSERT_TRUE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -67,10 +67,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, writable)
+    TEST(short_small_page_table_entry, writable)
     {
         size4 memory = 1 << 1;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_TRUE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -83,7 +83,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
 
-        auto fields = small_page_table_short_entry { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_small_page_table_entry { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_TRUE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -97,10 +97,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, user)
+    TEST(short_small_page_table_entry, user)
     {
         size4 memory = 1 << 2;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_TRUE(reference.user());
@@ -113,7 +113,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
 
-        auto fields = small_page_table_short_entry { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_small_page_table_entry { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_TRUE(fields.user());
@@ -127,10 +127,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, write_through)
+    TEST(short_small_page_table_entry, write_through)
     {
         size4 memory = 1 << 3;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -143,7 +143,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
 
-        auto fields = small_page_table_short_entry { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_small_page_table_entry { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -157,10 +157,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, cache)
+    TEST(short_small_page_table_entry, cache)
     {
         size4 memory = 1 << 4;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -173,7 +173,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
 
-        auto fields = small_page_table_short_entry { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_small_page_table_entry { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -187,10 +187,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, accessed)
+    TEST(short_small_page_table_entry, accessed)
     {
         size4 memory = 1 << 5;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -203,7 +203,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
         
-        auto fields = small_page_table_short_entry { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+        auto fields = short_small_page_table_entry { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -217,10 +217,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, dirty)
+    TEST(short_small_page_table_entry, dirty)
     {
         size4 memory = 1 << 6;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -233,7 +233,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
         
-        auto fields = small_page_table_short_entry { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+        auto fields = short_small_page_table_entry { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -247,10 +247,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, attribute)
+    TEST(short_small_page_table_entry, attribute)
     {
         size4 memory = 1 << 7;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -263,7 +263,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
         
-        auto fields = small_page_table_short_entry { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+        auto fields = short_small_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -277,10 +277,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, global)
+    TEST(short_small_page_table_entry, global)
     {
         size4 memory = 1 << 8;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -293,7 +293,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0,reference.address());
 
-        auto fields = small_page_table_short_entry { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+        auto fields = short_small_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -307,10 +307,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, available)
+    TEST(short_small_page_table_entry, available)
     {
         size4 memory = 3 << 9;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -323,7 +323,7 @@ namespace x86::_32
         ASSERT_EQ(3,reference.available());
         ASSERT_EQ(0,reference.address());
 
-        auto fields = small_page_table_short_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0 };
+        auto fields = short_small_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0 };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
@@ -337,10 +337,10 @@ namespace x86::_32
         ASSERT_EQ(0,fields.address());
     }
 
-    TEST(small_page_table_short_entry, address)
+    TEST(short_small_page_table_entry, address)
     {
         size4 memory = 0xFFFFF000;
-        auto& reference = reinterpret_cast<small_page_table_short_entry&>(memory);
+        auto& reference = reinterpret_cast<short_small_page_table_entry&>(memory);
         ASSERT_FALSE(reference.present());
         ASSERT_FALSE(reference.writable());
         ASSERT_FALSE(reference.user());
@@ -353,7 +353,7 @@ namespace x86::_32
         ASSERT_EQ(0,reference.available());
         ASSERT_EQ(0xFFFFF000,reference.address());
 
-        auto fields = small_page_table_short_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFFFFF };
+        auto fields = short_small_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFFFFF };
         ASSERT_FALSE(fields.present());
         ASSERT_FALSE(fields.writable());
         ASSERT_FALSE(fields.user());
