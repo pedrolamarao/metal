@@ -245,7 +245,7 @@ namespace x86::_32
 
     static_assert(sizeof(short_large_page_directory_entry) == 4, "unexpected size of short_large_page_directory_entry");
 
-    //! 64 bit, 4 KiB page table entry.
+    //! 64 bit page table entry.
 
     class long_page_table_entry
     {
