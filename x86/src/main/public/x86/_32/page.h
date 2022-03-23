@@ -406,55 +406,6 @@ namespace x86::_32
 
     static_assert(sizeof(long_small_page_directory_entry) == 8, "unexpected size of long_small_page_directory_entry");
 
-    //! 64 bit, 4 KiB page directory pointer entry.
-
-    class long_small_page_pointer_entry
-    {
-        size8 _present       :  1;
-        size8 _zero_0        :  2 = 0;
-        size8 _write_through :  1;
-        size8 _cache         :  1;
-        size8 _zero_1        :  4 = 0;
-        size8 _available     :  3;
-        size8 _address       : 40;
-        size8 _zero_2        : 12 = 0;
-
-    public:
-
-        //! Field constructor.
-
-        constexpr
-        long_small_page_pointer_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(3)  available,
-            unsigned _ExtInt(40) address
-        );
-
-        //! Page directory is present in memory.
-
-        auto present () const -> bool;
-
-        //! Page directory has write through.
-
-        auto write_through () const -> bool;
-
-        //! Page directory has cache.
-
-        auto cache () const -> bool;
-
-        //! Bits available to software.
-
-        auto available () const -> unsigned _ExtInt(3);
-
-        //! Page directory address.
-
-        auto address () const -> size8;
-    };
-
-    static_assert(sizeof(long_small_page_pointer_entry) == 8, "unexpected size of long_small_page_pointer_entry");
-
     //! 64 bit, 2 MiB page directory entry.
 
     class long_large_page_directory_entry
@@ -545,6 +496,57 @@ namespace x86::_32
     };
 
     static_assert(sizeof(long_large_page_directory_entry) == 8, "unexpected size of long_large_page_directory_entry");
+
+    //! Page directory pointer entry.
+
+    class page_directory_pointer_entry
+    {
+        size8 _present       :  1;
+        size8 _zero_0        :  2 = 0;
+        size8 _write_through :  1;
+        size8 _cache         :  1;
+        size8 _zero_1        :  4 = 0;
+        size8 _available     :  3;
+        size8 _address       : 40;
+        size8 _zero_2        : 12 = 0;
+
+    public:
+
+        //! Field constructor.
+
+        constexpr
+        page_directory_pointer_entry (
+            unsigned _ExtInt(1)  present,
+            unsigned _ExtInt(1)  write_through,
+            unsigned _ExtInt(1)  cache,
+            unsigned _ExtInt(3)  available,
+            unsigned _ExtInt(40) address
+        );
+
+        //! Page directory is present in memory.
+
+        auto present () const -> bool;
+
+        //! Page directory has write through.
+
+        auto write_through () const -> bool;
+
+        //! Page directory has cache.
+
+        auto cache () const -> bool;
+
+        //! Bits available to software.
+
+        auto available () const -> unsigned _ExtInt(3);
+
+        //! Page directory address.
+
+        auto address () const -> size8;
+    };
+
+    static_assert(sizeof(page_directory_pointer_entry) == 8, "unexpected size of page_directory_pointer_entry");
+    
+    //! @}
 }
 
 // Implementation.
@@ -834,36 +836,6 @@ namespace x86::_32
     auto long_small_page_directory_entry::executable () const -> bool { return _executable; }
 
     inline constexpr
-    long_small_page_pointer_entry::long_small_page_pointer_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(40) address
-    ) :
-        _present{present},
-        _write_through{write_through},
-        _cache{cache},
-        _available{available},
-        _address{address}
-    { }
-
-    inline
-    auto long_small_page_pointer_entry::present () const -> bool { return _present; }
-
-    inline
-    auto long_small_page_pointer_entry::write_through () const -> bool { return _write_through; }
-
-    inline
-    auto long_small_page_pointer_entry::cache () const -> bool { return _cache; }
-
-    inline
-    auto long_small_page_pointer_entry::available () const -> unsigned _ExtInt(3) { return _available; }
-
-    inline
-    auto long_small_page_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
-
-    inline constexpr
     long_large_page_directory_entry::long_large_page_directory_entry (
         unsigned _ExtInt(1)  present,
         unsigned _ExtInt(1)  writable,
@@ -927,4 +899,34 @@ namespace x86::_32
 
     inline
     auto long_large_page_directory_entry::executable () const -> bool { return _executable; }
+
+    inline constexpr
+    page_directory_pointer_entry::page_directory_pointer_entry (
+        unsigned _ExtInt(1)  present,
+        unsigned _ExtInt(1)  write_through,
+        unsigned _ExtInt(1)  cache,
+        unsigned _ExtInt(3)  available,
+        unsigned _ExtInt(40) address
+    ) :
+        _present{present},
+        _write_through{write_through},
+        _cache{cache},
+        _available{available},
+        _address{address}
+    { }
+
+    inline
+    auto page_directory_pointer_entry::present () const -> bool { return _present; }
+
+    inline
+    auto page_directory_pointer_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto page_directory_pointer_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto page_directory_pointer_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+
+    inline
+    auto page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
 }
