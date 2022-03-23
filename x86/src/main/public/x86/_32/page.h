@@ -1043,7 +1043,7 @@ namespace x86::_32
     auto short_paging_control::cache () const -> bool { return _cache; }
 
     inline
-    auto short_paging_control::address () const -> size { return _address << 12; }
+    auto short_paging_control::address () const -> size4 { return size4{_address} << 12; }
 
     inline
     auto page_directory_pointer_entry::present () const -> bool { return _present; }
