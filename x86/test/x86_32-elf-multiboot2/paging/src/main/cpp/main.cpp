@@ -70,11 +70,9 @@ void psys::main ()
 
     // Verify we can manipulate control registers.
 
-    _test_control = 100;
-
     // Verify we can manipulate page size extensions (CR4.PSE).
 
-    _test_control = 110;
+    step = 100;
 
     _test_control = step++;
     disable_large_pages();
@@ -107,7 +105,7 @@ void psys::main ()
 
     // Verify we can manipulate page address extensions (CR4.PAE).
 
-    _test_control = 120;
+    step = 200;
 
     _test_control = step++;
     disable_long_pages();
@@ -140,7 +138,7 @@ void psys::main ()
 
     // Verify we can manipulate the paging control (CR3) register.
 
-    _test_control = 130;
+    step = 300;
 
     _test_control = step++;
     get_short_paging_control_register();
@@ -149,7 +147,7 @@ void psys::main ()
     get_long_paging_control_register();
 
     _test_control = step++;
-    set_paging_control_register( short_paging_control { 0, 0, 0 } );
+    set_paging_control_register( short_paging_control { false, false, 0 } );
 
     _test_control = step++;
     auto control = get_short_paging_control_register();
@@ -173,7 +171,7 @@ void psys::main ()
     }
 
     _test_control = step++;
-    set_paging_control_register( short_paging_control { 1, 1, 1 } );
+    set_paging_control_register( short_paging_control { true, true, 0x1000 } );
 
     _test_control = step++;
     control = get_short_paging_control_register();
@@ -200,12 +198,28 @@ void psys::main ()
 
     // Verify that we can manipulate paging.
 
-    _test_control = 200;
+    step = 400;
 
     // Multiboot2 x86 requires that paging is disabled at entry time.
 
     _test_control = step++;
     if (is_paging()) {
+        _test_control = 0;
+        return;
+    }
+
+    // #TODO: prepare identity paging tables.
+
+    size4 address = reinterpret_cast<size4&>(page_directory);
+
+    _test_control = step++;
+    set_paging_control_register( short_paging_control{false,false,address} );
+
+    _test_control = step++;
+    enable_paging();
+
+    _test_control = step++;
+    if (! is_paging()) {
         _test_control = 0;
         return;
     }

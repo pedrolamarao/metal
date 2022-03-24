@@ -580,6 +580,14 @@ namespace x86::_32
             unsigned _ExtInt(20) address
         );
 
+        //! Constructor.
+
+        short_paging_control (
+            bool write_through,
+            bool cache,
+            size4 address
+        );
+
         //! Paging has write-through.
 
         auto write_through () const -> bool;
@@ -1085,6 +1093,17 @@ namespace x86::_32
         _write_through{write_through},
         _cache{cache},
         _address{address}
+    { }
+
+    inline
+    short_paging_control::short_paging_control (
+        bool write_through,
+        bool cache,
+        size4 address
+    ) :
+        _write_through{ static_cast<size4>(write_through ? 1 : 0) },
+        _cache{ static_cast<size4>(cache ? 1 : 0) },
+        _address{ static_cast<unsigned _ExtInt(20)>(address >> 12) }
     { }
 
     inline
