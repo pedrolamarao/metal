@@ -640,19 +640,55 @@ namespace x86::_32
     //! Operators.
     //! @{
 
-    //! Gets the CR3 paging control register interpreted as short paging.
+    //! Disable large pages (CR4.PSE).
+
+    void disable_large_pages ();
+
+    //! Disable long pages (CR4.PAE).
+
+    void disable_long_pages ();
+
+    //! Disable paging (CR0.PG).
+
+    void disable_paging ();
+
+    //! Enable large pages (CR4.PSE).
+
+    void enable_large_pages ();
+
+    //! Enable long pages (CR4.PAE).
+
+    void enable_long_pages ();
+
+    //! Enable paging (CR0.PG).
+
+    void enable_paging ();
+
+    //! Is large pages enabled (CR4.PSE)?
+
+    auto is_large_pages () -> bool;
+
+    //! Is long pages enabled (CR4.PAE)?
+
+    auto is_long_pages () -> bool;
+
+    //! Is paging enabled (CR0.PG)?
+
+    auto is_paging () -> bool;
+
+    //! Gets the paging control register (CR3) interpreted as short paging.
 
     auto get_short_paging_control_register () -> short_paging_control;
 
-    //! Gets the CR3 paging control register interpreted as long paging.
+    //! Gets the paging control register (CR3) interpreted as long paging.
 
     auto get_long_paging_control_register () -> long_paging_control;
 
-    //! Sets the CR3 paging control register.
+    //! Sets the paging control register (CR3).
 
     void set_paging_control_register (short_paging_control value);
 
-    //! Sets the CR3 paging control register.
+    //! Sets the paging control register (CR3).
 
     void set_paging_control_register (long_paging_control value);
 

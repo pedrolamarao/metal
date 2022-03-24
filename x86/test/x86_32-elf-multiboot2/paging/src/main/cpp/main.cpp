@@ -66,54 +66,146 @@ void psys::main ()
     set_stack_segment_register( segment_selector(3, false, 0) );
     set_extra_segment_registers( segment_selector(3, false, 0) );
 
-    // Verify we can set the paging control register with zero.
+    // Verify we can manipulate control registers.
 
-    _test_control = 10;
+    _test_control = 100;
+
+    // Verify we can manipulate page size extensions (CR4.PSE).
+
+    _test_control = 110;
+
+    _test_control++;
+    disable_large_pages();
+
+    _test_control++;
+    if (is_large_pages()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control++;
+    enable_large_pages();
+
+    _test_control++;
+    if (! is_large_pages()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control++;
+    disable_large_pages();
+
+    _test_control++;
+    if (is_large_pages()) {
+        _test_control = 0;
+        return;
+    }
+
+    // Post: page size extensions (CR4.PSE) disabled.
+
+    // Verify we can manipulate page address extensions (CR4.PAE).
+
+    _test_control = 120;
+
+    _test_control++;
+    disable_long_pages();
+
+    _test_control++;
+    if (is_long_pages()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control++;
+    enable_long_pages();
+
+    _test_control++;
+    if (! is_long_pages()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control++;
+    disable_long_pages();
+
+    _test_control++;
+    if (is_long_pages()) {
+        _test_control = 0;
+        return;
+    }
+
+    // Post: page address extensions (CR4.PAE) disabled.
+
+    // Verify we can manipulate the paging control (CR3) register.
+
+    _test_control = 130;
+
+    _test_control++;
+    get_short_paging_control_register();
+
+    _test_control++;
+    get_long_paging_control_register();
+
+    _test_control++;
     set_paging_control_register( short_paging_control { 0, 0, 0 } );
 
-    _test_control = 11;
+    _test_control++;
     auto control = get_short_paging_control_register();
 
-    _test_control = 12;
+    _test_control++;
     if (control.write_through() != 0) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 13;
+    _test_control++;
     if (control.cache() != 0) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 14;
+    _test_control++;
     if (control.address() != 0) {
         _test_control = 0;
         return;
     }
 
+    // Post: paging control (CR3) register is invalid!
+
     // Verify we can set the paging control register with non-zero.
 
-    _test_control = 20;
+    _test_control++;
     set_paging_control_register( short_paging_control { 1, 1, 1 } );
 
-    _test_control = 21;
+    _test_control++;
     control = get_short_paging_control_register();
 
-    _test_control = 22;
+    _test_control++;
     if (control.write_through() != 1) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 23;
+    _test_control++;
     if (control.cache() != 1) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 24;
+    _test_control++;
     if (control.address() != 0x1000) {
+        _test_control = 0;
+        return;
+    }
+
+    // Verify that we can manipulate paging.
+
+    _test_control = 200;
+
+    // Multiboot2 x86 requires that paging is disabled at entry time.
+
+    _test_control = 201;
+    if (is_paging()) {
         _test_control = 0;
         return;
     }

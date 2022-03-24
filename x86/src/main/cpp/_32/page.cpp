@@ -6,6 +6,83 @@
 
 namespace x86::_32
 {
+    // #XXX: LLVM 13 doesn't know how to do extended asm with _ExtInt
+    struct carrier4 { size4 value; };
+
+    void disable_large_pages ()
+    {
+        carrier4 carrier;
+        static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
+        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        carrier.value &= ~(size4{1} << 4);
+        __asm__ ( "mov %0, %%cr3" : : "r"(carrier) );
+    }
+
+    void disable_long_pages ()
+    {
+        carrier4 carrier;
+        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        carrier.value &= ~(size4{1} << 5);
+        __asm__ ( "mov %0, %%cr3" : : "r"(carrier) );
+    }
+
+    void disable_paging ()
+    {
+        carrier4 carrier;
+        __asm__ ( "mov %%cr0, %0" : "=r"(carrier) );
+        carrier.value &= ~(size4{1} << 31);
+        __asm__ ( "mov %0, %%cr0" : : "r"(carrier) );
+    }
+
+    void enable_large_pages ()
+    {
+        carrier4 carrier;
+        static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
+        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        carrier.value |= (size4{1} << 4);
+        __asm__ ( "mov %0, %%cr3" : : "r"(carrier) );
+    }
+
+    void enable_long_pages ()
+    {
+        carrier4 carrier;
+        static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
+        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        carrier.value |= (size4{1} << 5);
+        __asm__ ( "mov %0, %%cr3" : : "r"(carrier) );
+    }
+
+    void enable_paging ()
+    {
+        carrier4 carrier;
+        __asm__ ( "mov %%cr0, %0" : "=r"(carrier) );
+        carrier.value |= (size4{1} << 31);
+        __asm__ ( "mov %0, %%cr0" : : "r"(carrier) );
+    }
+
+    auto is_large_pages () -> bool
+    {
+        carrier4 carrier;
+        static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
+        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        return (carrier.value & (size4{1} << 4)) != 0;
+    }
+
+    auto is_long_pages () -> bool
+    {
+        carrier4 carrier;
+        static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
+        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        return (carrier.value & (size4{1} << 5)) != 0;
+    }
+
+    auto is_paging () -> bool
+    {
+        carrier4 carrier;
+        __asm__ ( "mov %%cr0, %0" : "=r"(carrier) );
+        return (carrier.value & (size4{1} << 31)) != 0;
+    }
+
     auto get_short_paging_control_register () -> short_paging_control
     {
         short_paging_control value;
