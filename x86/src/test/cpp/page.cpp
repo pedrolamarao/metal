@@ -946,6 +946,14 @@ namespace x86::_32
         ASSERT_EQ(0,fields.attribute());
         ASSERT_EQ(0x00FFFFC00000,fields.address());
     }
+
+    TEST(short_large_page_directory_entry, bits)
+    {
+        auto fields = short_large_page_directory_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto& memory = reinterpret_cast<size4&>(fields);
+        ASSERT_EQ(1,(memory>> 7)&1);
+        ASSERT_EQ(0,(memory>>21)&1);
+    }
     
     // long_page_table_entry
 
