@@ -2,6 +2,8 @@
 
 #include <x86/_32/page.h>
 
+// NOTE: inline assembler in `att` syntax.
+
 namespace x86::_32
 {
     auto get_short_paging_control_register () -> short_paging_control
