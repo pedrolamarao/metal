@@ -170,10 +170,6 @@ void psys::main ()
         return;
     }
 
-    // Post: paging control (CR3) register is invalid!
-
-    // Verify we can set the paging control register with non-zero.
-
     ++_test_control;
     set_paging_control_register( short_paging_control { 1, 1, 1 } );
 
@@ -197,6 +193,8 @@ void psys::main ()
         _test_control = 0;
         return;
     }
+
+    // Post: paging control (CR3) register is invalid!
 
     // Verify that we can manipulate paging.
 
