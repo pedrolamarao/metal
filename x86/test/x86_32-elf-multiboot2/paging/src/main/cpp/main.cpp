@@ -47,18 +47,20 @@ void psys::main ()
 {
     using namespace x86;
     using namespace x86::_32;
+    
+    size step = 1;
 
     // Smoke test paging operators.
 
-    ++_test_control;
+    _test_control = step++;
     get_short_paging_control_register();
 
-    ++_test_control;
+    _test_control = step++;
     get_long_paging_control_register();
 
     // Set flat segmentation.
 
-    ++_test_control;
+    _test_control = step++;
     set_global_descriptor_table_register(global_descriptor_table);
     set_code_segment_register( segment_selector(2, false, 0) );
     set_code_segment_register( segment_selector(2, false, 0) );
@@ -74,28 +76,28 @@ void psys::main ()
 
     _test_control = 110;
 
-    ++_test_control;
+    _test_control = step++;
     disable_large_pages();
 
-    ++_test_control;
+    _test_control = step++;
     if (is_large_pages()) {
         _test_control = 0;
         return;
     }
 
-    ++_test_control;
+    _test_control = step++;
     enable_large_pages();
 
-    ++_test_control;
+    _test_control = step++;
     if (! is_large_pages()) {
         _test_control = 0;
         return;
     }
 
-    ++_test_control;
+    _test_control = step++;
     disable_large_pages();
 
-    ++_test_control;
+    _test_control = step++;
     if (is_large_pages()) {
         _test_control = 0;
         return;
@@ -107,28 +109,28 @@ void psys::main ()
 
     _test_control = 120;
 
-    ++_test_control;
+    _test_control = step++;
     disable_long_pages();
 
-    ++_test_control;
+    _test_control = step++;
     if (is_long_pages()) {
         _test_control = 0;
         return;
     }
 
-    ++_test_control;
+    _test_control = step++;
     enable_long_pages();
 
-    ++_test_control;
+    _test_control = step++;
     if (! is_long_pages()) {
         _test_control = 0;
         return;
     }
 
-    ++_test_control;
+    _test_control = step++;
     disable_long_pages();
 
-    ++_test_control;
+    _test_control = step++;
     if (is_long_pages()) {
         _test_control = 0;
         return;
@@ -140,55 +142,55 @@ void psys::main ()
 
     _test_control = 130;
 
-    ++_test_control;
+    _test_control = step++;
     get_short_paging_control_register();
 
-    ++_test_control;
+    _test_control = step++;
     get_long_paging_control_register();
 
-    ++_test_control;
+    _test_control = step++;
     set_paging_control_register( short_paging_control { 0, 0, 0 } );
 
-    ++_test_control;
+    _test_control = step++;
     auto control = get_short_paging_control_register();
 
-    ++_test_control;
+    _test_control = step++;
     if (control.write_through() != 0) {
         _test_control = 0;
         return;
     }
 
-    ++_test_control;
+    _test_control = step++;
     if (control.cache() != 0) {
         _test_control = 0;
         return;
     }
 
-    ++_test_control;
+    _test_control = step++;
     if (control.address() != 0) {
         _test_control = 0;
         return;
     }
 
-    ++_test_control;
+    _test_control = step++;
     set_paging_control_register( short_paging_control { 1, 1, 1 } );
 
-    ++_test_control;
+    _test_control = step++;
     control = get_short_paging_control_register();
 
-    ++_test_control;
+    _test_control = step++;
     if (control.write_through() != 1) {
         _test_control = 0;
         return;
     }
 
-    ++_test_control;
+    _test_control = step++;
     if (control.cache() != 1) {
         _test_control = 0;
         return;
     }
 
-    ++_test_control;
+    _test_control = step++;
     if (control.address() != 0x1000) {
         _test_control = 0;
         return;
@@ -202,7 +204,7 @@ void psys::main ()
 
     // Multiboot2 x86 requires that paging is disabled at entry time.
 
-    ++_test_control;
+    _test_control = step++;
     if (is_paging()) {
         _test_control = 0;
         return;
