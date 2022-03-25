@@ -40,7 +40,7 @@ namespace x86
 
   //! Set data segment register.
 
-  void set_data_segment_register ( segment_selector value );
+  void set_data_segment ( segment_selector value );
 
   //! Set stack segment register.
 

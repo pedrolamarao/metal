@@ -27,7 +27,7 @@ namespace x86
        );
     }
 
-    void set_data_segment_register ( segment_selector value )
+    void set_data_segment ( segment_selector value )
     {
         __asm__ ( "mov %%ds, %0" : : "mr"(value) : );
     }
