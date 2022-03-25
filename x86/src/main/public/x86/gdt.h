@@ -30,25 +30,25 @@ namespace x86
   //! Operators.
   //! @{
 
-  //! Get code segment register.
+  //! Get code segment register (CS).
 
   auto get_code_segment () -> segment_selector ;
 
-  //! Set code segment register.
+  //! Set code segment register (CS).
 
   void set_code_segment ( segment_selector value );
 
-  //! Set data segment register.
+  //! Set data segment register (DS).
 
   void set_data_segment ( segment_selector value );
 
-  //! Set stack segment register.
+  //! Set data segment registers (DS, ES, FS, GS, SS).
+
+  void set_data_segments ( segment_selector value );
+
+  //! Set stack segment register (SS).
 
   void set_stack_segment ( segment_selector value );
-
-  //! Set extra segment registers.
-
-  void set_extra_segment_registers ( segment_selector value );
 
   //! @}
 }
