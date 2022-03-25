@@ -73,15 +73,15 @@ namespace x86::_32
   //! Operators.
   //! @{
 
-  //! Get the global descriptor table register
+  //! Get the global descriptor table register (IDTR).
 
-  auto get_interrupt_descriptor_table_register () -> interrupt_descriptor_table_register ;
+  auto get_interrupt_descriptor_table () -> interrupt_descriptor_table_register ;
 
-  //! Set the global descriptor table register
+  //! Set the global descriptor table register (IDTR).
 
   void set_interrupt_descriptor_table_register ( interrupt_descriptor_table_register value );
 
-  //! Set the global descriptor table register
+  //! Set the global descriptor table register (IDTR).
 
   template <unsigned N>
   void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] );

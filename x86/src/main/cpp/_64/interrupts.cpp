@@ -4,7 +4,7 @@
 
 namespace x86::_64
 {
-    auto get_interrupt_descriptor_table_register () -> interrupt_descriptor_table_register
+    auto get_interrupt_descriptor_table () -> interrupt_descriptor_table_register
     {
         interrupt_descriptor_table_register value;
         __asm__ ( "sidt %0" : "=m"(value) : : );

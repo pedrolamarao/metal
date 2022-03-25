@@ -144,7 +144,7 @@ void psys::main ()
         halt_cast<size4>(interrupt_descriptor_table)
     };
 
-    auto actual_idtr = get_interrupt_descriptor_table_register();
+    auto actual_idtr = get_interrupt_descriptor_table();
 
     if (actual_idtr != expected_idtr) {
         _test_debug = expected_idtr.size;

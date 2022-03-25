@@ -75,7 +75,7 @@ namespace x86::_64
 
   //! Get the global descriptor table register
 
-  auto get_interrupt_descriptor_table_register () -> interrupt_descriptor_table_register ;
+  auto get_interrupt_descriptor_table () -> interrupt_descriptor_table_register ;
 
   //! Set the global descriptor table register
 
