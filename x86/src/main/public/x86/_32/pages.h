@@ -765,7 +765,7 @@ namespace x86::_32
 
     //! Long (i.e. PAE) paging control.
 
-    class long_paging_control
+    class long_paging
     {
         size4 _zero_0        : 3  { 0 };
         size4 _write_through : 1  {};
@@ -777,12 +777,12 @@ namespace x86::_32
         //! Default constructor.
 
         constexpr
-        long_paging_control () = default;
+        long_paging () = default;
 
         //! Field constructor.
 
         constexpr
-        long_paging_control (
+        long_paging (
             unsigned _ExtInt(1) write_through,
             unsigned _ExtInt(1) cache,
             unsigned _ExtInt(27) address
@@ -791,7 +791,7 @@ namespace x86::_32
         //! Semantic constructor.
 
         constexpr
-        long_paging_control (
+        long_paging (
             decltype(nullptr) ignored,
             bool write_through,
             bool cache,
@@ -812,7 +812,7 @@ namespace x86::_32
 
     };
 
-    static_assert(sizeof(long_paging_control) == 4, "unexpected size of long_paging_control");
+    static_assert(sizeof(long_paging) == 4, "unexpected size of long_paging");
 
     //! @}
 
@@ -861,7 +861,7 @@ namespace x86::_32
 
     //! Gets the paging control register (CR3) interpreted as long paging.
 
-    auto get_long_paging () -> long_paging_control;
+    auto get_long_paging () -> long_paging;
 
     //! Sets the paging control register (CR3).
 
@@ -869,7 +869,7 @@ namespace x86::_32
 
     //! Sets the paging control register (CR3).
 
-    void set_paging (long_paging_control value);
+    void set_paging (long_paging value);
 
     //! @}
 }
@@ -1466,7 +1466,7 @@ namespace x86::_32
     auto short_paging::address () const -> size4 { return size4{_address} << 12; }
 
     constexpr inline
-    long_paging_control::long_paging_control (
+    long_paging::long_paging (
         unsigned _ExtInt(1) write_through,
         unsigned _ExtInt(1) cache,
         unsigned _ExtInt(27) address
@@ -1477,7 +1477,7 @@ namespace x86::_32
     { }
 
     constexpr inline
-    long_paging_control::long_paging_control (
+    long_paging::long_paging (
         decltype(nullptr),
         bool write_through,
         bool cache,
@@ -1489,11 +1489,11 @@ namespace x86::_32
     { }
 
     inline
-    auto long_paging_control::write_through () const -> bool { return _write_through; }
+    auto long_paging::write_through () const -> bool { return _write_through; }
 
     inline
-    auto long_paging_control::cache () const -> bool { return _cache; }
+    auto long_paging::cache () const -> bool { return _cache; }
 
     inline
-    auto long_paging_control::address () const -> size4 { return size4{_address} << 5; }
+    auto long_paging::address () const -> size4 { return size4{_address} << 5; }
 }

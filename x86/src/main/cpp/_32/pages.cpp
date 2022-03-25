@@ -90,9 +90,9 @@ namespace x86::_32
         return value;
     }
 
-    auto get_long_paging () -> long_paging_control
+    auto get_long_paging () -> long_paging
     {
-        long_paging_control value;
+        long_paging value;
         __asm__ ( "mov %%cr3, %0" : "=r"(value) );
         return value;
     }
@@ -102,7 +102,7 @@ namespace x86::_32
         __asm__ ( "mov %0, %%cr3" : : "r"(value) );
     }
 
-    void set_paging (long_paging_control value)
+    void set_paging (long_paging value)
     {
         __asm__ ( "mov %0, %%cr3" : : "r"(value) );
     }
