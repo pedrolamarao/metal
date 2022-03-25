@@ -215,7 +215,7 @@ void psys::main ()
     enable_large_pages();
 
     _test_control = step++;
-    size4 page_directory_table_address { reinterpret_cast<size4>(&page_directory_table[0]) };
+    size4 page_directory_table_address { reinterpret_cast<size4>(page_directory_table) };
     set_paging_control_register( short_paging_control{nullptr,false,false,page_directory_table_address} );
 
     _test_control = step++;
