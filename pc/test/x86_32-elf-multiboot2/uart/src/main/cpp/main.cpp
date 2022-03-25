@@ -7,7 +7,7 @@
 
 #include <x86/segments.h>
 #include <x86/interrupts.h>
-#include <x86/port.h>
+#include <x86/ports.h>
 
 #include <pc/pic.h>
 #include <pc/uart.h>
