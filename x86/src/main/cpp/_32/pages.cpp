@@ -83,26 +83,26 @@ namespace x86::_32
         return (carrier.value & (size4{1} << 31)) != 0;
     }
 
-    auto get_short_paging_control_register () -> short_paging_control
+    auto get_short_paging () -> short_paging_control
     {
         short_paging_control value;
         __asm__ ( "mov %%cr3, %0" : "=r"(value) );
         return value;
     }
 
-    auto get_long_paging_control_register () -> long_paging_control
+    auto get_long_paging () -> long_paging_control
     {
         long_paging_control value;
         __asm__ ( "mov %%cr3, %0" : "=r"(value) );
         return value;
     }
 
-    void set_paging_control_register (short_paging_control value)
+    void set_paging (short_paging_control value)
     {
         __asm__ ( "mov %0, %%cr3" : : "r"(value) );
     }
 
-    void set_paging_control_register (long_paging_control value)
+    void set_paging (long_paging_control value)
     {
         __asm__ ( "mov %0, %%cr3" : : "r"(value) );
     }

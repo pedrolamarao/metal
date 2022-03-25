@@ -857,19 +857,19 @@ namespace x86::_32
 
     //! Gets the paging control register (CR3) interpreted as short paging.
 
-    auto get_short_paging_control_register () -> short_paging_control;
+    auto get_short_paging () -> short_paging_control;
 
     //! Gets the paging control register (CR3) interpreted as long paging.
 
-    auto get_long_paging_control_register () -> long_paging_control;
+    auto get_long_paging () -> long_paging_control;
 
     //! Sets the paging control register (CR3).
 
-    void set_paging_control_register (short_paging_control value);
+    void set_paging (short_paging_control value);
 
     //! Sets the paging control register (CR3).
 
-    void set_paging_control_register (long_paging_control value);
+    void set_paging (long_paging_control value);
 
     //! @}
 }
