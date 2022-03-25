@@ -120,7 +120,7 @@ void psys::main ()
         halt_cast<size4>(global_descriptor_table)
     };
 
-    auto const actual_gdtr = get_global_descriptor_table_register();
+    auto const actual_gdtr = get_global_descriptor_table();
 
     if (actual_gdtr != expected_gdtr) {
         _test_debug = expected_gdtr.size;

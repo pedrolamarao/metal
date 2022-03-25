@@ -4,7 +4,7 @@
 
 namespace x86::_32
 {
-    auto get_global_descriptor_table_register () -> global_descriptor_table_register
+    auto get_global_descriptor_table () -> global_descriptor_table_register
     {
         global_descriptor_table_register value;
         __asm__ ( "sgdt %0" : "=m"(value) : : );

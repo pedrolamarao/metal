@@ -70,7 +70,7 @@ namespace x86::_64
 
   //! Gets the global descriptor table register
 
-  auto get_global_descriptor_table_register () -> global_descriptor_table_register ;
+  auto get_global_descriptor_table () -> global_descriptor_table_register ;
 
   //! Sets the global descriptor table register.
 
