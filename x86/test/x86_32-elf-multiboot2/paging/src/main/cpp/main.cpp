@@ -5,7 +5,7 @@
 #include <psys/test.h>
 
 #include <x86/gdt.h>
-#include <x86/_32/page.h>
+#include <x86/_32/pages.h>
 #include <x86/_32/segment.h>
 
 

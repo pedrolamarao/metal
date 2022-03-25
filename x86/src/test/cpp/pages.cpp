@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <x86/_32/page.h>
+#include <x86/_32/pages.h>
 
 
 namespace x86::_32

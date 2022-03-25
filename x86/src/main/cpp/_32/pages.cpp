@@ -1,6 +1,6 @@
 // Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <x86/_32/page.h>
+#include <x86/_32/pages.h>
 
 // NOTE: inline assembler in `att` syntax.
 
