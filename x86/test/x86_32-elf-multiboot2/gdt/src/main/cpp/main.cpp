@@ -5,7 +5,7 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/gdt.h>
+#include <x86/segments.h>
 
 
 namespace
