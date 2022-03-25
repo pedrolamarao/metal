@@ -6,7 +6,7 @@ namespace x86
 {
     // Interface types.
 
-    auto get_code_segment_register () -> segment_selector
+    auto get_code_segment () -> segment_selector
     {
         segment_selector value;
         __asm__ ( "movw %%cs, %0" : "=mr"(value) );

@@ -143,7 +143,7 @@ void psys::main ()
 
     _test_control = 31;
 
-    segment_selector actual_cs { get_code_segment_register() };
+    segment_selector actual_cs { get_code_segment() };
 
     if (expected_cs != actual_cs) {
         _test_debug = size2{expected_cs};

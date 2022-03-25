@@ -32,7 +32,7 @@ namespace x86
 
   //! Get code segment register.
 
-  auto get_code_segment_register () -> segment_selector ;
+  auto get_code_segment () -> segment_selector ;
 
   //! Set code segment register.
 
