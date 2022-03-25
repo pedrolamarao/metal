@@ -74,12 +74,12 @@ namespace x86::_64
 
   //! Sets the global descriptor table register.
 
-  void set_global_descriptor_table_register ( global_descriptor_table_register value );
+  void set_global_descriptor_table ( global_descriptor_table_register value );
 
   //! Sets the global descriptor table register.
 
   template <unsigned N>
-  void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] );
+  void set_global_descriptor_table ( segment_descriptor const (& table) [N] );
 
   //! @}
 }
@@ -163,12 +163,12 @@ namespace x86::_64
 
   template <unsigned N>
   inline
-  void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] )
+  void set_global_descriptor_table ( segment_descriptor const (& table) [N] )
   {
     global_descriptor_table_register value {
         ((N * sizeof(segment_descriptor)) - 1),
         reinterpret_cast<ps::size>(table)
     };
-    set_global_descriptor_table_register(value);
+    set_global_descriptor_table(value);
   }
 }

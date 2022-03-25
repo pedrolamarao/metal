@@ -71,7 +71,7 @@ void psys::main ()
 
     _test_control = 2;
 
-    set_global_descriptor_table_register(global_descriptor_table);
+    set_global_descriptor_table(global_descriptor_table);
 
     set_segment_registers(segment_selector(2, false, 0), segment_selector(3, false, 0));
 

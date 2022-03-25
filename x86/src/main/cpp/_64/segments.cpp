@@ -11,7 +11,7 @@ namespace x86::_64
         return value;
     }
 
-    void set_global_descriptor_table_register ( global_descriptor_table_register value )
+    void set_global_descriptor_table ( global_descriptor_table_register value )
     {
         __asm__ ( "lgdt %0" : : "m"(value) : );
     }

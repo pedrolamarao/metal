@@ -109,7 +109,7 @@ void psys::main ()
 
     _test_control = 20;
 
-    set_global_descriptor_table_register(global_descriptor_table);
+    set_global_descriptor_table(global_descriptor_table);
 
     // test: did we successfully update the GDT register?
 

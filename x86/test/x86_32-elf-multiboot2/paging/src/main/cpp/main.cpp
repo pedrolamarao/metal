@@ -51,7 +51,7 @@ void psys::main ()
     // Set flat segmentation.
 
     _test_control = step++;
-    set_global_descriptor_table_register(global_descriptor_table);
+    set_global_descriptor_table(global_descriptor_table);
     set_code_segment_register( segment_selector(2, false, 0) );
     set_code_segment_register( segment_selector(2, false, 0) );
     set_data_segment_register( segment_selector(2, false, 0) );
