@@ -34,13 +34,8 @@ namespace
         { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
     };
 
-    // #TODO: appropriately align this object
-    constinit
-    short_page_table_entry page_table [ 2048 ] {};
-
-    // #TODO: appropriately align this object
-    constinit
-    short_small_page_directory_entry page_directory [ 2048 ] {};
+    alignas(0x1000) constinit
+    short_large_page_directory_entry page_directory_table [ 0x400 ] {};
 }
 
 void psys::main ()
@@ -147,7 +142,7 @@ void psys::main ()
     get_long_paging_control_register();
 
     _test_control = step++;
-    set_paging_control_register( short_paging_control { false, false, 0 } );
+    set_paging_control_register( short_paging_control { 0, 0, 0 } );
 
     _test_control = step++;
     auto control = get_short_paging_control_register();
@@ -171,7 +166,7 @@ void psys::main ()
     }
 
     _test_control = step++;
-    set_paging_control_register( short_paging_control { true, true, 0x1000 } );
+    set_paging_control_register( short_paging_control { 1, 1, 1 } );
 
     _test_control = step++;
     control = get_short_paging_control_register();
@@ -208,12 +203,20 @@ void psys::main ()
         return;
     }
 
-    // #TODO: prepare identity paging tables.
+    // Prepare page directory table for identity paging.
 
-    size4 address = reinterpret_cast<size4&>(page_directory);
+    for (size i = 0; i != 0x400; ++i) {
+        page_directory_table[i] = {
+            true, true, true, false, false, false, false, false, 0, 0, (0x400000 * i)
+        };
+    }
 
     _test_control = step++;
-    set_paging_control_register( short_paging_control{false,false,address} );
+    enable_large_pages();
+
+    _test_control = step++;
+    size4 page_directory_table_address { reinterpret_cast<size4>(&page_directory_table[0]) };
+    set_paging_control_register( short_paging_control{nullptr,false,false,page_directory_table_address} );
 
     _test_control = step++;
     enable_paging();
