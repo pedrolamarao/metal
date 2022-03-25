@@ -10,7 +10,7 @@ namespace x86
         __asm__ volatile ( "sti" : : : );
     }
 
-    void cli ()
+    void disable_interrupts ()
     {
         __asm__ volatile ( "cli" : : : );
     }

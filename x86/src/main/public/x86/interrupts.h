@@ -21,7 +21,7 @@ namespace x86
 
     //! Disables interrupts on this processor.
 
-    void cli ();
+    void disable_interrupts ();
 
     //! Interrupt this processor.
 

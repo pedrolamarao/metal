@@ -92,7 +92,7 @@ void psys::main ()
 
     _test_control = 14;
 
-    cli();
+    disable_interrupts();
 
     master_pic_counter = 0;
 
