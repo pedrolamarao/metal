@@ -11,7 +11,7 @@ namespace x86::_32
         return value;
     }
 
-    void set_interrupt_descriptor_table_register ( interrupt_descriptor_table_register value )
+    void set_interrupt_descriptor_table ( interrupt_descriptor_table_register value )
     {
         __asm__ ( "lidt %0" : : "m"(value) : );
     }

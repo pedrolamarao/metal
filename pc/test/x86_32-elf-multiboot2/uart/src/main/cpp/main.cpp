@@ -22,7 +22,7 @@ namespace
     unsigned slave_pic_counter {};
     unsigned interrupt_counter {};
 
-    void set_interrupt_descriptor_table_register ();
+    void set_interrupt_descriptor_table ();
 }
 
 void psys::main ()
@@ -40,7 +40,7 @@ void psys::main ()
 
     _test_control = 3;
 
-    set_interrupt_descriptor_table_register();
+    set_interrupt_descriptor_table();
 
     // test: verify interrupt sanity
 
@@ -287,7 +287,7 @@ namespace
     constinit
     interrupt_gate_descriptor interrupt_descriptor_table [256] {};
 
-    void set_interrupt_descriptor_table_register ()
+    void set_interrupt_descriptor_table ()
     {
         auto const interrupt_segment = segment_selector(1, false, 0);
 
@@ -336,6 +336,6 @@ namespace
            interrupt_descriptor_table[i] = { interrupt_segment, interrupt_handler, true, true, 0, true };
         }
 
-        set_interrupt_descriptor_table_register(interrupt_descriptor_table);
+        set_interrupt_descriptor_table(interrupt_descriptor_table);
     }
 }

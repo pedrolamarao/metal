@@ -133,7 +133,7 @@ void psys::main ()
 
     _test_control = 20;
 
-    set_interrupt_descriptor_table_register(interrupt_descriptor_table);
+    set_interrupt_descriptor_table(interrupt_descriptor_table);
     
     // test: did we successfully update the IDT register?
 

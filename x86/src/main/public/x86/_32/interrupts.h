@@ -79,12 +79,12 @@ namespace x86::_32
 
   //! Set the global descriptor table register (IDTR).
 
-  void set_interrupt_descriptor_table_register ( interrupt_descriptor_table_register value );
+  void set_interrupt_descriptor_table ( interrupt_descriptor_table_register value );
 
   //! Set the global descriptor table register (IDTR).
 
   template <unsigned N>
-  void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] );
+  void set_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] );
 
   //! @}
 }
@@ -166,12 +166,12 @@ namespace x86::_32
 
   template <unsigned N>
   inline
-  void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] )
+  void set_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] )
   {
     interrupt_descriptor_table_register value {
       N * sizeof(interrupt_gate_descriptor),
       halt_cast<size4>(table)
     };
-    set_interrupt_descriptor_table_register(value);
+    set_interrupt_descriptor_table(value);
   }
 }

@@ -88,7 +88,7 @@ void psys::main ()
     interrupt_descriptor_table[0x0B] = { interrupt_selector, interrupt_0B, true, true, 0, true };
     interrupt_descriptor_table[0x0D] = { interrupt_selector, interrupt_0D, true, true, 0, true };
 
-    set_interrupt_descriptor_table_register(interrupt_descriptor_table);
+    set_interrupt_descriptor_table(interrupt_descriptor_table);
 
     // test: exception 00: division error
 
