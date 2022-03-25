@@ -18,7 +18,7 @@ namespace x86::_32
         __asm__ ( "mov %0, %%cr4" : : "r"(carrier) );
     }
 
-    void disable_long_pages ()
+    void disable_long_addresses ()
     {
         carrier4 carrier;
         __asm__ ( "mov %%cr4, %0" : "=r"(carrier) );
@@ -43,7 +43,7 @@ namespace x86::_32
         __asm__ ( "mov %0, %%cr4" : : "r"(carrier) );
     }
 
-    void enable_long_pages ()
+    void enable_long_addresses ()
     {
         carrier4 carrier;
         static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
@@ -68,7 +68,7 @@ namespace x86::_32
         return (carrier.value & (size4{1} << 4)) != 0;
     }
 
-    auto is_long_pages () -> bool
+    auto is_long_addresses () -> bool
     {
         carrier4 carrier;
         static_assert(sizeof(carrier) == 4, "unexpected size of carrier");

@@ -103,28 +103,28 @@ void psys::main ()
     step = 200;
 
     _test_control = step++;
-    disable_long_pages();
+    disable_long_addresses();
 
     _test_control = step++;
-    if (is_long_pages()) {
+    if (is_long_addresses()) {
         _test_control = 0;
         return;
     }
 
     _test_control = step++;
-    enable_long_pages();
+    enable_long_addresses();
 
     _test_control = step++;
-    if (! is_long_pages()) {
+    if (! is_long_addresses()) {
         _test_control = 0;
         return;
     }
 
     _test_control = step++;
-    disable_long_pages();
+    disable_long_addresses();
 
     _test_control = step++;
-    if (is_long_pages()) {
+    if (is_long_addresses()) {
         _test_control = 0;
         return;
     }
