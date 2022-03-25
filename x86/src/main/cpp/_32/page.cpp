@@ -13,17 +13,17 @@ namespace x86::_32
     {
         carrier4 carrier;
         static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
-        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        __asm__ ( "mov %%cr4, %0" : "=r"(carrier) );
         carrier.value &= ~(size4{1} << 4);
-        __asm__ ( "mov %0, %%cr3" : : "r"(carrier) );
+        __asm__ ( "mov %0, %%cr4" : : "r"(carrier) );
     }
 
     void disable_long_pages ()
     {
         carrier4 carrier;
-        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        __asm__ ( "mov %%cr4, %0" : "=r"(carrier) );
         carrier.value &= ~(size4{1} << 5);
-        __asm__ ( "mov %0, %%cr3" : : "r"(carrier) );
+        __asm__ ( "mov %0, %%cr4" : : "r"(carrier) );
     }
 
     void disable_paging ()
@@ -38,18 +38,18 @@ namespace x86::_32
     {
         carrier4 carrier;
         static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
-        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        __asm__ ( "mov %%cr4, %0" : "=r"(carrier) );
         carrier.value |= (size4{1} << 4);
-        __asm__ ( "mov %0, %%cr3" : : "r"(carrier) );
+        __asm__ ( "mov %0, %%cr4" : : "r"(carrier) );
     }
 
     void enable_long_pages ()
     {
         carrier4 carrier;
         static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
-        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        __asm__ ( "mov %%cr4, %0" : "=r"(carrier) );
         carrier.value |= (size4{1} << 5);
-        __asm__ ( "mov %0, %%cr3" : : "r"(carrier) );
+        __asm__ ( "mov %0, %%cr4" : : "r"(carrier) );
     }
 
     void enable_paging ()
@@ -64,7 +64,7 @@ namespace x86::_32
     {
         carrier4 carrier;
         static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
-        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        __asm__ ( "mov %%cr4, %0" : "=r"(carrier) );
         return (carrier.value & (size4{1} << 4)) != 0;
     }
 
@@ -72,7 +72,7 @@ namespace x86::_32
     {
         carrier4 carrier;
         static_assert(sizeof(carrier) == 4, "unexpected size of carrier");
-        __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
+        __asm__ ( "mov %%cr4, %0" : "=r"(carrier) );
         return (carrier.value & (size4{1} << 5)) != 0;
     }
 
