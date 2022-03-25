@@ -4,8 +4,8 @@
 
 #include <x86/common.h>
 
-#include <x86/_32/segment.h>
-#include <x86/_64/segment.h>
+#include <x86/_32/segments.h>
+#include <x86/_64/segments.h>
 
 
 // Interface.

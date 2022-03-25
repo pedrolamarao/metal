@@ -6,7 +6,7 @@
 
 #include <x86/gdt.h>
 #include <x86/_32/pages.h>
-#include <x86/_32/segment.h>
+#include <x86/_32/segments.h>
 
 
 namespace
