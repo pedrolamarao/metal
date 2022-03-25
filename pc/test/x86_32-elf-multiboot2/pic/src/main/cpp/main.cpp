@@ -126,13 +126,11 @@ namespace
 
     void set_global_descriptor_table_register ()
     {
-        set_global_descriptor_table_register(global_descriptor_table);
+        set_global_descriptor_table(global_descriptor_table);
         auto const cs = segment_selector(1, false, 0);
-        set_code_segment_register(cs);
+        set_code_segment(cs);
         auto const ds = segment_selector(2, false, 0);
-        set_data_segment_register(ds);
-        set_stack_segment_register(ds);
-        set_extra_segment_registers(ds);
+        set_data_segments(ds);
     }
 
     // Interrupts.
