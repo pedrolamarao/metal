@@ -189,6 +189,7 @@ abstract class MultibootTestImageTask : DefaultTask()
 
         gdb.handle { onTestStart(gdb, this) }
         gdb.handle { onTestControl(gdb, this) }
+        gdb.handle { onTestDebug(gdb, this) }
         gdb.handle { onTestFinish(gdb, this) }
 
         try
@@ -252,6 +253,20 @@ abstract class MultibootTestImageTask : DefaultTask()
             logger.lifecycle("${project.path}:${this.name}: [SUCCESS]: ${old}")
             logger.info("${project.path}:${this.name}: [ENTER]: ${new}")
         }
+        ForkJoinPool.commonPool().submit { gdb.execContinue {} }
+    }
+
+    fun onTestDebug (gdb : GdbExec, message : GdbMiMessage)
+    {
+        if (message !is GdbMiMessage.RecordMessage) return
+        val properties = message.content().properties()
+        if (properties.get("reason", String::class.java) != "watchpoint-trigger") return
+        val wpt = properties.get("wpt", GdbMiProperties::class.java) ?: return
+        if (wpt.get("exp", String::class.java) != "_test_debug") return
+        val value = properties.get("value", GdbMiProperties::class.java) ?: return
+        val old = value.get("old", String::class.java) ?: return
+        val new = value.get("new", String::class.java) ?: return
+        logger.info("${project.path}:${this.name}: [DEBUG]: ${old} -> ${new}")
         ForkJoinPool.commonPool().submit { gdb.execContinue {} }
     }
 
