@@ -945,6 +945,36 @@ namespace x86::_32
         ASSERT_EQ(0,fields.available());
         ASSERT_EQ(0,fields.attribute());
         ASSERT_EQ(0x00FFFFC00000,fields.address());
+
+        auto value = short_large_page_directory_entry {
+            false, false, false, false, false, false, false, false, 0, 0, 0xFEC00000
+        };
+        ASSERT_FALSE(value.present());
+        ASSERT_FALSE(value.writable());
+        ASSERT_FALSE(value.user());
+        ASSERT_FALSE(value.write_through());
+        ASSERT_FALSE(value.cache());
+        ASSERT_FALSE(value.accessed());
+        ASSERT_FALSE(value.dirty());
+        ASSERT_FALSE(value.global());
+        ASSERT_EQ(0,value.available());
+        ASSERT_EQ(0,value.attribute());
+        ASSERT_EQ(0xFEC00000,value.address());
+
+        auto four_mb = short_large_page_directory_entry {
+            false, false, false, false, false, false, false, false, 0, 0, 0x400000
+        };
+        ASSERT_FALSE(four_mb.present());
+        ASSERT_FALSE(four_mb.writable());
+        ASSERT_FALSE(four_mb.user());
+        ASSERT_FALSE(four_mb.write_through());
+        ASSERT_FALSE(four_mb.cache());
+        ASSERT_FALSE(four_mb.accessed());
+        ASSERT_FALSE(four_mb.dirty());
+        ASSERT_FALSE(four_mb.global());
+        ASSERT_EQ(0,four_mb.available());
+        ASSERT_EQ(0,four_mb.attribute());
+        ASSERT_EQ(0x400000,four_mb.address());
     }
 
     TEST(short_large_page_directory_entry, bits)

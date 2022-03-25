@@ -173,22 +173,27 @@ namespace x86::_32
 
     class short_large_page_directory_entry
     {
-        size4 _present       : 1;
-        size4 _writable      : 1;
-        size4 _user          : 1;
-        size4 _write_through : 1;
-        size4 _cache         : 1;
-        size4 _accessed      : 1;
-        size4 _dirty         : 1;
-        size4 _large         : 1 = 1;
-        size4 _global        : 1;
-        size4 _available     : 3;
-        size4 _attribute     : 1;
-        size4 _address_high  : 8;
-        size4 _zero          : 1 = 0;
-        size4 _address_low   : 10;
+        size4 _present       : 1  {};
+        size4 _writable      : 1  {};
+        size4 _user          : 1  {};
+        size4 _write_through : 1  {};
+        size4 _cache         : 1  {};
+        size4 _accessed      : 1  {};
+        size4 _dirty         : 1  {};
+        size4 _large         : 1  {1};
+        size4 _global        : 1  {};
+        size4 _available     : 3  {};
+        size4 _attribute     : 1  {};
+        size4 _address_high  : 8  {};
+        size4 _zero          : 1  {0};
+        size4 _address_low   : 10 {};
 
     public:
+
+        //! Default constructor.
+
+        constexpr
+        short_large_page_directory_entry () = default;
 
         //! Field constructor.
 
@@ -206,6 +211,23 @@ namespace x86::_32
             unsigned _ExtInt(1)  attribute,
             unsigned _ExtInt(8)  address_high,
             unsigned _ExtInt(10) address_low
+        );
+
+        //! Semantic constructor.
+
+        constexpr
+        short_large_page_directory_entry (
+            bool present,
+            bool writable,
+            bool user,
+            bool write_through,
+            bool cache,
+            bool accessed,
+            bool dirty,
+            bool global,
+            unsigned _ExtInt(3) available,
+            unsigned _ExtInt(1) attribute,
+            size4 address
         );
 
         //! Page is present in memory.
@@ -842,6 +864,34 @@ namespace x86::_32
         _attribute{attribute},
         _address_high{address_high},
         _address_low{address_low}
+    { }
+
+    inline constexpr
+    short_large_page_directory_entry::short_large_page_directory_entry (
+        bool present,
+        bool writable,
+        bool user,
+        bool write_through,
+        bool cache,
+        bool accessed,
+        bool dirty,
+        bool global,
+        unsigned _ExtInt(3) available,
+        unsigned _ExtInt(1) attribute,
+        size4 address
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _dirty{dirty},
+        _global{global},
+        _available{available},
+        _attribute{attribute},
+        _address_high{0},
+        _address_low{address >> 22}
     { }
 
     inline
