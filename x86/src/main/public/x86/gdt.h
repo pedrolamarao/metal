@@ -36,7 +36,7 @@ namespace x86
 
   //! Set code segment register.
 
-  void set_code_segment_register ( segment_selector value );
+  void set_code_segment ( segment_selector value );
 
   //! Set data segment register.
 

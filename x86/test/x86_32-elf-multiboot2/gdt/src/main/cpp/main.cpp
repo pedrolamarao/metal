@@ -137,7 +137,7 @@ void psys::main ()
 
     auto const expected_cs = x86::segment_selector(2, false, 0);
 
-    x86::set_code_segment_register( expected_cs );
+    x86::set_code_segment( expected_cs );
 
     // test: did we successfully update the CS register?
 

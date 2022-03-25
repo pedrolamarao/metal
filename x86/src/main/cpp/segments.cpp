@@ -13,7 +13,7 @@ namespace x86
         return value;
     }
 
-    void set_code_segment_register ( segment_selector value )
+    void set_code_segment ( segment_selector value )
     {
         unsigned int const _value { size2 { value } };
         __asm__ (
