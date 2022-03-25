@@ -137,7 +137,7 @@ void psys::main ()
     get_long_paging();
 
     _test_control = step++;
-    set_paging( short_paging_control { 0, 0, 0 } );
+    set_paging( short_paging { 0, 0, 0 } );
 
     _test_control = step++;
     auto control = get_short_paging();
@@ -161,7 +161,7 @@ void psys::main ()
     }
 
     _test_control = step++;
-    set_paging( short_paging_control { 1, 1, 1 } );
+    set_paging( short_paging { 1, 1, 1 } );
 
     _test_control = step++;
     control = get_short_paging();
@@ -218,7 +218,7 @@ void psys::main ()
 
     _test_control = step++;
     size4 page_directory_table_address { reinterpret_cast<size4>(page_directory_table) };
-    set_paging( short_paging_control { {}, false, false, page_directory_table_address } );
+    set_paging( short_paging { {}, false, false, page_directory_table_address } );
 
     _test_control = step++;
     enable_paging();

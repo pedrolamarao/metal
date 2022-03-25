@@ -711,7 +711,7 @@ namespace x86::_32
 
     //! Short (i.e. non PAE) paging control.
 
-    class short_paging_control
+    class short_paging
     {
         size4 _zero_0        : 3  { 0 };
         size4 _write_through : 1  {};
@@ -724,12 +724,12 @@ namespace x86::_32
         //! Default constructor.
 
         constexpr
-        short_paging_control () = default;
+        short_paging () = default;
 
         //! Field constructor.
 
         constexpr
-        short_paging_control (
+        short_paging (
             unsigned _ExtInt(1) write_through,
             unsigned _ExtInt(1) cache,
             unsigned _ExtInt(20) address
@@ -740,7 +740,7 @@ namespace x86::_32
         // #XXX: useless extra parameter to disambiguate constructors
 
         constexpr
-        short_paging_control (
+        short_paging (
             decltype(nullptr) ignored,
             bool write_through,
             bool cache,
@@ -761,7 +761,7 @@ namespace x86::_32
 
     };
 
-    static_assert(sizeof(short_paging_control) == 4, "unexpected size of short_paging_control");
+    static_assert(sizeof(short_paging) == 4, "unexpected size of short_paging");
 
     //! Long (i.e. PAE) paging control.
 
@@ -857,7 +857,7 @@ namespace x86::_32
 
     //! Gets the paging control register (CR3) interpreted as short paging.
 
-    auto get_short_paging () -> short_paging_control;
+    auto get_short_paging () -> short_paging;
 
     //! Gets the paging control register (CR3) interpreted as long paging.
 
@@ -865,7 +865,7 @@ namespace x86::_32
 
     //! Sets the paging control register (CR3).
 
-    void set_paging (short_paging_control value);
+    void set_paging (short_paging value);
 
     //! Sets the paging control register (CR3).
 
@@ -1434,7 +1434,7 @@ namespace x86::_32
     auto page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
 
     constexpr inline
-    short_paging_control::short_paging_control (
+    short_paging::short_paging (
         unsigned _ExtInt(1) write_through,
         unsigned _ExtInt(1) cache,
         unsigned _ExtInt(20) address
@@ -1445,7 +1445,7 @@ namespace x86::_32
     { }
 
     constexpr inline
-    short_paging_control::short_paging_control (
+    short_paging::short_paging (
         decltype(nullptr),
         bool write_through,
         bool cache,
@@ -1457,13 +1457,13 @@ namespace x86::_32
     { }
 
     inline
-    auto short_paging_control::write_through () const -> bool { return _write_through; }
+    auto short_paging::write_through () const -> bool { return _write_through; }
 
     inline
-    auto short_paging_control::cache () const -> bool { return _cache; }
+    auto short_paging::cache () const -> bool { return _cache; }
 
     inline
-    auto short_paging_control::address () const -> size4 { return size4{_address} << 12; }
+    auto short_paging::address () const -> size4 { return size4{_address} << 12; }
 
     constexpr inline
     long_paging_control::long_paging_control (
