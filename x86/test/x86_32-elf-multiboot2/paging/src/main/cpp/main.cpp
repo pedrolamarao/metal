@@ -210,7 +210,7 @@ void psys::main ()
 
     for (size i = 0; i != 0x400; ++i) {
         page_table[i] = {
-            nullptr, true, true, true, false, false, false, false, 0, false, 0, (0x1000 * i)
+            {}, true, true, true, false, false, false, false, 0, false, 0, (0x1000 * i)
         };
     }
 
@@ -218,7 +218,7 @@ void psys::main ()
 
     for (size i = 0; i != 0x400; ++i) {
         page_directory_table[i] = {
-            nullptr, true, true, true, false, false, false, 0, reinterpret_cast<size4>(page_table)
+            {}, true, true, true, false, false, false, 0, reinterpret_cast<size4>(page_table)
         };
     }
 
@@ -226,7 +226,7 @@ void psys::main ()
 
     _test_control = step++;
     size4 page_directory_table_address { reinterpret_cast<size4>(page_directory_table) };
-    set_paging_control_register( short_paging_control{nullptr,false,false,page_directory_table_address} );
+    set_paging_control_register( short_paging_control { {}, false, false, page_directory_table_address } );
 
     _test_control = step++;
     enable_paging();
