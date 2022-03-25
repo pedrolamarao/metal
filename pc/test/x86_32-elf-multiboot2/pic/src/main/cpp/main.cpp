@@ -76,7 +76,7 @@ void psys::main ()
     master.ocw1(0xFE);
     slave.ocw1(0xFF);
 
-    sti();
+    enable_interrupts();
 
     // test: hardware interrupt increments counter
     // assumption: PIT shall interrupt IRQ 0
@@ -96,7 +96,7 @@ void psys::main ()
 
     master_pic_counter = 0;
 
-    sti();
+    enable_interrupts();
 
     while (master_pic_counter == 0) {
         // wait!

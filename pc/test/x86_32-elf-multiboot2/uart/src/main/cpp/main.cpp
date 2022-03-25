@@ -76,7 +76,7 @@ void psys::main ()
     master.ocw1(0xFF);
     slave.ocw1(0xFF);
 
-    sti();
+    enable_interrupts();
 
     // uart: data types
 

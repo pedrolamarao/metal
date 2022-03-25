@@ -12,14 +12,14 @@
 
 namespace x86
 {
-    //! Primitive procedures.
+    //! Operators.
     //! @{
 
-    //! Enable interrupts on this processor
+    //! Enable interrupts on this processor.
 
-    void sti ();
+    void enable_interrupts ();
 
-    //! Disables interrupts on this processor
+    //! Disables interrupts on this processor.
 
     void cli ();
 

@@ -77,7 +77,7 @@ void psys::main ()
     master.ocw1(0xFE);
     slave.ocw1(0xFF);
 
-    sti();
+    enable_interrupts();
 
     // pit
 

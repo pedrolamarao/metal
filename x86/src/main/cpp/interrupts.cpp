@@ -2,11 +2,10 @@
 
 #include <x86/interrupts.h>
 
+
 namespace x86
 {
-    // Primitive procedures.
-
-    void sti ()
+    void enable_interrupts ()
     {
         __asm__ volatile ( "sti" : : : );
     }

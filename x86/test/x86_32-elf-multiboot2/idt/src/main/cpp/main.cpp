@@ -181,7 +181,7 @@ void psys::main ()
 
     _test_control = 40;
 
-    sti();
+    enable_interrupts();
 
     _test_control = -1;
     return;
