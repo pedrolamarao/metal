@@ -6,7 +6,7 @@
 #include <psys/test.h>
 
 #include <x86/segments.h>
-#include <x86/idt.h>
+#include <x86/interrupts.h>
 #include <x86/port.h>
 
 #include <pc/pic.h>
