@@ -52,6 +52,26 @@ namespace x86::_32
             unsigned _ExtInt(20) address
         );
 
+        //! Semantic constructor.
+
+        // #XXX: useless extra parameter for overload disambiguation.
+
+        constexpr
+        short_page_entry (
+            decltype(nullptr) ignore,
+            bool present,
+            bool writable,
+            bool user,
+            bool write_through,
+            bool cache,
+            bool accessed,
+            bool dirty,
+            bool attribute,
+            bool global,
+            unsigned _ExtInt(3) available,
+            size4 address
+        );
+
         //! Page is present in memory.
 
         auto present () const -> bool;
@@ -132,6 +152,23 @@ namespace x86::_32
             unsigned _ExtInt(1)  accessed,
             unsigned _ExtInt(3)  available,
             unsigned _ExtInt(20) address
+        );
+
+        //! Semantic constructor.
+
+        // #XXX: useless extra parameter for overload disambiguation.
+
+        constexpr
+        short_small_page_directory_entry (
+            decltype(nullptr) ignore,
+            bool present,
+            bool writable,
+            bool user,
+            bool write_through,
+            bool cache,
+            bool accessed,
+            unsigned _ExtInt(3) available,
+            size4 address
         );
 
         //! Page table is present in memory.
@@ -759,6 +796,34 @@ namespace x86::_32
         _address{address}
     { }
 
+    inline constexpr
+    short_page_entry::short_page_entry (
+        decltype(nullptr) ignore,
+        bool present,
+        bool writable,
+        bool user,
+        bool write_through,
+        bool cache,
+        bool accessed,
+        bool dirty,
+        bool attribute,
+        bool global,
+        unsigned _ExtInt(3) available,
+        size4 address
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _dirty{dirty},
+        _attribute{attribute},
+        _global{global},
+        _available{available},
+        _address{address>>12}
+    { }
+
     inline
     auto short_page_entry::present () const -> bool { return _present; }
 
@@ -811,6 +876,28 @@ namespace x86::_32
         _accessed{accessed},
         _available{available},
         _address{address}
+    { }
+
+    inline constexpr
+    short_small_page_directory_entry::short_small_page_directory_entry (
+        decltype(nullptr) ignore,
+        bool present,
+        bool writable,
+        bool user,
+        bool write_through,
+        bool cache,
+        bool accessed,
+        unsigned _ExtInt(3) available,
+        size4 address
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _available{available},
+        _address{address>>12}
     { }
 
     inline

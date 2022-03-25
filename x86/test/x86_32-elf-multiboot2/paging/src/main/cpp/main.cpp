@@ -35,7 +35,10 @@ namespace
     };
 
     alignas(0x1000) constinit
-    short_large_page_directory_entry page_directory_table [ 0x400 ] {};
+    short_page_entry page_table [ 0x400 ] {};
+
+    alignas(0x1000) constinit
+    short_small_page_directory_entry page_directory_table [ 0x400 ] {};
 }
 
 void psys::main ()
@@ -203,16 +206,23 @@ void psys::main ()
         return;
     }
 
+    // Prepare page table for identity paging.
+
+    for (size i = 0; i != 0x400; ++i) {
+        page_table[i] = {
+            nullptr, true, true, true, false, false, false, false, 0, false, 0, (0x1000 * i)
+        };
+    }
+
     // Prepare page directory table for identity paging.
 
     for (size i = 0; i != 0x400; ++i) {
         page_directory_table[i] = {
-            true, true, true, false, false, false, false, false, 0, 0, (0x400000 * i)
+            nullptr, true, true, true, false, false, false, 0, reinterpret_cast<size4>(page_table)
         };
     }
 
-    _test_control = step++;
-    enable_large_pages();
+    // Enable paging.
 
     _test_control = step++;
     size4 page_directory_table_address { reinterpret_cast<size4>(page_directory_table) };
