@@ -582,7 +582,10 @@ namespace x86::_32
 
         //! Constructor.
 
+        // #XXX: useless parameter to disambiguate constructors
+
         short_paging_control (
+            decltype(nullptr) ignore,
             bool write_through,
             bool cache,
             size4 address
@@ -1097,13 +1100,14 @@ namespace x86::_32
 
     inline
     short_paging_control::short_paging_control (
+        decltype(nullptr) ignore,
         bool write_through,
         bool cache,
         size4 address
     ) :
-        _write_through{ static_cast<size4>(write_through ? 1 : 0) },
-        _cache{ static_cast<size4>(cache ? 1 : 0) },
-        _address{ static_cast<unsigned _ExtInt(20)>(address >> 12) }
+        _write_through{write_through},
+        _cache{cache},
+        _address{static_cast<unsigned _ExtInt(20)>(address>>12)}
     { }
 
     inline

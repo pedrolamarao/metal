@@ -2162,4 +2162,82 @@ namespace x86::_32
         ASSERT_EQ(0,fields.available());
         ASSERT_EQ(0xFEDCBA9876000,fields.address());
     }
+
+    // short_paging_control
+
+    TEST(short_paging_control, zero)
+    {
+        size4 memory = 0;
+        auto& reference = reinterpret_cast<short_paging_control&>(memory);
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_EQ(0,reference.address());
+
+        auto fields = short_paging_control { 0, 0, 0 };
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_EQ(0,fields.address());
+
+        auto value = short_paging_control { nullptr, false, false, 0 };
+        ASSERT_FALSE(value.write_through());
+        ASSERT_FALSE(value.cache());
+        ASSERT_EQ(0,value.address());
+    }
+
+    TEST(short_paging_control, write_through)
+    {
+        size4 memory = size4{1} << 3;
+        auto& reference = reinterpret_cast<short_paging_control&>(memory);
+        ASSERT_TRUE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_EQ(0,reference.address());
+
+        auto fields = short_paging_control { 1, 0, 0 };
+        ASSERT_TRUE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_EQ(0,fields.address());
+
+        auto value = short_paging_control { nullptr, true, false, 0 };
+        ASSERT_TRUE(value.write_through());
+        ASSERT_FALSE(value.cache());
+        ASSERT_EQ(0,value.address());
+    }
+
+    TEST(short_paging_control, cache)
+    {
+        size4 memory = size4{1} << 4;
+        auto& reference = reinterpret_cast<short_paging_control&>(memory);
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_TRUE(reference.cache());
+        ASSERT_EQ(0,reference.address());
+
+        auto fields = short_paging_control { 0, 1, 0 };
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_TRUE(fields.cache());
+        ASSERT_EQ(0,fields.address());
+
+        auto value = short_paging_control { nullptr, false, true, 0 };
+        ASSERT_FALSE(value.write_through());
+        ASSERT_TRUE(value.cache());
+        ASSERT_EQ(0,value.address());
+    }
+
+    TEST(short_paging_control, address)
+    {
+        size4 memory = 0xFECDB000;
+        auto& reference = reinterpret_cast<short_paging_control&>(memory);
+        ASSERT_FALSE(reference.write_through());
+        ASSERT_FALSE(reference.cache());
+        ASSERT_EQ(0xFECDB000,reference.address());
+
+        auto fields = short_paging_control { 0, 0, 0xFECDB };
+        ASSERT_FALSE(fields.write_through());
+        ASSERT_FALSE(fields.cache());
+        ASSERT_EQ(0xFECDB000,fields.address());
+
+        auto value = short_paging_control { nullptr, false, false, 0xFECDB000 };
+        ASSERT_FALSE(value.write_through());
+        ASSERT_FALSE(value.cache());
+        ASSERT_EQ(0xFECDB000,value.address());
+    }
 }
