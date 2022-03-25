@@ -188,7 +188,7 @@ namespace
     {
         set_code_segment(code);
         set_data_segment(data);
-        set_stack_segment_register(data);
+        set_stack_segment(data);
         set_extra_segment_registers(data);
     }
 

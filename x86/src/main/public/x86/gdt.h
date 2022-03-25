@@ -44,7 +44,7 @@ namespace x86
 
   //! Set stack segment register.
 
-  void set_stack_segment_register ( segment_selector value );
+  void set_stack_segment ( segment_selector value );
 
   //! Set extra segment registers.
 

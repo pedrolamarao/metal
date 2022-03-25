@@ -53,8 +53,8 @@ void psys::main ()
     _test_control = step++;
     set_global_descriptor_table(global_descriptor_table);
     set_code_segment( segment_selector(2, false, 0) );
-    set_data_segment( segment_selector(2, false, 0) );
-    set_stack_segment_register( segment_selector(3, false, 0) );
+    set_data_segment( segment_selector(3, false, 0) );
+    set_stack_segment( segment_selector(3, false, 0) );
     set_extra_segment_registers( segment_selector(3, false, 0) );
 
     // Verify we can manipulate control registers.

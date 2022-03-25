@@ -32,7 +32,7 @@ namespace x86
         __asm__ ( "mov %%ds, %0" : : "mr"(value) : );
     }
 
-    void set_stack_segment_register ( segment_selector value )
+    void set_stack_segment ( segment_selector value )
     {
         __asm__ ( "mov %%ss, %0" : : "mr"(value) : );
     }
