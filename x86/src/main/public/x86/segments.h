@@ -31,11 +31,11 @@ namespace x86
   //! Operators.
   //! @{
 
-  //! Gets the global descriptor table register.
+  //! Gets the global descriptor table register (GDTR).
 
   auto get_global_descriptor_table () -> descriptor_table ;
 
-  //! Sets the global descriptor table register.
+  //! Sets the global descriptor table register (GDTR).
 
   void set_global_descriptor_table ( descriptor_table value );
 
