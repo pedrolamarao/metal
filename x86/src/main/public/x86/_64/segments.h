@@ -50,31 +50,10 @@ namespace x86::_64
 
   static_assert(sizeof(segment_descriptor) == 16, "unexpected size of segment_descriptor");
 
-  //! Global descriptor table register.
-
-  struct [[gnu::packed]] global_descriptor_table_register
-  {
-    size2 size;
-    size8 offset;
-  };
-
-  constexpr
-  auto operator== ( global_descriptor_table_register, global_descriptor_table_register) -> bool;
-
-  static_assert(sizeof(global_descriptor_table_register) == 10, "unexpected size of global_descriptor_table_register");
-
   //! @}
 
   //! Operators.
   //! @{
-
-  //! Gets the global descriptor table register
-
-  auto get_global_descriptor_table () -> global_descriptor_table_register ;
-
-  //! Sets the global descriptor table register.
-
-  void set_global_descriptor_table ( global_descriptor_table_register value );
 
   //! Sets the global descriptor table register.
 
@@ -155,20 +134,14 @@ namespace x86::_64
   inline
   auto segment_descriptor::is_4kb () const -> bool { return (_w3 & 0x80) != 0; }
 
-  constexpr inline
-  auto operator== ( global_descriptor_table_register x, global_descriptor_table_register y ) -> bool
-  {
-    return (x.size == y.size) && (x.offset == y.offset);
-  }
-
   template <unsigned N>
   inline
   void set_global_descriptor_table ( segment_descriptor const (& table) [N] )
   {
-    global_descriptor_table_register value {
+    segment_descriptor_table value {
         ((N * sizeof(segment_descriptor)) - 1),
-        reinterpret_cast<ps::size>(table)
+        reinterpret_cast<size>(table)
     };
-    set_global_descriptor_table(value);
+    gdtr(value);
   }
 }

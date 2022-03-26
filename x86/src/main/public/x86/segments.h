@@ -3,6 +3,7 @@
 #pragma once
 
 #include <x86/common.h>
+#include <x86/registers.h>
 
 #include <x86/_32/segments.h>
 #include <x86/_64/segments.h>
@@ -29,6 +30,14 @@ namespace x86
 
   //! Operators.
   //! @{
+
+  //! Gets the global descriptor table register.
+
+  auto get_global_descriptor_table () -> segment_descriptor_table ;
+
+  //! Sets the global descriptor table register.
+
+  void set_global_descriptor_table ( segment_descriptor_table value );
 
   //! Get code segment register (CS).
 
@@ -65,5 +74,17 @@ namespace x86
   constexpr inline
   auto data_segment ( bool downwards, bool writable, bool accessed ) -> descriptor_type {
     return (0 << 3) | (downwards << 2) | (writable << 1) | accessed;
+  }
+
+  inline
+  auto get_global_descriptor_table () -> segment_descriptor_table
+  {
+    return gdtr();
+  }
+
+  inline
+  void set_global_descriptor_table ( segment_descriptor_table value )
+  {
+    gdtr(value);
   }
 }
