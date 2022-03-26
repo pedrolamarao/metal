@@ -7,26 +7,26 @@
 
 // Interface.
 
-namespace x86::_32
+namespace x86
 {
     //! Control registers.
     //! @{
 
-    auto cr0 () -> size4;
+    auto cr0 () -> size;
 
-    void cr0 (size4);
+    void cr0 (size);
 
-    auto cr2 () -> size4;
+    auto cr2 () -> size;
 
-    void cr2 (size4);
+    void cr2 (size);
 
-    auto cr3 () -> size4;
+    auto cr3 () -> size;
 
-    void cr3 (size4);
+    void cr3 (size);
 
-    auto cr4 () -> size4;
+    auto cr4 () -> size;
 
-    void cr4 (size4);
+    void cr4 (size);
 
     //! @}
 
@@ -35,8 +35,8 @@ namespace x86::_32
 
     struct [[gnu::packed]] segment_descriptor_table
     {
-        size2 size;
-        size4 offset;
+        size2    size;
+        ps::size offset;
     };
 
     auto gdtr () -> segment_descriptor_table;

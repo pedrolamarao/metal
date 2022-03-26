@@ -1,7 +1,7 @@
 // Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #include <x86/_32/interrupts.h>
-#include <x86/_32/registers.h>
+#include <x86/registers.h>
 
 namespace x86::_32
 {

@@ -1,10 +1,10 @@
 // Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <x86/_32/registers.h>
+#include <x86/registers.h>
 
 // NOTE: inline assembler in `att` syntax.
 
-namespace x86::_32
+namespace x86
 {
     // #XXX: LLVM 13 doesn't know how to do extended asm with _ExtInt
     struct carrier4 { size4 value; };
