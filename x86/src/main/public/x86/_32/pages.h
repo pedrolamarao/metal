@@ -3,6 +3,7 @@
 #pragma once
 
 #include <x86/common.h>
+#include <x86/registers.h>
 
 
 // Interface.
