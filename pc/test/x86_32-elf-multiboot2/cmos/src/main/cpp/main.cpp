@@ -5,7 +5,7 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/port.h>
+#include <x86/ports.h>
 
 #include <pc/cmos.h>
 

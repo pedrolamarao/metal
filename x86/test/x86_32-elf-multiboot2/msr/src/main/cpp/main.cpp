@@ -6,8 +6,8 @@
 #include <psys/test.h>
 
 #include <x86/cpuid.h>
-#include <x86/gdt.h>
-#include <x86/idt.h>
+#include <x86/segments.h>
+#include <x86/interrupts.h>
 #include <x86/msr.h>
 
 

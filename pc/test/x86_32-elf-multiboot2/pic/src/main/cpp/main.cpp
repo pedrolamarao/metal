@@ -6,10 +6,10 @@
 #include <psys/test.h>
 
 #include <x86/cpuid.h>
-#include <x86/gdt.h>
-#include <x86/idt.h>
+#include <x86/segments.h>
+#include <x86/interrupts.h>
 #include <x86/msr.h>
-#include <x86/port.h>
+#include <x86/ports.h>
 
 #include <pc/pic.h>
 
@@ -23,7 +23,7 @@ namespace
     unsigned slave_pic_counter {};
     unsigned interrupt_counter {};
 
-    void set_interrupt_descriptor_table_register ();
+    void set_interrupt_descriptor_table ();
 }
 
 void psys::main ()
@@ -40,7 +40,7 @@ void psys::main ()
 
     _test_control = 3;
 
-    set_interrupt_descriptor_table_register();
+    set_interrupt_descriptor_table();
 
     // test: handle software interrupt
 
@@ -76,7 +76,7 @@ void psys::main ()
     master.ocw1(0xFE);
     slave.ocw1(0xFF);
 
-    sti();
+    enable_interrupts();
 
     // test: hardware interrupt increments counter
     // assumption: PIT shall interrupt IRQ 0
@@ -92,11 +92,11 @@ void psys::main ()
 
     _test_control = 14;
 
-    cli();
+    disable_interrupts();
 
     master_pic_counter = 0;
 
-    sti();
+    enable_interrupts();
 
     while (master_pic_counter == 0) {
         // wait!
@@ -126,13 +126,11 @@ namespace
 
     void set_global_descriptor_table_register ()
     {
-        set_global_descriptor_table_register(global_descriptor_table);
+        set_global_descriptor_table(global_descriptor_table);
         auto const cs = segment_selector(1, false, 0);
-        set_code_segment_register(cs);
+        set_code_segment(cs);
         auto const ds = segment_selector(2, false, 0);
-        set_data_segment_register(ds);
-        set_stack_segment_register(ds);
-        set_extra_segment_registers(ds);
+        set_data_segments(ds);
     }
 
     // Interrupts.
@@ -237,7 +235,7 @@ namespace
     constinit
     interrupt_gate_descriptor interrupt_descriptor_table [256] {};
 
-    void set_interrupt_descriptor_table_register ()
+    void set_interrupt_descriptor_table ()
     {
         auto const interrupt_segment = segment_selector(1, false, 0);
 
@@ -286,6 +284,6 @@ namespace
            interrupt_descriptor_table[i] = { interrupt_segment, interrupt_handler, true, true, 0, true };
         }
 
-        set_interrupt_descriptor_table_register(interrupt_descriptor_table);
+        set_interrupt_descriptor_table(interrupt_descriptor_table);
     }
 }

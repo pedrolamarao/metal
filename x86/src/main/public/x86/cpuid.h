@@ -1,23 +1,14 @@
-// Copyright (C) 2012, 2013, 2014, 2015, 2016, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2012,2013,2014,2015,2016,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
-#include <psys/integer.h>
+#include <x86/common.h>
 
 
-//! Declarations
+// Interface.
 
 namespace x86
 {
-    using ps::size1;
-    using ps::size2;
-    using ps::size4;
-    using ps::size8;
-
-  //! True if cpuid is supported
-
-  auto has_cpuid () -> bool ;
-
   //! Data types
   //! @{
 
@@ -95,12 +86,20 @@ namespace x86
 
   //! @}
 
-    //! Primitive procedures.
+    //! Operators.
     //! @{
+
+    //! Age of this processor.
 
     auto cpu_age () -> size4;
 
+    //! Get processor identification features.
+
     void cpuid_ (size4 feature, size4 variant, size4 * a, size4 * b, size4 * c, size4 * d);
+
+    //! This processor supports the processor identification (cpuid) instruction.
+
+    auto has_cpuid () -> bool ;
 
     //! @}
 }

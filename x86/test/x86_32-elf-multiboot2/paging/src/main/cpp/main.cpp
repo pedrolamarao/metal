@@ -4,9 +4,9 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/gdt.h>
+#include <x86/segments.h>
 #include <x86/_32/pages.h>
-#include <x86/_32/segment.h>
+#include <x86/_32/segments.h>
 
 
 namespace
@@ -48,23 +48,12 @@ void psys::main ()
     
     size step = 1;
 
-    // Smoke test paging operators.
-
-    _test_control = step++;
-    get_short_paging_control_register();
-
-    _test_control = step++;
-    get_long_paging_control_register();
-
     // Set flat segmentation.
 
     _test_control = step++;
-    set_global_descriptor_table_register(global_descriptor_table);
-    set_code_segment_register( segment_selector(2, false, 0) );
-    set_code_segment_register( segment_selector(2, false, 0) );
-    set_data_segment_register( segment_selector(2, false, 0) );
-    set_stack_segment_register( segment_selector(3, false, 0) );
-    set_extra_segment_registers( segment_selector(3, false, 0) );
+    set_global_descriptor_table(global_descriptor_table);
+    set_code_segment( segment_selector(2, false, 0) );
+    set_data_segments( segment_selector(3, false, 0) );
 
     // Verify we can manipulate control registers.
 
@@ -139,16 +128,16 @@ void psys::main ()
     step = 300;
 
     _test_control = step++;
-    get_short_paging_control_register();
+    get_short_paging();
 
     _test_control = step++;
-    get_long_paging_control_register();
+    get_long_paging();
 
     _test_control = step++;
-    set_paging_control_register( short_paging_control { 0, 0, 0 } );
+    set_paging( short_paging { 0, 0, 0 } );
 
     _test_control = step++;
-    auto control = get_short_paging_control_register();
+    auto control = get_short_paging();
 
     _test_control = step++;
     if (control.write_through() != 0) {
@@ -169,10 +158,10 @@ void psys::main ()
     }
 
     _test_control = step++;
-    set_paging_control_register( short_paging_control { 1, 1, 1 } );
+    set_paging( short_paging { 1, 1, 1 } );
 
     _test_control = step++;
-    control = get_short_paging_control_register();
+    control = get_short_paging();
 
     _test_control = step++;
     if (control.write_through() != 1) {
@@ -226,7 +215,7 @@ void psys::main ()
 
     _test_control = step++;
     size4 page_directory_table_address { reinterpret_cast<size4>(page_directory_table) };
-    set_paging_control_register( short_paging_control { {}, false, false, page_directory_table_address } );
+    set_paging( short_paging { {}, false, false, page_directory_table_address } );
 
     _test_control = step++;
     enable_paging();

@@ -5,8 +5,8 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/gdt.h>
-#include <x86/idt.h>
+#include <x86/segments.h>
+#include <x86/interrupts.h>
 
 
 namespace
@@ -34,10 +34,8 @@ namespace
 
     void set_segment_registers ( segment_selector code, segment_selector data )
     {
-        set_code_segment_register(code);
-        set_data_segment_register(data);
-        set_stack_segment_register(data);
-        set_extra_segment_registers(data);
+        set_code_segment(code);
+        set_data_segments(data);
     }
 
     // Interrupts.
@@ -71,7 +69,7 @@ void psys::main ()
 
     _test_control = 2;
 
-    set_global_descriptor_table_register(global_descriptor_table);
+    set_global_descriptor_table(global_descriptor_table);
 
     set_segment_registers(segment_selector(2, false, 0), segment_selector(3, false, 0));
 
@@ -135,7 +133,7 @@ void psys::main ()
 
     _test_control = 20;
 
-    set_interrupt_descriptor_table_register(interrupt_descriptor_table);
+    set_interrupt_descriptor_table(interrupt_descriptor_table);
     
     // test: did we successfully update the IDT register?
 
@@ -146,7 +144,7 @@ void psys::main ()
         halt_cast<size4>(interrupt_descriptor_table)
     };
 
-    auto actual_idtr = get_interrupt_descriptor_table_register();
+    auto actual_idtr = get_interrupt_descriptor_table();
 
     if (actual_idtr != expected_idtr) {
         _test_debug = expected_idtr.size;
@@ -183,7 +181,7 @@ void psys::main ()
 
     _test_control = 40;
 
-    sti();
+    enable_interrupts();
 
     _test_control = -1;
     return;

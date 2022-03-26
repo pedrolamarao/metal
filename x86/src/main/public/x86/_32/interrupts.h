@@ -3,12 +3,12 @@
 #pragma once
 
 #include <x86/common.h>
-#include <x86/_64/descriptor.h>
+#include <x86/_32/descriptor.h>
 
 
 // Interface.
 
-namespace x86::_64
+namespace x86::_32
 {
   //! Types.
   //! @{
@@ -25,7 +25,7 @@ namespace x86::_64
     constexpr
     interrupt_gate_descriptor (
       segment_selector segment,
-      size8 offset,
+      size4 offset,
       bool is_present,
       bool must_cli,
       privilege_level privilege,
@@ -47,51 +47,51 @@ namespace x86::_64
 
     auto must_cli () const -> bool;
 
-    auto offset () const -> size8;
+    auto offset () const -> size4;
 
     auto segment () const -> segment_selector;
 
   };
 
-  static_assert(sizeof(interrupt_gate_descriptor) == 16, "unexpected size of interrupt_gate_descriptor");
+  static_assert(sizeof(interrupt_gate_descriptor) == 8, "unexpected size of interrupt_gate_descriptor");
 
   //! Interrupt descriptor table register.
 
   struct [[gnu::packed]] interrupt_descriptor_table_register
   {
     size2 size;
-    size8 offset;
+    size4 offset;
   };
 
   constexpr
   auto operator== ( interrupt_descriptor_table_register, interrupt_descriptor_table_register) -> bool;
 
-  static_assert(sizeof(interrupt_descriptor_table_register) == 10, "unexpected size of interrupt_descriptor_table_register");
+  static_assert(sizeof(interrupt_descriptor_table_register) == 6, "unexpected size of interrupt_descriptor_table_register");
 
   //! @}
 
   //! Operators.
   //! @{
 
-  //! Get the global descriptor table register
+  //! Get the global descriptor table register (IDTR).
 
-  auto get_interrupt_descriptor_table_register () -> interrupt_descriptor_table_register ;
+  auto get_interrupt_descriptor_table () -> interrupt_descriptor_table_register ;
 
-  //! Set the global descriptor table register
+  //! Set the global descriptor table register (IDTR).
 
-  void set_interrupt_descriptor_table_register ( interrupt_descriptor_table_register value );
+  void set_interrupt_descriptor_table ( interrupt_descriptor_table_register value );
 
-  //! Set the global descriptor table register
+  //! Set the global descriptor table register (IDTR).
 
   template <unsigned N>
-  void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] );
+  void set_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] );
 
   //! @}
 }
 
 // Implementation.
 
-namespace x86::_64
+namespace x86::_32
 {
   constexpr inline
   interrupt_gate_descriptor::interrupt_gate_descriptor () : descriptor {}
@@ -100,7 +100,7 @@ namespace x86::_64
   constexpr inline
   interrupt_gate_descriptor::interrupt_gate_descriptor (
     segment_selector segment,
-    size8 offset,
+    size4 offset,
     bool is_present,
     bool must_cli,
     privilege_level privilege,
@@ -123,11 +123,7 @@ namespace x86::_64
       ),
       static_cast<size2>(
         (offset >> 16) & 0xFFFF
-      ),
-      static_cast<size4>(
-        offset >> 32
-      ),
-      0
+      )
     }
   { }
 
@@ -140,7 +136,7 @@ namespace x86::_64
     privilege_level privilege,
     bool is_32bit
   )
-  : interrupt_gate_descriptor { segment, reinterpret_cast<size>(offset), is_present, must_cli, privilege, is_32bit }
+  : interrupt_gate_descriptor { segment, halt_cast<size4>(offset), is_present, must_cli, privilege, is_32bit }
   { }
 
   inline
@@ -153,10 +149,8 @@ namespace x86::_64
   auto interrupt_gate_descriptor::must_cli () const -> bool { return (_w2 & 0x100) == 0; }
 
   inline
-  auto interrupt_gate_descriptor::offset () const -> size8 {
-    return ((size8{_q4} << 32) & 0xFFFFFFFF00000000) |
-           ((size8{_w3} << 16) & 0x00000000FFFF0000) |
-            (size8{_w0}        & 0x000000000000FFFF);
+  auto interrupt_gate_descriptor::offset () const -> size4 {
+    return (size4{_w3} << 16) | size4{_w0};
   }
 
   inline
@@ -172,12 +166,12 @@ namespace x86::_64
 
   template <unsigned N>
   inline
-  void set_interrupt_descriptor_table_register ( interrupt_gate_descriptor const (& table) [N] )
+  void set_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] )
   {
     interrupt_descriptor_table_register value {
       N * sizeof(interrupt_gate_descriptor),
-      reinterpret_cast<ps::size>(table)
+      halt_cast<size4>(table)
     };
-    set_interrupt_descriptor_table_register(value);
+    set_interrupt_descriptor_table(value);
   }
 }

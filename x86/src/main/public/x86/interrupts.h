@@ -4,24 +4,24 @@
 
 #include <x86/common.h>
 
-#include <x86/_32/interrupt.h>
-#include <x86/_64/interrupt.h>
+#include <x86/_32/interrupts.h>
+#include <x86/_64/interrupts.h>
 
 
 //! Declarations
 
 namespace x86
 {
-    //! Primitive procedures.
+    //! Operators.
     //! @{
 
-    //! Enable interrupts on this processor
+    //! Enable interrupts on this processor.
 
-    void sti ();
+    void enable_interrupts ();
 
-    //! Disables interrupts on this processor
+    //! Disables interrupts on this processor.
 
-    void cli ();
+    void disable_interrupts ();
 
     //! Interrupt this processor.
 

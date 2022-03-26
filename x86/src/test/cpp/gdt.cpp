@@ -1,4 +1,4 @@
-#include <x86/gdt.h>
+#include <x86/segments.h>
 
 #include <gtest/gtest.h>
 

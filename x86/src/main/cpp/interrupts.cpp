@@ -1,17 +1,16 @@
 // Copyright (C) 2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <x86/idt.h>
+#include <x86/interrupts.h>
+
 
 namespace x86
 {
-    // Primitive procedures.
-
-    void sti ()
+    void enable_interrupts ()
     {
         __asm__ volatile ( "sti" : : : );
     }
 
-    void cli ()
+    void disable_interrupts ()
     {
         __asm__ volatile ( "cli" : : : );
     }

@@ -5,8 +5,8 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/gdt.h>
-#include <x86/idt.h>
+#include <x86/segments.h>
+#include <x86/interrupts.h>
 
 
 namespace
@@ -66,7 +66,7 @@ void psys::main ()
 
     _test_control = 2;
 
-    set_global_descriptor_table_register(global_descriptor_table);
+    set_global_descriptor_table(global_descriptor_table);
 
     set_segment_registers(segment_selector(2, false, 0), segment_selector(3, false, 0));
 
@@ -88,7 +88,7 @@ void psys::main ()
     interrupt_descriptor_table[0x0B] = { interrupt_selector, interrupt_0B, true, true, 0, true };
     interrupt_descriptor_table[0x0D] = { interrupt_selector, interrupt_0D, true, true, 0, true };
 
-    set_interrupt_descriptor_table_register(interrupt_descriptor_table);
+    set_interrupt_descriptor_table(interrupt_descriptor_table);
 
     // test: exception 00: division error
 
@@ -186,10 +186,8 @@ namespace
 
     void set_segment_registers ( segment_selector code, segment_selector data )
     {
-        set_code_segment_register(code);
-        set_data_segment_register(data);
-        set_stack_segment_register(data);
-        set_extra_segment_registers(data);
+        set_code_segment(code);
+        set_data_segments(data);
     }
 
     [[gnu::section(".idt")]]

@@ -5,7 +5,7 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/gdt.h>
+#include <x86/segments.h>
 
 
 namespace
@@ -109,7 +109,7 @@ void psys::main ()
 
     _test_control = 20;
 
-    set_global_descriptor_table_register(global_descriptor_table);
+    set_global_descriptor_table(global_descriptor_table);
 
     // test: did we successfully update the GDT register?
 
@@ -120,7 +120,7 @@ void psys::main ()
         halt_cast<size4>(global_descriptor_table)
     };
 
-    auto const actual_gdtr = get_global_descriptor_table_register();
+    auto const actual_gdtr = get_global_descriptor_table();
 
     if (actual_gdtr != expected_gdtr) {
         _test_debug = expected_gdtr.size;
@@ -137,13 +137,13 @@ void psys::main ()
 
     auto const expected_cs = x86::segment_selector(2, false, 0);
 
-    x86::set_code_segment_register( expected_cs );
+    x86::set_code_segment( expected_cs );
 
     // test: did we successfully update the CS register?
 
     _test_control = 31;
 
-    segment_selector actual_cs { get_code_segment_register() };
+    segment_selector actual_cs { get_code_segment() };
 
     if (expected_cs != actual_cs) {
         _test_debug = size2{expected_cs};

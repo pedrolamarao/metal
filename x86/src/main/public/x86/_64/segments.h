@@ -3,17 +3,13 @@
 #pragma once
 
 #include <x86/common.h>
-#include <x86/_32/descriptor.h>
+#include <x86/_64/descriptor.h>
 
 
 // Interface.
 
-namespace x86::_32
+namespace x86::_64
 {
-  using ps::size;
-  using ps::size2;
-  using ps::size4;
-
   //! Types.
   //! @{
 
@@ -28,7 +24,7 @@ namespace x86::_32
 
     constexpr
     segment_descriptor (
-      size4 base,
+      size8 base,
       size4 limit,
       descriptor_type type,
       privilege_level privilege,
@@ -38,7 +34,7 @@ namespace x86::_32
       bool is_4kb
     ) ;
 
-    auto base () const -> size4 ;
+    auto base () const -> size8 ;
 
     auto limit () const -> size4 ;
 
@@ -52,20 +48,20 @@ namespace x86::_32
 
   };
 
-  static_assert(sizeof(segment_descriptor) == 8, "unexpected size of segment_descriptor");
+  static_assert(sizeof(segment_descriptor) == 16, "unexpected size of segment_descriptor");
 
   //! Global descriptor table register.
 
   struct [[gnu::packed]] global_descriptor_table_register
   {
     size2 size;
-    size4 offset;
+    size8 offset;
   };
 
   constexpr
   auto operator== ( global_descriptor_table_register, global_descriptor_table_register) -> bool;
 
-  static_assert(sizeof(global_descriptor_table_register) == 6, "unexpected size of global_descriptor_table_register");
+  static_assert(sizeof(global_descriptor_table_register) == 10, "unexpected size of global_descriptor_table_register");
 
   //! @}
 
@@ -74,30 +70,30 @@ namespace x86::_32
 
   //! Gets the global descriptor table register
 
-  auto get_global_descriptor_table_register () -> global_descriptor_table_register ;
+  auto get_global_descriptor_table () -> global_descriptor_table_register ;
 
   //! Sets the global descriptor table register.
 
-  void set_global_descriptor_table_register ( global_descriptor_table_register value );
+  void set_global_descriptor_table ( global_descriptor_table_register value );
 
   //! Sets the global descriptor table register.
 
   template <unsigned N>
-  void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] );
+  void set_global_descriptor_table ( segment_descriptor const (& table) [N] );
 
   //! @}
 }
 
 // Implementation.
 
-namespace x86::_32
+namespace x86::_64
 {
   constexpr inline
   segment_descriptor::segment_descriptor ( ) : descriptor { } { } ;
 
   constexpr inline
   segment_descriptor::segment_descriptor (
-    size4 base,
+    size8 base,
     size4 limit,
     descriptor_type type,
     privilege_level privilege,
@@ -127,12 +123,19 @@ namespace x86::_32
         (is_available ? 1 : 0) << 4 |
         (limit >> 16) & 0x000F
       ),
+      static_cast<size4>(
+        base >> 32
+      ),
+      0
     }
   { }
 
   inline
-  auto segment_descriptor::base () const -> size4 {
-    return ((size4{_w3} << 16) & 0xFF000000) | ((size4{_w2} << 16) & 0x00FF0000) | (size4{_w1} & 0x0000FFFF);
+  auto segment_descriptor::base () const -> size8 {
+    return ((size8{_q4} << 32) & 0xFFFFFFFF00000000) |
+           ((size8{_w3} << 16) & 0x00000000FF000000) |
+           ((size8{_w2} << 16) & 0x0000000000FF0000) |
+           ((size8{_w1}      ) & 0x000000000000FFFF);
   }
 
   inline
@@ -160,12 +163,12 @@ namespace x86::_32
 
   template <unsigned N>
   inline
-  void set_global_descriptor_table_register ( segment_descriptor const (& table) [N] )
+  void set_global_descriptor_table ( segment_descriptor const (& table) [N] )
   {
     global_descriptor_table_register value {
         ((N * sizeof(segment_descriptor)) - 1),
-        halt_cast<size4>(table)
+        reinterpret_cast<ps::size>(table)
     };
-    set_global_descriptor_table_register(value);
+    set_global_descriptor_table(value);
   }
 }

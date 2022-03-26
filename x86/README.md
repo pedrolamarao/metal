@@ -13,7 +13,7 @@ In the future, support for AMD64 shall be added here.
 In the following example, we define a minimal GDT for x86 protected mode flat memory model. It contains the required null segment descriptor, two segment descriptors (code and data) for ring 0 and two segment descriptors (code and data) for ring 3.
 
 ```c++
-#include <x86/gdt.h>
+#include <x86/segments.h>
 
 using namespace x86;
 
