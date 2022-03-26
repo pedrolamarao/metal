@@ -1460,4 +1460,30 @@ namespace x86::_32
 
     inline
     auto long_paging::address () const -> size4 { return size4{_address} << 5; }
+
+    inline
+    auto get_short_paging () -> short_paging
+    {
+        size value = cr3();
+        return reinterpret_cast<short_paging&>(value);
+    }
+
+    inline
+    auto get_long_paging () -> long_paging
+    {
+        size value = cr3();
+        return reinterpret_cast<long_paging&>(value);
+    }
+
+    inline
+    void set_paging (short_paging value)
+    {
+        cr3( reinterpret_cast<size&>(value) );
+    }
+
+    inline
+    void set_paging (long_paging value)
+    {
+        cr3( reinterpret_cast<size&>(value) );
+    }
 }
