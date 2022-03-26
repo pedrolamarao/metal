@@ -33,11 +33,11 @@ namespace x86
 
   //! Gets the global descriptor table register.
 
-  auto get_global_descriptor_table () -> segment_descriptor_table ;
+  auto get_global_descriptor_table () -> descriptor_table ;
 
   //! Sets the global descriptor table register.
 
-  void set_global_descriptor_table ( segment_descriptor_table value );
+  void set_global_descriptor_table ( descriptor_table value );
 
   //! Get code segment register (CS).
 
@@ -77,13 +77,13 @@ namespace x86
   }
 
   inline
-  auto get_global_descriptor_table () -> segment_descriptor_table
+  auto get_global_descriptor_table () -> descriptor_table
   {
     return gdtr();
   }
 
   inline
-  void set_global_descriptor_table ( segment_descriptor_table value )
+  void set_global_descriptor_table ( descriptor_table value )
   {
     gdtr(value);
   }

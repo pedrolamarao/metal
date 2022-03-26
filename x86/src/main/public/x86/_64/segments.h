@@ -138,7 +138,7 @@ namespace x86::_64
   inline
   void set_global_descriptor_table ( segment_descriptor const (& table) [N] )
   {
-    segment_descriptor_table value {
+    descriptor_table value {
         ((N * sizeof(segment_descriptor)) - 1),
         reinterpret_cast<size>(table)
     };

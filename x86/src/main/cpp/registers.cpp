@@ -65,40 +65,40 @@ namespace x86
         __asm__ ( "mov %0, %%cr4" : : "r"(carrier) );
     }
 
-    // Segment descriptor registers.
+    // Descriptor table registers.
 
-    auto gdtr () -> segment_descriptor_table
+    auto gdtr () -> descriptor_table
     {
-        segment_descriptor_table value;
+        descriptor_table value;
         __asm__ ( "sgdt %0" : "=m"(value) : : );
         return value;
     }
 
-    void gdtr (segment_descriptor_table value)
+    void gdtr (descriptor_table value)
     {
         __asm__ ( "lgdt %0" : : "m"(value) : );
     }
 
-    auto idtr () -> segment_descriptor_table
+    auto idtr () -> descriptor_table
     {
-        segment_descriptor_table value;
+        descriptor_table value;
         __asm__ ( "sidt %0" : "=m"(value) : : );
         return value;
     }
 
-    void idtr (segment_descriptor_table value)
+    void idtr (descriptor_table value)
     {
         __asm__ ( "lidt %0" : : "m"(value) : );
     }
 
-    auto ldtr () -> segment_descriptor_table
+    auto ldtr () -> descriptor_table
     {
-        segment_descriptor_table value;
+        descriptor_table value;
         __asm__ ( "sldt %0" : "=m"(value) : : );
         return value;
     }
 
-    void ldtr (segment_descriptor_table value)
+    void ldtr (descriptor_table value)
     {
         __asm__ ( "lldt %0" : : "m"(value) : );
     }

@@ -30,26 +30,26 @@ namespace x86
 
     //! @}
 
-    //! Segment descriptor registers.
+    //! Descriptor table registers.
     //! @{
 
-    struct [[gnu::packed]] segment_descriptor_table
+    struct [[gnu::packed]] descriptor_table
     {
         size2    size;
         ps::size offset;
     };
 
-    auto gdtr () -> segment_descriptor_table;
+    auto gdtr () -> descriptor_table;
 
-    void gdtr (segment_descriptor_table);
+    void gdtr (descriptor_table);
 
-    auto idtr () -> segment_descriptor_table;
+    auto idtr () -> descriptor_table;
 
-    void idtr (segment_descriptor_table);
+    void idtr (descriptor_table);
 
-    auto ldtr () -> segment_descriptor_table;
+    auto ldtr () -> descriptor_table;
 
-    void ldtr (segment_descriptor_table);
+    void ldtr (descriptor_table);
 
     //! @}
 
