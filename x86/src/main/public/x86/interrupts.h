@@ -15,6 +15,14 @@ namespace x86
     //! Operators.
     //! @{
 
+    //! Get the global descriptor table register (IDTR).
+
+    auto get_interrupt_descriptor_table () -> descriptor_table;
+
+    //! Set the global descriptor table register (IDTR).
+
+    void set_interrupt_descriptor_table ( descriptor_table value );
+
     //! Enable interrupts on this processor.
 
     void enable_interrupts ();
@@ -35,7 +43,19 @@ namespace x86
 
 namespace x86
 {
-  template <unsigned N>
+    inline
+    auto get_interrupt_descriptor_table () -> descriptor_table
+    {
+        return idtr();
+    }
+
+    inline
+    void set_interrupt_descriptor_table ( descriptor_table value )
+    {
+        idtr(value);
+    }
+
+ template <unsigned N>
   inline
   void interrupt ()
   {

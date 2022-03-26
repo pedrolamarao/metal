@@ -139,18 +139,16 @@ void psys::main ()
 
     _test_control = 21;
 
-    auto expected_idtr = interrupt_descriptor_table_register {
-        interrupt_descriptor_table_size * sizeof(interrupt_gate_descriptor),
-        halt_cast<size4>(interrupt_descriptor_table)
-    };
+    auto expected_size = interrupt_descriptor_table_size * sizeof(interrupt_gate_descriptor);
+    auto expected_offset = halt_cast<size4>(interrupt_descriptor_table);
 
-    auto actual_idtr = get_interrupt_descriptor_table();
+    auto [actual_size, actual_offset] = get_interrupt_descriptor_table();
 
-    if (actual_idtr != expected_idtr) {
-        _test_debug = expected_idtr.size;
-        _test_debug = expected_idtr.offset;
-        _test_debug = actual_idtr.size;
-        _test_debug = actual_idtr.offset;
+    if (actual_size != expected_size || actual_offset != expected_offset) {
+        _test_debug = expected_size;
+        _test_debug = expected_offset;
+        _test_debug = actual_size;
+        _test_debug = actual_offset;
         _test_control = 0;
         return;
     }
