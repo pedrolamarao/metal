@@ -319,19 +319,19 @@ namespace x86::_32
 
     class long_page_entry
     {
-        size8 _present       :  1;
-        size8 _writable      :  1;
-        size8 _user          :  1;
-        size8 _write_through :  1;
-        size8 _cache         :  1;
-        size8 _accessed      :  1;
-        size8 _dirty         :  1;
-        size8 _attribute     :  1;
-        size8 _global        :  1;
-        size8 _available     :  3;
-        size8 _address       : 40;
-        size8 _zero          : 11 = 0;
-        size8 _executable    :  1;
+        size8 _present       :  1 {};
+        size8 _writable      :  1 {};
+        size8 _user          :  1 {};
+        size8 _write_through :  1 {};
+        size8 _cache         :  1 {};
+        size8 _accessed      :  1 {};
+        size8 _dirty         :  1 {};
+        size8 _attribute     :  1 {};
+        size8 _global        :  1 {};
+        size8 _available     :  3 {};
+        size8 _address       : 40 {};
+        size8 _zero          : 11 { 0 };
+        size8 _executable    :  1 {};
 
     public:
     
@@ -434,17 +434,17 @@ namespace x86::_32
 
     class long_small_page_directory_entry
     {
-        size8 _present       :  1;
-        size8 _writable      :  1;
-        size8 _user          :  1;
-        size8 _write_through :  1;
-        size8 _cache         :  1;
-        size8 _accessed      :  1;
-        size8 _zero_0        :  3 = 0;
-        size8 _available     :  3;
-        size8 _address       : 40;
-        size8 _zero_1        : 11 = 0;
-        size8 _executable    :  1;
+        size8 _present       :  1 {};
+        size8 _writable      :  1 {};
+        size8 _user          :  1 {};
+        size8 _write_through :  1 {};
+        size8 _cache         :  1 {};
+        size8 _accessed      :  1 {};
+        size8 _zero_0        :  3 { 0 };
+        size8 _available     :  3 {};
+        size8 _address       : 40 {};
+        size8 _zero_1        : 11 { 0 };
+        size8 _executable    :  1 {};
 
     public:
 
@@ -529,21 +529,21 @@ namespace x86::_32
 
     class long_large_page_directory_entry
     {
-        size8 _present       :  1;
-        size8 _writable      :  1;
-        size8 _user          :  1;
-        size8 _write_through :  1;
-        size8 _cache         :  1;
-        size8 _accessed      :  1;
-        size8 _dirty         :  1;
-        size8 _long          :  1 = 1;
-        size8 _global        :  1;
-        size8 _available     :  3;
-        size8 _attribute     :  1;
-        size8 _zero_0        :  8 = 0;
-        size8 _address       : 31;
-        size8 _zero_1        : 11 = 0;
-        size8 _executable    :  1;
+        size8 _present       :  1 {};
+        size8 _writable      :  1 {};
+        size8 _user          :  1 {};
+        size8 _write_through :  1 {};
+        size8 _cache         :  1 {};
+        size8 _accessed      :  1 {};
+        size8 _dirty         :  1 {};
+        size8 _long          :  1 { 1 };
+        size8 _global        :  1 {};
+        size8 _available     :  3 {};
+        size8 _attribute     :  1 {};
+        size8 _zero_0        :  8 { 0 };
+        size8 _address       : 31 {};
+        size8 _zero_1        : 11 { 0 };
+        size8 _executable    :  1 {};
 
     public:
 
@@ -646,14 +646,14 @@ namespace x86::_32
 
     class page_directory_pointer_entry
     {
-        size8 _present       :  1;
-        size8 _zero_0        :  2 = 0;
-        size8 _write_through :  1;
-        size8 _cache         :  1;
-        size8 _zero_1        :  4 = 0;
-        size8 _available     :  3;
-        size8 _address       : 40;
-        size8 _zero_2        : 12 = 0;
+        size8 _present       :  1 {};
+        size8 _zero_0        :  2 { 0 };
+        size8 _write_through :  1 {};
+        size8 _cache         :  1 {};
+        size8 _zero_1        :  4 { 0 };
+        size8 _available     :  3 {};
+        size8 _address       : 40 {};
+        size8 _zero_2        : 12 { 0 };
 
     public:
 

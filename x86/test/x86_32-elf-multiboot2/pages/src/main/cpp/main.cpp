@@ -28,11 +28,37 @@ namespace
 
     // pages.
 
-    extern
-    short_page_entry page_table [ 0x400 ];
+    // short small paging.
 
-    extern
-    short_small_page_directory_entry page_directory_table [ 0x400 ];
+    alignas(0x1000) constinit
+    short_page_entry short_page_table [ 0x400 ] {};
+
+    alignas(0x1000) constinit
+    short_small_page_directory_entry short_small_page_directory_table [ 0x400 ] {};
+
+    // short large paging.
+
+    alignas(0x1000) constinit
+    short_large_page_directory_entry short_large_page_directory_table [ 0x400 ] {};
+
+    // long small paging.
+
+    alignas(0x1000) constinit
+    long_page_entry long_page_table [ 0x200 ] {};
+
+    alignas(0x1000) constinit
+    long_small_page_directory_entry long_small_page_directory_table [ 0x200 ] {};
+
+    alignas(0x1000) constinit
+    page_directory_pointer_entry small_page_directory_pointer_table [ 0x200 ] {};
+
+    // long large paging.
+
+    alignas(0x1000) constinit
+    long_large_page_directory_entry long_large_page_directory_table [ 0x200 ] {};
+
+    alignas(0x1000) constinit
+    page_directory_pointer_entry large_page_directory_pointer_table [ 0x200 ] {};
 }
 
 void psys::main ()
@@ -57,6 +83,14 @@ void psys::main ()
         interrupt_descriptor_table[i] = { interrupt_segment, interrupt_handler, true, true, 0, true };
     }
     set_interrupt_descriptor_table(interrupt_descriptor_table);
+
+    // Multiboot2 x86 requires that paging is disabled at entry time.
+
+    _test_control = step++;
+    if (is_paging()) {
+        _test_control = 0;
+        return;
+    }
 
     // Verify we can manipulate control registers.
 
@@ -186,39 +220,30 @@ void psys::main ()
 
     // Post: paging control (CR3) register is invalid!
 
-    // Verify that we can manipulate paging.
+    // Verify that we can do short small paging.
 
     step = 400;
 
-    // Multiboot2 x86 requires that paging is disabled at entry time.
-
-    _test_control = step++;
-    if (is_paging()) {
-        _test_control = 0;
-        return;
-    }
-
-    // Prepare page table for identity paging.
-
     for (size i = 0; i != 0x400; ++i) {
-        page_table[i] = {
+        short_page_table[i] = {
             {}, true, true, true, false, false, false, false, 0, false, 0, (0x1000 * i)
         };
     }
 
-    // Prepare page directory table for identity paging.
-
     for (size i = 0; i != 0x400; ++i) {
-        page_directory_table[i] = {
-            {}, true, true, true, false, false, false, 0, reinterpret_cast<size4>(page_table)
+        short_small_page_directory_table[i] = {
+            {}, true, true, true, false, false, false, 0, reinterpret_cast<size4>(short_page_table)
         };
     }
 
-    // Enable paging.
+    _test_control = step++;
+    disable_large_pages();
 
     _test_control = step++;
-    size4 page_directory_table_address { reinterpret_cast<size4>(page_directory_table) };
-    set_paging( short_paging { {}, false, false, page_directory_table_address } );
+    disable_long_addresses();
+
+    _test_control = step++;
+    set_paging( short_paging { {}, false, false, reinterpret_cast<size4>(short_small_page_directory_table) } );
 
     _test_control = step++;
     enable_paging();
@@ -228,6 +253,40 @@ void psys::main ()
         _test_control = 0;
         return;
     }
+
+    _test_control = step++;
+    disable_paging();
+
+    // Verify that we can do short large paging.
+
+    step = 500;
+
+    for (size i = 0; i != 0x400; ++i) {
+        short_large_page_directory_table[i] = {
+            true, true, true, false, false, false, false, false, 0, 0, (0x400000 * i)
+        };
+    }
+
+    _test_control = step++;
+    enable_large_pages();
+
+    _test_control = step++;
+    disable_long_addresses();
+
+    _test_control = step++;
+    set_paging( short_paging { {}, false, false, reinterpret_cast<size4>(short_large_page_directory_table) } );
+
+    _test_control = step++;
+    enable_paging();
+
+    _test_control = step++;
+    if (! is_paging()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = step++;
+    disable_paging();
 
     _test_control = -1;
     return;
