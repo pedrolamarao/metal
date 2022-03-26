@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <x86/common.h>
+#include <x86/registers.h>
 #include <x86/_64/descriptor.h>
 
 
