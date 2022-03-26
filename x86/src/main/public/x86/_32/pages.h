@@ -819,42 +819,6 @@ namespace x86::_32
     //! Operators.
     //! @{
 
-    //! Disable large pages (CR4.PSE).
-
-    void disable_large_pages ();
-
-    //! Disable long addresses (CR4.PAE).
-
-    void disable_long_addresses ();
-
-    //! Disable paging (CR0.PG).
-
-    void disable_paging ();
-
-    //! Enable large pages (CR4.PSE).
-
-    void enable_large_pages ();
-
-    //! Enable long addresses (CR4.PAE).
-
-    void enable_long_addresses ();
-
-    //! Enable paging (CR0.PG).
-
-    void enable_paging ();
-
-    //! Is large pages enabled (CR4.PSE)?
-
-    auto is_large_pages () -> bool;
-
-    //! Is long addresses enabled (CR4.PAE)?
-
-    auto is_long_addresses () -> bool;
-
-    //! Is paging enabled (CR0.PG)?
-
-    auto is_paging () -> bool;
-
     //! Gets the paging control register (CR3) interpreted as short paging.
 
     auto get_short_paging () -> short_paging;

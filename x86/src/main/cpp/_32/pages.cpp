@@ -7,51 +7,6 @@
 
 namespace x86::_32
 {
-    void disable_large_pages ()
-    {
-        cr4( cr4() & ~(size4{1} << 4) );
-    }
-
-    void disable_long_addresses ()
-    {
-        cr4( cr4() & ~(size4{1} << 5) );
-    }
-
-    void disable_paging ()
-    {
-        cr0( cr0() & ~(size4{1} << 31) );
-    }
-
-    void enable_large_pages ()
-    {
-        cr4( cr4() | (size4{1} << 4) );
-    }
-
-    void enable_long_addresses ()
-    {
-        cr4( cr4() | (size4{1} << 5) );
-    }
-
-    void enable_paging ()
-    {
-        cr0( cr0() | (size4{1} << 31) );
-    }
-
-    auto is_large_pages () -> bool
-    {
-        return (cr4() & (size4{1} << 4)) != 0;
-    }
-
-    auto is_long_addresses () -> bool
-    {
-        return (cr4() & (size4{1} << 5)) != 0;
-    }
-
-    auto is_paging () -> bool
-    {
-        return (cr0() & (size4{1} << 31)) != 0;
-    }
-
     auto get_short_paging () -> short_paging
     {
         short_paging value;
