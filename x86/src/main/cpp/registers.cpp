@@ -7,61 +7,61 @@
 namespace x86
 {
     // #XXX: LLVM 13 doesn't know how to do extended asm with _ExtInt
-    struct carrier4 { size4 value; };
+    struct carrier { size value; };
 
-    static_assert(sizeof(carrier4) == 4, "unexpected size of carrier4");
+    static_assert(sizeof(carrier) == sizeof(size), "unexpected size of carrier");
 
     // Control registers.
 
-    auto cr0 () -> size4
+    auto cr0 () -> size
     {
-        carrier4 carrier;
+        carrier carrier;
         __asm__ ( "mov %%cr0, %0" : "=r"(carrier) );
         return carrier.value;
     }
 
-    void cr0 (size4 value)
+    void cr0 (size value)
     {
-        carrier4 carrier { value };
+        carrier carrier { value };
         __asm__ ( "mov %0, %%cr0" : : "r"(carrier) );
     }
 
-    auto cr2 () -> size4
+    auto cr2 () -> size
     {
-        carrier4 carrier;
+        carrier carrier;
         __asm__ ( "mov %%cr2, %0" : "=r"(carrier) );
         return carrier.value;
     }
 
-    void cr2 (size4 value)
+    void cr2 (size value)
     {
-        carrier4 carrier { value };
+        carrier carrier { value };
         __asm__ ( "mov %0, %%cr2" : : "r"(carrier) );
     }
 
-    auto cr3 () -> size4
+    auto cr3 () -> size
     {
-        carrier4 carrier;
+        carrier carrier;
         __asm__ ( "mov %%cr3, %0" : "=r"(carrier) );
         return carrier.value;
     }
 
-    void cr3 (size4 value)
+    void cr3 (size value)
     {
-        carrier4 carrier { value };
+        carrier carrier { value };
         __asm__ ( "mov %0, %%cr3" : : "r"(carrier) );
     }
 
-    auto cr4 () -> size4
+    auto cr4 () -> size
     {
-        carrier4 carrier;
+        carrier carrier;
         __asm__ ( "mov %%cr4, %0" : "=r"(carrier) );
         return carrier.value;
     }
 
-    void cr4 (size4 value)
+    void cr4 (size value)
     {
-        carrier4 carrier { value };
+        carrier carrier { value };
         __asm__ ( "mov %0, %%cr4" : : "r"(carrier) );
     }
 
