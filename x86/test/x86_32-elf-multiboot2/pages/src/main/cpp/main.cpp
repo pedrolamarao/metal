@@ -4,6 +4,7 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
+#include <x86/interrupts.h>
 #include <x86/pages.h>
 #include <x86/segments.h>
 
@@ -13,31 +14,25 @@ namespace
     using namespace x86;
     using namespace x86::_32;
 
-    constexpr unsigned global_descriptor_table_size = 6;
+    // segments.
 
-    [[gnu::section(".gdt")]]
-    constinit
-    segment_descriptor global_descriptor_table [ global_descriptor_table_size ] =
-    {
-        // required null descriptor
-        { },
-        // unexpected null descriptor!
-        { },
-        // system flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
-        // system flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
-        // user flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
-        // user flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
-    };
+    extern
+    segment_descriptor global_descriptor_table [ 6 ];
 
-    alignas(0x1000) constinit
-    short_page_entry page_table [ 0x400 ] {};
+    // interrupts.
 
-    alignas(0x1000) constinit
-    short_small_page_directory_entry page_directory_table [ 0x400 ] {};
+    extern
+    interrupt_gate_descriptor interrupt_descriptor_table [ 256 ];
+
+    void interrupt_handler ();
+
+    // pages.
+
+    extern
+    short_page_entry page_table [ 0x400 ];
+
+    extern
+    short_small_page_directory_entry page_directory_table [ 0x400 ];
 }
 
 void psys::main ()
@@ -47,12 +42,21 @@ void psys::main ()
     
     size step = 1;
 
-    // Set flat segmentation.
+    // prepare segments.
 
     _test_control = step++;
     set_global_descriptor_table(global_descriptor_table);
     set_code_segment( segment_selector(2, false, 0) );
     set_data_segments( segment_selector(3, false, 0) );
+
+    // prepare interrupts.
+
+    _test_control = step++;
+    auto interrupt_segment = segment_selector(2, false, 0);
+    for (auto i = 0U, j = 256U; i != j; ++i) {
+        interrupt_descriptor_table[i] = { interrupt_segment, interrupt_handler, true, true, 0, true };
+    }
+    set_interrupt_descriptor_table(interrupt_descriptor_table);
 
     // Verify we can manipulate control registers.
 
@@ -227,4 +231,55 @@ void psys::main ()
 
     _test_control = -1;
     return;
+}
+
+namespace
+{
+    // segments.
+
+    constexpr
+    unsigned global_descriptor_table_size { 6 };
+
+    constinit
+    segment_descriptor global_descriptor_table [ global_descriptor_table_size ] =
+    {
+        // required null descriptor
+        { },
+        // unexpected null descriptor!
+        { },
+        // system flat code descriptor
+        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
+        // system flat data descriptor
+        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
+        // user flat code descriptor
+        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
+        // user flat data descriptor
+        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
+    };
+
+    // interrupts.
+
+    constinit
+    interrupt_gate_descriptor interrupt_descriptor_table [ 256 ]
+    { };
+
+    [[gnu::naked]]
+    void interrupt_handler ()
+    {
+        __asm__
+        {
+            cli
+        loop:
+            hlt
+            jmp loop
+        }
+    }
+
+    // pages.
+
+    alignas(0x1000) constinit
+    short_page_entry page_table [ 0x400 ] {};
+
+    alignas(0x1000) constinit
+    short_small_page_directory_entry page_directory_table [ 0x400 ] {};
 }
