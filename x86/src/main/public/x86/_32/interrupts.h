@@ -3,6 +3,7 @@
 #pragma once
 
 #include <x86/common.h>
+#include <x86/registers.h>
 #include <x86/_32/descriptor.h>
 
 
@@ -72,14 +73,6 @@ namespace x86::_32
 
   //! Operators.
   //! @{
-
-  //! Get the global descriptor table register (IDTR).
-
-  auto get_interrupt_descriptor_table () -> interrupt_descriptor_table_register ;
-
-  //! Set the global descriptor table register (IDTR).
-
-  void set_interrupt_descriptor_table ( interrupt_descriptor_table_register value );
 
   //! Set the global descriptor table register (IDTR).
 
@@ -168,10 +161,7 @@ namespace x86::_32
   inline
   void set_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] )
   {
-    interrupt_descriptor_table_register value {
-      N * sizeof(interrupt_gate_descriptor),
-      halt_cast<size4>(table)
-    };
-    set_interrupt_descriptor_table(value);
+    descriptor_table value { N * sizeof(interrupt_gate_descriptor), reinterpret_cast<size>(table) };
+    idtr(value);
   }
 }

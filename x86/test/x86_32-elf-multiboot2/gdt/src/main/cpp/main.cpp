@@ -115,18 +115,16 @@ void psys::main ()
 
     _test_control = 21;
 
-    const global_descriptor_table_register expected_gdtr {
-        ((global_descriptor_table_size * sizeof(segment_descriptor)) - 1),
-        halt_cast<size4>(global_descriptor_table)
-    };
+    auto expected_size = ((global_descriptor_table_size * sizeof(segment_descriptor)) - 1);
+    auto expected_offset = reinterpret_cast<size>(global_descriptor_table);
 
-    auto const actual_gdtr = get_global_descriptor_table();
+    auto [actual_size, actual_offset] = get_global_descriptor_table();
 
-    if (actual_gdtr != expected_gdtr) {
-        _test_debug = expected_gdtr.size;
-        _test_debug = expected_gdtr.offset;
-        _test_debug = actual_gdtr.size;
-        _test_debug = actual_gdtr.offset;
+    if (actual_size != expected_size || actual_offset != expected_offset) {
+        _test_debug = expected_size;
+        _test_debug = expected_offset;
+        _test_debug = actual_size;
+        _test_debug = actual_offset;
         _test_control = 0;
         return;
     }
