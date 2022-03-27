@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <x86/common.h>
+#include <x86/instructions.h>
 
 
 // Interface.
@@ -93,10 +93,6 @@ namespace x86
 
     auto cpu_age () -> size4;
 
-    //! Get processor identification features.
-
-    void cpuid_ (size4 feature, size4 variant, size4 * a, size4 * b, size4 * c, size4 * d);
-
     //! This processor supports the processor identification (cpuid) instruction.
 
     auto has_cpuid () -> bool ;
@@ -129,15 +125,15 @@ namespace x86
   inline
   auto cpuid::load ( ps::size4 feature, ps::size4 variant ) -> cpuid
   {
-    cpuid _r;
-    cpuid_(feature, variant, &_r._a, &_r._b, &_r._c, &_r._d);
-    return _r;
+    auto [a, b, c, d] = cpuid2(feature,variant);
+    return cpuid { a, b, c, d};
   }
 
   inline
   auto cpuid::load ( ps::size4 feature ) -> cpuid
   {
-    return load(feature, 0);
+    auto [a, b, c, d] = cpuid2(feature);
+    return cpuid { a, b, c, d};
   }
 
   inline constexpr
