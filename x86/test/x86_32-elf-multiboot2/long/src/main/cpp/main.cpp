@@ -7,6 +7,7 @@
 #include <x86/cpuid.h>
 #include <x86/identification.h>
 #include <x86/interrupts.h>
+#include <x86/msr.h>
 #include <x86/pages.h>
 #include <x86/segments.h>
 
@@ -96,12 +97,28 @@ void psys::main ()
     // enable long mode.
 
     _test_control = step++;
-    // #TODO: enable EFER.LME
+    wrmsr( static_cast<size4>(msr::EFER), rdmsr( static_cast<size4>(msr::EFER) ) | (1 << 8) );
+
+    // did we succeed?
+
+    _test_control = step++;
+    if ((rdmsr( static_cast<size4>(msr::EFER) ) & (1 << 8)) == 0) {
+        _test_control = 0;
+        return;
+    }
 
     // enable paging, enter long compatibility mode.
 
     _test_control = step++;
     enable_paging();
+
+    // did we succeed?
+
+    _test_control = step++;
+    if ((rdmsr( static_cast<size4>(msr::EFER) ) & (1 << 9)) == 0) {
+        _test_control = 0;
+        return;
+    }
 
     // jump to a long mode code segment, enter long mode.
     // #TODO: jump!

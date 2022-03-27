@@ -26,8 +26,9 @@ namespace x86
 
   enum class msr : size4
   {
-    IA32_APIC_BASE   = 0x001B,
-    IA32_MISC_ENABLE = 0x01A0,
+    IA32_APIC_BASE   = 0x0000001B,
+    IA32_MISC_ENABLE = 0x000001A0,
+    EFER             = 0xC0000080,
   };
 
   //! Read value of model specific register
