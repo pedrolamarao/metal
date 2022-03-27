@@ -970,7 +970,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 0;
@@ -1000,7 +1000,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1;
@@ -1030,7 +1030,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 1;
@@ -1060,7 +1060,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 2;
@@ -1090,7 +1090,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 3;
@@ -1120,7 +1120,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 4;
@@ -1150,7 +1150,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 5;
@@ -1180,7 +1180,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 6;
@@ -1210,7 +1210,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 7;
@@ -1240,7 +1240,7 @@ namespace x86::_32
             ASSERT_TRUE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 8;
@@ -1270,7 +1270,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(3,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 3 << 9;
@@ -1300,7 +1300,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0xFEDCBA9876000,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 0xFEDCBA9876000;
@@ -1316,7 +1316,7 @@ namespace x86::_32
         test(semantic);
     }
 
-    TEST(long_page_entry, executable)
+    TEST(long_page_entry, nonexecutable)
     {
         auto test = [] (long_page_entry& value) {
             ASSERT_FALSE(value.present());
@@ -1330,7 +1330,7 @@ namespace x86::_32
             ASSERT_FALSE(value.global());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_TRUE(value.executable());
+            ASSERT_TRUE(value.nonexecutable());
         };
 
         size8 memory = size8{1} << 63;
@@ -1357,7 +1357,7 @@ namespace x86::_32
             ASSERT_FALSE(value.accessed());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 0;
@@ -1384,7 +1384,7 @@ namespace x86::_32
             ASSERT_FALSE(value.accessed());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1;
@@ -1411,7 +1411,7 @@ namespace x86::_32
             ASSERT_FALSE(value.accessed());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 1;
@@ -1438,7 +1438,7 @@ namespace x86::_32
             ASSERT_FALSE(value.accessed());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 2;
@@ -1465,7 +1465,7 @@ namespace x86::_32
             ASSERT_FALSE(value.accessed());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 3;
@@ -1492,7 +1492,7 @@ namespace x86::_32
             ASSERT_FALSE(value.accessed());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 4;
@@ -1519,7 +1519,7 @@ namespace x86::_32
             ASSERT_TRUE(value.accessed());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 5;
@@ -1546,7 +1546,7 @@ namespace x86::_32
             ASSERT_FALSE(value.accessed());
             ASSERT_EQ(3,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 3 << 9;
@@ -1573,7 +1573,7 @@ namespace x86::_32
             ASSERT_FALSE(value.accessed());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0xFEDCBA9876000,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 0xFEDCBA9876000;
@@ -1589,7 +1589,7 @@ namespace x86::_32
         test(semantic);
     }
 
-    TEST(long_small_page_directory_entry, executable)
+    TEST(long_small_page_directory_entry, nonexecutable)
     {
         auto test = [] (long_small_page_directory_entry& value) {
             ASSERT_FALSE(value.present());
@@ -1600,7 +1600,7 @@ namespace x86::_32
             ASSERT_FALSE(value.accessed());
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.address());
-            ASSERT_TRUE(value.executable());
+            ASSERT_TRUE(value.nonexecutable());
         };
 
         size8 memory = size8{1} << 63;
@@ -1632,7 +1632,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 0;
@@ -1662,7 +1662,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1;
@@ -1692,7 +1692,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 1;
@@ -1722,7 +1722,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 2;
@@ -1752,7 +1752,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 3;
@@ -1782,7 +1782,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 4;
@@ -1812,7 +1812,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 5;
@@ -1842,7 +1842,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 6;
@@ -1872,7 +1872,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 8;
@@ -1902,7 +1902,7 @@ namespace x86::_32
             ASSERT_EQ(3,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 3 << 9;
@@ -1932,7 +1932,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(4,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 1 << 12;
@@ -1962,7 +1962,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0xFFFFFFFE00000,value.address());
-            ASSERT_FALSE(value.executable());
+            ASSERT_FALSE(value.nonexecutable());
         };
 
         size8 memory = 0xFFFFFFFE00000;
@@ -1978,7 +1978,7 @@ namespace x86::_32
         test(semantic);
     }
 
-    TEST(long_large_page_directory_entry, executable)
+    TEST(long_large_page_directory_entry, nonexecutable)
     {
         auto test = [] (long_large_page_directory_entry& value) {
             ASSERT_FALSE(value.present());
@@ -1992,7 +1992,7 @@ namespace x86::_32
             ASSERT_EQ(0,value.available());
             ASSERT_EQ(0,value.attribute());
             ASSERT_EQ(0,value.address());
-            ASSERT_TRUE(value.executable());
+            ASSERT_TRUE(value.nonexecutable());
         };
 
         size8 memory = size8{1} << 63;

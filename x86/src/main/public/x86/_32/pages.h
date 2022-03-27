@@ -331,7 +331,7 @@ namespace x86::_32
         size8 _available     :  3 {};
         size8 _address       : 40 {};
         size8 _zero          : 11 { 0 };
-        size8 _executable    :  1 {};
+        size8 _nonexecutable :  1 {};
 
     public:
     
@@ -355,7 +355,7 @@ namespace x86::_32
             unsigned _ExtInt(1)  global,
             unsigned _ExtInt(3)  available,
             unsigned _ExtInt(40) address,
-            unsigned _ExtInt(1)  executable
+            unsigned _ExtInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -376,7 +376,7 @@ namespace x86::_32
             bool global,
             unsigned _ExtInt(3) available,
             size8 address,
-            bool executable
+            bool nonexecutable
         );
 
         //! Page is present in memory.
@@ -423,9 +423,9 @@ namespace x86::_32
 
         auto address () const -> size8;
 
-        //! Page is executable.
+        //! Page is not executable.
 
-        auto executable () const -> bool;
+        auto nonexecutable () const -> bool;
     };
 
     static_assert(sizeof(long_page_entry) == 8, "unexpected size of long_page_entry");
@@ -444,7 +444,7 @@ namespace x86::_32
         size8 _available     :  3 {};
         size8 _address       : 40 {};
         size8 _zero_1        : 11 { 0 };
-        size8 _executable    :  1 {};
+        size8 _nonexecutable :  1 {};
 
     public:
 
@@ -465,7 +465,7 @@ namespace x86::_32
             unsigned _ExtInt(1)  accessed,
             unsigned _ExtInt(3)  available,
             unsigned _ExtInt(40) address,
-            unsigned _ExtInt(1)  executable
+            unsigned _ExtInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -483,7 +483,7 @@ namespace x86::_32
             bool accessed,
             unsigned _ExtInt(3) available,
             size8 address,
-            bool executable
+            bool nonexecutable
         );
 
         //! Page table entry is present in memory.
@@ -518,9 +518,9 @@ namespace x86::_32
 
         auto address () const -> size8;
 
-        //! Page table entry is executable.
+        //! Page table entry is not executable.
 
-        auto executable () const -> bool;
+        auto nonexecutable () const -> bool;
     };
 
     static_assert(sizeof(long_small_page_directory_entry) == 8, "unexpected size of long_small_page_directory_entry");
@@ -543,7 +543,7 @@ namespace x86::_32
         size8 _zero_0        :  8 { 0 };
         size8 _address       : 31 {};
         size8 _zero_1        : 11 { 0 };
-        size8 _executable    :  1 {};
+        size8 _nonexecutable :  1 {};
 
     public:
 
@@ -567,7 +567,7 @@ namespace x86::_32
             unsigned _ExtInt(3)  available,
             unsigned _ExtInt(1)  attribute,
             unsigned _ExtInt(31) address,
-            unsigned _ExtInt(1)  executable
+            unsigned _ExtInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -588,7 +588,7 @@ namespace x86::_32
             unsigned _ExtInt(3) available,
             unsigned _ExtInt(3) attribute,
             size8 address,
-            bool executable
+            bool nonexecutable
         );
 
         //! Page is present in memory.
@@ -637,7 +637,7 @@ namespace x86::_32
 
         //! Page is executable.
 
-        auto executable () const -> bool;
+        auto nonexecutable () const -> bool;
     };
 
     static_assert(sizeof(long_large_page_directory_entry) == 8, "unexpected size of long_large_page_directory_entry");
@@ -1101,7 +1101,7 @@ namespace x86::_32
         unsigned _ExtInt(1)  global,
         unsigned _ExtInt(3)  available,
         unsigned _ExtInt(40) address,
-        unsigned _ExtInt(1)  executable
+        unsigned _ExtInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -1114,7 +1114,7 @@ namespace x86::_32
         _global{global},
         _available{available},
         _address{address},
-        _executable{executable}
+        _nonexecutable{nonexecutable}
     { }
 
     constexpr inline
@@ -1131,7 +1131,7 @@ namespace x86::_32
         bool global,
         unsigned _ExtInt(3) available,
         size8 address,
-        bool executable
+        bool nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -1144,7 +1144,7 @@ namespace x86::_32
         _global{global},
         _available{available},
         _address{address>>12},
-        _executable{executable}
+        _nonexecutable{nonexecutable}
     { }
     
     inline
@@ -1181,7 +1181,7 @@ namespace x86::_32
     auto long_page_entry::address () const -> size8 { return size8{_address} << 12; }
 
     inline
-    auto long_page_entry::executable () const -> bool { return _executable; }
+    auto long_page_entry::nonexecutable () const -> bool { return _nonexecutable; }
 
     constexpr inline
     long_small_page_directory_entry::long_small_page_directory_entry (
@@ -1193,7 +1193,7 @@ namespace x86::_32
         unsigned _ExtInt(1)  accessed,
         unsigned _ExtInt(3)  available,
         unsigned _ExtInt(40) address,
-        unsigned _ExtInt(1)  executable
+        unsigned _ExtInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -1203,7 +1203,7 @@ namespace x86::_32
         _accessed{accessed},
         _available{available},
         _address{address},
-        _executable{executable}
+        _nonexecutable{nonexecutable}
     { }
 
     constexpr inline
@@ -1217,7 +1217,7 @@ namespace x86::_32
         bool accessed,
         unsigned _ExtInt(3) available,
         size8 address,
-        bool executable
+        bool nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -1227,7 +1227,7 @@ namespace x86::_32
         _accessed{accessed},
         _available{available},
         _address{address>>12},
-        _executable{executable}
+        _nonexecutable{nonexecutable}
     { }
     
     inline
@@ -1255,7 +1255,7 @@ namespace x86::_32
     auto long_small_page_directory_entry::address () const -> size8 { return size8{_address} << 12; }
 
     inline
-    auto long_small_page_directory_entry::executable () const -> bool { return _executable; }
+    auto long_small_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
 
     constexpr inline
     long_large_page_directory_entry::long_large_page_directory_entry (
@@ -1270,7 +1270,7 @@ namespace x86::_32
         unsigned _ExtInt(3)  available,
         unsigned _ExtInt(1)  attribute,
         unsigned _ExtInt(31) address,
-        unsigned _ExtInt(1)  executable
+        unsigned _ExtInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -1283,7 +1283,7 @@ namespace x86::_32
         _available{available},
         _attribute{attribute},
         _address{address},
-        _executable{executable}
+        _nonexecutable{nonexecutable}
     { }
 
     constexpr inline
@@ -1300,7 +1300,7 @@ namespace x86::_32
         unsigned _ExtInt(3) available,
         unsigned _ExtInt(3) attribute,
         size8 address,
-        bool executable
+        bool nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -1313,7 +1313,7 @@ namespace x86::_32
         _available{available},
         _attribute{attribute},
         _address{address>>21},
-        _executable{executable}
+        _nonexecutable{nonexecutable}
     { }
     
     inline
@@ -1350,7 +1350,7 @@ namespace x86::_32
     auto long_large_page_directory_entry::address () const -> size8 { return size8{_address} << 21; }
 
     inline
-    auto long_large_page_directory_entry::executable () const -> bool { return _executable; }
+    auto long_large_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
 
     constexpr inline
     page_directory_pointer_entry::page_directory_pointer_entry (
