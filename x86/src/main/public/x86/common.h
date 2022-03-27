@@ -59,18 +59,14 @@ namespace x86
     //! Primitive procedures.
     //! @{
 
-    void halt ();
-
     template <typename T, typename U>
     auto halt_cast (U* address)
     {
       auto offset = reinterpret_cast<size>(address);
       auto narrow = static_cast<T>(offset);
-      if (narrow != offset) { while (true) halt(); }
+      if (narrow != offset) { while (true) __asm__ ( "hlt" : ); }
       return narrow;
     }
-
-    void pause ();
 
     //! @}
 }
