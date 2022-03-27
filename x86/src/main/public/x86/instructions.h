@@ -21,7 +21,31 @@ namespace x86
 
     void halt ();
 
+    //! Read from I/O port.
+
+    auto in1 ( size2 port ) -> size1;
+
+    //! Read from I/O port.
+
+    auto in2 ( size2 port ) -> size2;
+
+    //! Read from I/O port.
+
+    auto in4 ( size2 port ) -> size4;
+
+    //! Write to I/O port.
+
+    void out1 ( size2 port, size1 data );
+
+    //! Write to I/O port.
+
+    void out2 ( size2 port, size2 data );
+
+    //! Write to I/O port.
+
+    void out4 ( size2 port, size4 data );
+
     //! Pause processor.
 
-    void halt ();
+    void pause ();
 }

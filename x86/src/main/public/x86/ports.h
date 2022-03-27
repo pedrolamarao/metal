@@ -1,39 +1,14 @@
-// Copyright (C) 2016, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2016,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
-#include <psys/integer.h>
+#include <x86/instructions.h>
 
-//! @brief Declarations
+
+//! Interface
 
 namespace x86
 {
-    using ps::size1;
-    using ps::size2;
-    using ps::size4;
-
-    //! Data types.
-    //! @{
-
-    //! @}
-
-    //! Primitive procedures.
-    //! @{
-
-    auto in1 ( size2 port ) -> size1;
-
-    auto in2 ( size2 port ) -> size2;
-
-    auto in4 ( size2 port ) -> size4;
-
-    void out1 ( size2 port, size1 data );
-
-    void out2 ( size2 port, size2 data );
-
-    void out4 ( size2 port, size4 data );
-
-    //! @}
-
   //! Interface types.
   //! @{
 
