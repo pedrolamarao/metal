@@ -12,6 +12,12 @@ namespace x86
     struct carrier { size data {}; };
     static_assert(sizeof(carrier) == sizeof(size), "unexpected size of carrier");
 
+    struct carrier1 { size1 data {}; };
+    static_assert(sizeof(carrier1) == sizeof(size1), "unexpected size of carrier1");
+
+    struct carrier2 { size2 data {}; };
+    static_assert(sizeof(carrier2) == sizeof(size2), "unexpected size of carrier2");
+
     struct carrier4 { size4 data {}; };
     static_assert(sizeof(carrier4) == sizeof(size4), "unexpected size of carrier4");
 
@@ -28,6 +34,51 @@ namespace x86
     void halt ()
     {
         __asm__ ( "hlt" : );
+    }
+
+    auto in1 ( size2 port ) -> size1
+    {
+        carrier2 _port { port };
+        carrier1 _in {};
+        __asm__ ( "inb %1, %0" : "=a"(_in) : "Nd"(_port) : );
+        return _in.data;
+    }
+
+    auto in2 ( size2 port ) -> size2
+    {
+        carrier2 _port { port };
+        carrier2 _in {};
+        __asm__ ( "inw %1, %0" : "=a"(_in) : "Nd"(_port) : );
+        return _in.data;
+    }
+
+    auto in4 ( size2 port ) -> size4
+    {
+        carrier2 _port { port };
+        carrier4 _in {};
+        __asm__ ( "inl %1, %0" : "=a"(_in) : "Nd"(_port) : );
+        return _in.data;
+    }
+
+    void out1 ( size2 port, size1 data )
+    {
+        carrier2 _port { port };
+        carrier1 _out { data };
+        __asm__ ( "outb %0, %1" : : "a"(_out), "Nd"(_port) : );
+    }
+
+    void out2 ( size2 port, size2 data )
+    {
+        carrier2 _port { port };
+        carrier2 _out { data };
+        __asm__ ( "outw %0, %1" : : "a"(_out), "Nd"(_port) : );
+    }
+
+    void out4 ( size2 port, size4 data )
+    {
+        carrier2 _port { port };
+        carrier4 _out { data };
+        __asm__ ( "outl %0, %1" : : "a"(_out), "Nd"(_port) : );
     }
 
     void pause ()
