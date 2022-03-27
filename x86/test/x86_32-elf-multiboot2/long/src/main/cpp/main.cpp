@@ -5,6 +5,7 @@
 #include <psys/test.h>
 
 #include <x86/cpuid.h>
+#include <x86/identification.h>
 #include <x86/interrupts.h>
 #include <x86/pages.h>
 #include <x86/segments.h>
@@ -53,10 +54,7 @@ void psys::main ()
     }
 
     _test_control = step++;
-    // #XXX: fix cpuid
-    unsigned a = 0x80000001, b = -1, c = 0, d = -1;
-    __asm__ volatile ( "cpuid" : "=a"(a), "=b"(b), "=c"(c), "=d"(d) : "a"(a), "c"(c) );
-    if ((d & (1 << 29)) == 0) {
+    if (! has_long_mode()) {
         _test_control = 0;
         return;
     }
