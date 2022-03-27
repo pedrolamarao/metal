@@ -5,7 +5,7 @@
 namespace x86
 {
     [[gnu::naked]]
-    auto cpu_age () -> ps::size4
+    auto cpu_age () -> size
     {
 #if defined(__i386__)
         __asm__

@@ -22,38 +22,38 @@ namespace x86
     cpuid () ;
 
     constexpr
-    cpuid ( ps::size4 a, ps::size4 b, ps::size4 c, ps::size4 d ) ;
+    cpuid ( size a, size b, size c, size d ) ;
 
     //! @pre has_cpuid()
     //! @pre feature <= cpuid(0).a()
 
     static
-    auto load ( ps::size4 feature, ps::size4 variant ) -> cpuid ;
+    auto load ( size feature, size variant ) -> cpuid ;
 
     //! @pre has_cpuid()
     //! @pre feature <= cpuid(0).a()
 
     static
-    auto load ( ps::size4 feature ) -> cpuid ;
+    auto load ( size feature ) -> cpuid ;
 
     constexpr
-    auto a () const -> ps::size4 ;
+    auto a () const -> size ;
 
     constexpr
-    auto b () const -> ps::size4 ;
+    auto b () const -> size ;
 
     constexpr
-    auto c () const -> ps::size4 ;
+    auto c () const -> size ;
 
     constexpr
-    auto d () const -> ps::size4 ;
+    auto d () const -> size ;
 
   private:
 
-    ps::size4 _a;
-    ps::size4 _b;
-    ps::size4 _c;
-    ps::size4 _d;
+    size _a;
+    size _b;
+    size _c;
+    size _d;
 
   };
 
@@ -91,7 +91,7 @@ namespace x86
 
     //! Age of this processor.
 
-    auto cpu_age () -> size4;
+    auto cpu_age () -> size;
 
     //! This processor supports the processor identification (cpuid) instruction.
 
@@ -117,45 +117,45 @@ namespace x86
   }
 
   inline constexpr
-  cpuid::cpuid ( ps::size4 a, ps::size4 b, ps::size4 c, ps::size4 d ) : _a{a}, _b{b}, _c{c}, _d{d}
+  cpuid::cpuid ( size a, size b, size c, size d ) : _a{a}, _b{b}, _c{c}, _d{d}
   {
 
   }
 
   inline
-  auto cpuid::load ( ps::size4 feature, ps::size4 variant ) -> cpuid
+  auto cpuid::load ( size feature, size variant ) -> cpuid
   {
     auto [a, b, c, d] = cpuid2(feature,variant);
     return cpuid { a, b, c, d};
   }
 
   inline
-  auto cpuid::load ( ps::size4 feature ) -> cpuid
+  auto cpuid::load ( size feature ) -> cpuid
   {
     auto [a, b, c, d] = cpuid2(feature);
     return cpuid { a, b, c, d};
   }
 
   inline constexpr
-  auto cpuid::a () const -> ps::size4
+  auto cpuid::a () const -> size
   {
     return _a;
   }
 
   inline constexpr
-  auto cpuid::b () const -> ps::size4
+  auto cpuid::b () const -> size
   {
     return _b;
   }
 
   inline constexpr
-  auto cpuid::c () const -> ps::size4
+  auto cpuid::c () const -> size
   {
     return _c;
   }
 
   inline constexpr
-  auto cpuid::d () const -> ps::size4
+  auto cpuid::d () const -> size
   {
     return _d;
   }
