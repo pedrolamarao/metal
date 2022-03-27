@@ -294,13 +294,13 @@ void psys::main ()
 
     for (size i = 0; i != 0x200; ++i) {
         long_page_table[i] = {
-            {}, true, true, true, false, false, false, false, 0, false, 0, (0x1000 * i), 0
+            {}, true, true, true, false, false, false, false, 0, false, 0, (0x1000 * i), false
         };
     }
 
     for (size i = 0; i != 0x200; ++i) {
         long_small_page_directory_table[i] = {
-            {}, true, true, true, false, false, false, 0, reinterpret_cast<size8>(long_page_table), 0
+            {}, true, true, true, false, false, false, 0, reinterpret_cast<size8>(long_page_table), false
         };
     }
 
@@ -337,7 +337,7 @@ void psys::main ()
 
     for (size i = 0; i != 0x200; ++i) {
         long_large_page_directory_table[i] = {
-            {}, true, true, true, false, false, false, false, false, 0, 0, (0x200000 * i), 0
+            {}, true, true, true, false, false, false, false, false, 0, 0, (0x200000 * i), false
         };
     }
 
