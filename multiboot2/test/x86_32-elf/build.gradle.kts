@@ -20,7 +20,10 @@ subprojects {
             implementation(project(":multiboot2"))
         }
 
-        val baseArgs = listOf("-std=c++20", "-flto", "-fasm-blocks")
+        val baseArgs = listOf(
+            "-std=c++20", "-flto", "-fasm-blocks",
+            "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2"
+        )
 
         binaries.configureEach {
             if (this is ExecutableBinary) {
