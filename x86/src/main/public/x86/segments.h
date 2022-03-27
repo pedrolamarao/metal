@@ -87,4 +87,32 @@ namespace x86
   {
     gdtr(value);
   }
+
+    inline
+    auto get_code_segment () -> segment_selector
+    {
+        return cs();
+    }
+
+    inline
+    void set_data_segment ( segment_selector value )
+    {
+        ds(value);
+    }
+
+    inline
+    void set_stack_segment ( segment_selector value )
+    {
+        ss(value);
+    }
+
+    inline
+    void set_data_segments ( segment_selector value )
+    {
+        ds(value);
+        es(value);
+        fs(value);
+        gs(value);
+        ss(value);
+    }
 }

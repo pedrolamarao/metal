@@ -102,4 +102,78 @@ namespace x86
     {
         __asm__ ( "lldt %0" : : "m"(value) : );
     }
+
+    // Segment descriptor registers.
+
+    auto cs () -> segment_selector
+    {
+        segment_selector value {};
+        __asm__ ( "mov %%cs, %0" : "=m"(value) );
+        return value;
+    }
+
+    void cs (segment_selector value)
+    {
+        __asm__ ( "mov %%ss, %0" : : "m"(value) : );
+    }
+
+    auto ds () -> segment_selector
+    {
+        segment_selector value {};
+        __asm__ ( "mov %%ds, %0" : "=m"(value) );
+        return value;
+    }
+
+    void ds (segment_selector value)
+    {
+        __asm__ ( "mov %%ds, %0" : : "m"(value) : );
+    }
+
+    auto es () -> segment_selector
+    {
+        segment_selector value {};
+        __asm__ ( "mov %%es, %0" : "=m"(value) );
+        return value;
+    }
+
+    void es (segment_selector value)
+    {
+        __asm__ ( "mov %%es, %0" : : "m"(value) : );
+    }
+
+    auto fs () -> segment_selector
+    {
+        segment_selector value {};
+        __asm__ ( "mov %%fs, %0" : "=m"(value) );
+        return value;
+    }
+
+    void fs (segment_selector value)
+    {
+        __asm__ ( "mov %%fs, %0" : : "m"(value) : );
+    }
+
+    auto gs () -> segment_selector
+    {
+        segment_selector value {};
+        __asm__ ( "mov %%gs, %0" : "=m"(value) );
+        return value;
+    }
+
+    void gs (segment_selector value)
+    {
+        __asm__ ( "mov %%gs, %0" : : "m"(value) : );
+    }
+
+    auto ss () -> segment_selector
+    {
+        segment_selector value {};
+        __asm__ ( "mov %%ss, %0" : "=m"(value) );
+        return value;
+    }
+
+    void ss (segment_selector value)
+    {
+        __asm__ ( "mov %%ss, %0" : : "m"(value) : );
+    }
 }
