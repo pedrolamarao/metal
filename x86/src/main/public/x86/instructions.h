@@ -48,4 +48,12 @@ namespace x86
     //! Pause processor.
 
     void pause ();
+
+    //! Read from model-specific register.
+
+    auto rdmsr (size4 id) -> size8;
+
+    //! Write to model-specific register.
+
+    void wrmsr (size4 id, size8 value);
 }

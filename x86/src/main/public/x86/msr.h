@@ -1,33 +1,13 @@
+// Copyright (C) 2012,2020,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+
 #pragma once
 
-#include <x86/cpuid.h>
+#include <x86/instructions.h>
 
 //! Declarations
 
 namespace x86
 {
-    using ps::size4;
-    using ps::size8;
-
-    //! Data types.
-    //! @{
-
-    //! @}
-
-    //! Primitive procedures.
-    //! @{
-
-    auto rdmsr (size4 id) -> size8;
-
-    void wrmsr (size4 id, size8 value);
-
-    //! @}
-
-    //! Interface types.
-    //! @{
-
-    //! @}
-
   //! Standard procedures.
   //! @{
 
