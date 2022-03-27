@@ -50,7 +50,7 @@ namespace
     long_small_page_directory_entry long_small_page_directory_table [ 0x200 ] {};
 
     alignas(0x1000) constinit
-    page_directory_pointer_entry small_page_directory_pointer_table [ 0x200 ] {};
+    page_directory_pointer_entry small_page_directory_pointer_table [ 4 ] {};
 
     // long large paging.
 
@@ -58,7 +58,7 @@ namespace
     long_large_page_directory_entry long_large_page_directory_table [ 0x200 ] {};
 
     alignas(0x1000) constinit
-    page_directory_pointer_entry large_page_directory_pointer_table [ 0x200 ] {};
+    page_directory_pointer_entry large_page_directory_pointer_table [ 4 ] {};
 }
 
 void psys::main ()
@@ -288,6 +288,86 @@ void psys::main ()
     _test_control = step++;
     disable_paging();
 
+    // Verify that we can do long small paging.
+
+    step = 600;
+
+    for (size i = 0; i != 0x200; ++i) {
+        long_page_table[i] = {
+            {}, true, true, true, false, false, false, false, 0, false, 0, (0x1000 * i), 0
+        };
+    }
+
+    for (size i = 0; i != 0x200; ++i) {
+        long_small_page_directory_table[i] = {
+            {}, true, true, true, false, false, false, 0, reinterpret_cast<size8>(long_page_table), 0
+        };
+    }
+
+    for (size i = 0; i != 4; ++i) {
+        small_page_directory_pointer_table[i] = {
+            {}, true, false, false, 0, reinterpret_cast<size8>(long_small_page_directory_table)
+        };
+    }
+
+    _test_control = step++;
+    disable_large_pages();
+
+    _test_control = step++;
+    enable_long_addresses();
+
+    _test_control = step++;
+    set_paging( long_paging { {}, false, false, reinterpret_cast<size4>(small_page_directory_pointer_table) } );
+
+    _test_control = step++;
+    enable_paging();
+
+    _test_control = step++;
+    if (! is_paging()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = step++;
+    disable_paging();
+
+    // Verify that we can do long large paging.
+
+    step = 700;
+
+    for (size i = 0; i != 0x200; ++i) {
+        long_large_page_directory_table[i] = {
+            {}, true, true, true, false, false, false, false, false, 0, 0, (0x200000 * i), 0
+        };
+    }
+
+    for (size i = 0; i != 4; ++i) {
+        large_page_directory_pointer_table[i] = {
+            {}, true, false, false, 0, reinterpret_cast<size8>(long_large_page_directory_table)
+        };
+    }
+
+    _test_control = step++;
+    enable_large_pages();
+
+    _test_control = step++;
+    enable_long_addresses();
+
+    _test_control = step++;
+    set_paging( long_paging { {}, false, false, reinterpret_cast<size4>(large_page_directory_pointer_table) } );
+
+    _test_control = step++;
+    enable_paging();
+
+    _test_control = step++;
+    if (! is_paging()) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = step++;
+    disable_paging();
+
     _test_control = -1;
     return;
 }
@@ -327,18 +407,16 @@ namespace
     {
         __asm__
         {
+            xor eax, eax
+            mov _test_debug, eax
+            mov eax, 1234
+            mov _test_debug, eax
+            xor eax, eax
+            mov _test_control, eax
             cli
         loop:
             hlt
             jmp loop
         }
     }
-
-    // pages.
-
-    alignas(0x1000) constinit
-    short_page_entry page_table [ 0x400 ] {};
-
-    alignas(0x1000) constinit
-    short_small_page_directory_entry page_directory_table [ 0x400 ] {};
 }
