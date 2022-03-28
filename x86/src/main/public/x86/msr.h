@@ -9,7 +9,7 @@
 
 namespace x86
 {
-    //! Model specific registers.
+    //! Model-specific registers (MSR).
 
     enum class msr : size4
     {
@@ -17,4 +17,18 @@ namespace x86
         MISC_ENABLE = 0x000001A0,
         EFER        = 0xC0000080,
     };
+
+    //! Get model-specific register (MSR).
+
+    auto get_msr (msr id) -> size8
+    {
+        return rdmsr( static_cast<size4>(id) );
+    }
+
+    //! Set model-specific register (MSR).
+
+    void set_msr (msr id, size8 value)
+    {
+        wrmsr( static_cast<size4>(id), value );
+    }
 }

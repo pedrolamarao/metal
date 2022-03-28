@@ -97,12 +97,12 @@ void psys::main ()
     // enable long mode.
 
     _test_control = step++;
-    wrmsr( static_cast<size4>(msr::EFER), rdmsr( static_cast<size4>(msr::EFER) ) | (1 << 8) );
+    set_msr(msr::EFER, get_msr(msr::EFER) | (1 << 8));
 
     // did we succeed?
 
     _test_control = step++;
-    if ((rdmsr( static_cast<size4>(msr::EFER) ) & (1 << 8)) == 0) {
+    if ((get_msr(msr::EFER) & (1 << 8)) == 0) {
         _test_control = 0;
         return;
     }
@@ -115,7 +115,7 @@ void psys::main ()
     // did we succeed?
 
     _test_control = step++;
-    if ((rdmsr( static_cast<size4>(msr::EFER) ) & (1 << 9)) == 0) {
+    if ((get_msr(msr::EFER) & (1 << 9)) == 0) {
         _test_control = 0;
         return;
     }
