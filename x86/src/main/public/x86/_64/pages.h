@@ -215,7 +215,7 @@ namespace x86::_64
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(3);
+        auto available () const -> unsigned _ExtInt(14);
 
         //! Page table address.
 
@@ -571,4 +571,85 @@ namespace x86::_64
 
     inline
     auto page_table_entry::nonexecutable () const -> bool { return _nonexecutable; }
+}
+
+// Implementation: small_page_directory_entry
+
+namespace x86::_64
+{
+    constexpr inline
+    small_page_directory_entry::small_page_directory_entry (
+        unsigned _ExtInt(1)  present,
+        unsigned _ExtInt(1)  writable,
+        unsigned _ExtInt(1)  user,
+        unsigned _ExtInt(1)  write_through,
+        unsigned _ExtInt(1)  cache,
+        unsigned _ExtInt(1)  accessed,
+        unsigned _ExtInt(3)  available_low,
+        unsigned _ExtInt(40) address,
+        unsigned _ExtInt(11) available_high,
+        unsigned _ExtInt(1)  nonexecutable
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _available_low{available_low},
+        _address{address},
+        _available_high{available_high},
+        _nonexecutable{nonexecutable}
+    { }
+
+    constexpr inline
+    small_page_directory_entry::small_page_directory_entry (
+        bool present,
+        bool writable,
+        bool user,
+        bool write_through,
+        bool cache,
+        bool accessed,
+        unsigned _ExtInt(14) available,
+        size8 address,
+        bool nonexecutable
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _available_low{available},
+        _address{address>>12},
+        _available_high{available>>3},
+        _nonexecutable{nonexecutable}
+    { }
+
+    inline
+    auto small_page_directory_entry::present () const -> bool { return _present; }
+
+    inline
+    auto small_page_directory_entry::writable () const -> bool { return _writable; }
+
+    inline
+    auto small_page_directory_entry::user () const -> bool { return _user; }
+
+    inline
+    auto small_page_directory_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto small_page_directory_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto small_page_directory_entry::accessed () const -> bool { return _accessed; }
+
+    inline
+    auto small_page_directory_entry::available () const -> unsigned _ExtInt(14) { return (_available_high << 3) | _available_low; }
+
+    inline
+    auto small_page_directory_entry::address () const -> size8 { return size8{_address} << 12; }
+
+    inline
+    auto small_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
 }
