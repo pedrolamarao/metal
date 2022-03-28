@@ -19,9 +19,9 @@ namespace
     // segments.
 
     extern
-    _32::segment_descriptor global_descriptor_table_32 [ 8 ];
+    _32::segment_descriptor global_descriptor_table [ 5 ];
 
-    // interrupts.
+    // protected mode.
 
     extern
     _32::interrupt_gate_descriptor interrupt_descriptor_table_32 [ 256 ];
@@ -29,7 +29,7 @@ namespace
     [[gnu::naked]]
     void interrupt_handler_32 ();
 
-    // pages.
+    // long mode.
 
     extern
     _64::page_table_entry page_table [ 0x200 ];
@@ -66,20 +66,19 @@ void psys::main ()
         return;
     }
 
-    // prepare 32 bit protected mode segments.
+    // prepare segments.
 
     _test_control = step++;
-    set_global_descriptor_table(global_descriptor_table_32);
-    auto code_segment = segment_selector{1,false,0};
-    set_code_segment(code_segment);
-    auto data_segment = segment_selector{2,false,0};
-    set_data_segments(data_segment);
+    set_global_descriptor_table(global_descriptor_table);
+    set_data_segments(segment_selector{1,false,0});
+    auto code_segment_32 = segment_selector{2,false,0};
+    set_code_segment(code_segment_32);
 
     // prepare 32 bit protected mode interrupts.
 
     _test_control = step++;
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table_32[i] = { code_segment, interrupt_handler_32, true, true, 0, true };
+        interrupt_descriptor_table_32[i] = { code_segment_32, interrupt_handler_32, true, true, 0, true };
     }
     set_interrupt_descriptor_table(interrupt_descriptor_table_32);
     
@@ -170,15 +169,16 @@ namespace
     // protected mode segments.
 
     constinit
-    _32::segment_descriptor global_descriptor_table_32 [ 8 ] =
+    _32::segment_descriptor global_descriptor_table [ 5 ] =
     {
         // null descriptor
         { },
-        // protected mode flat system code segment
-        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
-        // protected mode flat system data segment
+        // data segment
         { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
-        // long mode flat system code descriptor
+        // 32 bit code segment
+        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
+        // 64 bit code segment
+        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, false, true, },
     };
 
     // protected mode interrupts.
