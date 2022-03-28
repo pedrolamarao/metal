@@ -839,3 +839,37 @@ namespace x86::_64
     inline
     auto page_map_entry::nonexecutable () const -> bool { return _nonexecutable; }
 }
+
+// Implementation: paging
+
+namespace x86::_64
+{
+    constexpr inline
+    paging::paging (
+        unsigned _ExtInt(1) write_through,
+        unsigned _ExtInt(1) cache,
+        unsigned _ExtInt(40) address
+    ) :
+        _write_through { write_through },
+        _cache { cache },
+        _address { address }
+    { }
+
+    constexpr inline
+    paging::paging (
+        decltype(nullptr) ignored,
+        bool write_through,
+        bool cache,
+        size8 address
+    ) :
+        _write_through { write_through },
+        _cache { cache },
+        _address { address >> 12 }
+    { }
+
+    auto paging::write_through () const -> bool { return _write_through; }
+
+    auto paging::cache () const -> bool { return _cache; }
+
+    auto paging::address () const -> size8 { return _address << 12; }
+}
