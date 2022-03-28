@@ -1,4 +1,4 @@
-// Copyright (C) 2020, 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <psys/integer.h>
@@ -7,6 +7,7 @@
 
 #include <x86/cpuid.h>
 #include <x86/segments.h>
+#include <x86/identification.h>
 #include <x86/interrupts.h>
 #include <x86/msr.h>
 
@@ -15,36 +16,36 @@ void psys::main ()
 {
     using namespace x86;
 
-    // cpuid
+    size step { 1 };
 
-    _test_control = 2;
+    // cpuid?
 
-    if (! x86::has_cpuid()) {
+    _test_control = step++;
+
+    if (! has_cpuid()) {
         _test_control = 0;
         return;
     }
 
-    // msr
+    // msr?
 
-    _test_control = 3;
+    _test_control = step++;
 
-    auto cpuid_1 = x86::cpuid_1::load();
-
-    if (! cpuid_1.has_msr()) {
+    if (! has_msr()) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 4;
+    _test_control = step++;
 
-    if (! cpuid_1.has_local_apic()) {
+    if (! cpuid_1::load().has_local_apic()) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 5;
+    _test_control = step++;
 
-    auto value = x86::read_msr(msr::IA32_APIC_BASE);
+    auto value = rdmsr( static_cast<size4>(msr::APIC_BASE) );
     if ((value & 0xFFFFFFFFFFFF0000) != 0x00000000FEE00000) {
         _test_control = 0;
         return;

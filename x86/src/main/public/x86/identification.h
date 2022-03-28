@@ -16,4 +16,12 @@ namespace x86
     {
         return (cpuid2(0x80000001).d & (1 << 29)) != 0;
     }
+
+    //! Test if this processor has model-specific registers.
+
+    inline
+    auto has_msr () -> bool
+    {
+        return (cpuid2(1).d & (1 << 4)) != 0;
+    }
 }
