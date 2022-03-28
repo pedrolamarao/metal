@@ -3007,3 +3007,279 @@ namespace x86::_64
         test(semantic);
     }
 }
+
+// small_page_directory_pointer_entry
+    
+namespace x86::_64
+{
+    TEST(small_page_directory_pointer_entry_64, zero)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_FALSE(value.present());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.user());
+            ASSERT_FALSE(value.write_through());
+            ASSERT_FALSE(value.cache());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_EQ(0,value.available());
+            ASSERT_EQ(0,value.address());
+            ASSERT_FALSE(value.nonexecutable());
+        };
+
+        size8 memory = 0;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            false, false, false, false, false, false, 0, 0, false
+        };
+        test(semantic);
+    }
+
+    TEST(small_page_directory_pointer_entry_64, present)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_TRUE(value.present());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.user());
+            ASSERT_FALSE(value.write_through());
+            ASSERT_FALSE(value.cache());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_EQ(0,value.available());
+            ASSERT_EQ(0,value.address());
+            ASSERT_FALSE(value.nonexecutable());
+        };
+
+        size8 memory = 1;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            true, false, false, false, false, false, 0, 0, false
+        };
+        test(semantic);
+    }
+
+    TEST(small_page_directory_pointer_entry_64, writable)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_FALSE(value.present());
+            ASSERT_TRUE(value.writable());
+            ASSERT_FALSE(value.user());
+            ASSERT_FALSE(value.write_through());
+            ASSERT_FALSE(value.cache());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_EQ(0,value.available());
+            ASSERT_EQ(0,value.address());
+            ASSERT_FALSE(value.nonexecutable());
+        };
+
+        size8 memory = 1 << 1;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            false, true, false, false, false, false, 0, 0, false
+        };
+        test(semantic);
+    }
+
+    TEST(small_page_directory_pointer_entry_64, user)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_FALSE(value.present());
+            ASSERT_FALSE(value.writable());
+            ASSERT_TRUE(value.user());
+            ASSERT_FALSE(value.write_through());
+            ASSERT_FALSE(value.cache());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_EQ(0,value.available());
+            ASSERT_EQ(0,value.address());
+            ASSERT_FALSE(value.nonexecutable());
+        };
+
+        size8 memory = 1 << 2;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            false, false, true, false, false, false, 0, 0, false
+        };
+        test(semantic);
+    }
+
+    TEST(small_page_directory_pointer_entry_64, write_through)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_FALSE(value.present());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.user());
+            ASSERT_TRUE(value.write_through());
+            ASSERT_FALSE(value.cache());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_EQ(0,value.available());
+            ASSERT_EQ(0,value.address());
+            ASSERT_FALSE(value.nonexecutable());
+        };
+
+        size8 memory = 1 << 3;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            false, false, false, true, false, false, 0, 0, false
+        };
+        test(semantic);
+    }
+
+    TEST(small_page_directory_pointer_entry_64, cache)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_FALSE(value.present());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.user());
+            ASSERT_FALSE(value.write_through());
+            ASSERT_TRUE(value.cache());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_EQ(0,value.available());
+            ASSERT_EQ(0,value.address());
+            ASSERT_FALSE(value.nonexecutable());
+        };
+
+        size8 memory = 1 << 4;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            false, false, false, false, true, false, 0, 0, false
+        };
+        test(semantic);
+    }
+
+    TEST(small_page_directory_pointer_entry_64, accessed)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_FALSE(value.present());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.user());
+            ASSERT_FALSE(value.write_through());
+            ASSERT_FALSE(value.cache());
+            ASSERT_TRUE(value.accessed());
+            ASSERT_EQ(0,value.available());
+            ASSERT_EQ(0,value.address());
+            ASSERT_FALSE(value.nonexecutable());
+        };
+
+        size8 memory = 1 << 5;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            false, false, false, false, false, true, 0, 0, false
+        };
+        test(semantic);
+    }
+
+    TEST(small_page_directory_pointer_entry_64, available)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_FALSE(value.present());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.user());
+            ASSERT_FALSE(value.write_through());
+            ASSERT_FALSE(value.cache());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_EQ(0x3FFF,value.available());
+            ASSERT_EQ(0,value.address());
+            ASSERT_FALSE(value.nonexecutable());
+        };
+
+        size8 memory = 0x7FF0000000000E00;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 0, 0, 0, 0, 0, 0, 0x7, 0, 0x7FF, 0 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            false, false, false, false, false, false, 0x3FFF, 0, false
+        };
+        test(semantic);
+    }
+
+    TEST(small_page_directory_pointer_entry_64, address)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_FALSE(value.present());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.user());
+            ASSERT_FALSE(value.write_through());
+            ASSERT_FALSE(value.cache());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_EQ(0,value.available());
+            ASSERT_EQ(0xFFFFFFFFFF000,value.address());
+            ASSERT_FALSE(value.nonexecutable());
+        };
+
+        size8 memory = 0xFFFFFFFFFF000;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 0, 0, 0, 0, 0, 0, 0, 0xFFFFFFFFFF, 0, 0 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            false, false, false, false, false, false, 0, 0xFFFFFFFFFF000, false
+        };
+        test(semantic);
+    }
+
+
+    TEST(small_page_directory_pointer_entry_64, nonexecutable)
+    {
+        auto test = [] (small_page_directory_pointer_entry& value) {
+            ASSERT_FALSE(value.present());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.user());
+            ASSERT_FALSE(value.write_through());
+            ASSERT_FALSE(value.cache());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_EQ(0,value.available());
+            ASSERT_EQ(0,value.address());
+            ASSERT_TRUE(value.nonexecutable());
+        };
+
+        size8 memory = size8{1} << 63;
+        auto& reference = reinterpret_cast<small_page_directory_pointer_entry&>(memory);
+        test(reference);
+
+        auto fields = small_page_directory_pointer_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+        test(fields);
+
+        auto semantic = small_page_directory_pointer_entry {
+            false, false, false, false, false, false, 0, 0, true
+        };
+        test(semantic);
+    }
+}
