@@ -47,24 +47,24 @@ namespace
     alignas(0x1000) constinit
     short_large_page_directory_entry short_large_page_directory_table [ 0x400 ] {};
 
-    // long small paging.
+    // extended small paging.
 
     alignas(0x1000) constinit
-    long_page_entry long_page_table [ 0x200 ] {};
+    extended_page_entry long_page_table [ 0x200 ] {};
 
     alignas(0x1000) constinit
-    long_small_page_directory_entry long_small_page_directory_table [ 0x200 ] {};
+    extended_small_page_directory_entry long_small_page_directory_table [ 0x200 ] {};
 
     alignas(0x1000) constinit
-    page_directory_pointer_entry small_page_directory_pointer_table [ 4 ] {};
+    extended_page_directory_pointer_entry small_page_directory_pointer_table [ 4 ] {};
 
-    // long large paging.
-
-    alignas(0x1000) constinit
-    long_large_page_directory_entry long_large_page_directory_table [ 0x200 ] {};
+    // extended large paging.
 
     alignas(0x1000) constinit
-    page_directory_pointer_entry large_page_directory_pointer_table [ 4 ] {};
+    extended_large_page_directory_entry long_large_page_directory_table [ 0x200 ] {};
+
+    alignas(0x1000) constinit
+    extended_page_directory_pointer_entry large_page_directory_pointer_table [ 4 ] {};
 }
 
 void psys::main ()
