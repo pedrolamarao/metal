@@ -44,6 +44,21 @@ namespace
     _64::page_map_entry page_map [ 0x200 ];
 }
 
+[[gnu::naked, gnu::used]]
+extern "C"
+void test_64 ()
+{
+    __asm__ (
+        ".code64          \n"
+        "mov $999, %%rax  \n"
+        "mov %%eax, %0    \n"
+        "lretl            \n"
+        :
+        : "m"(_test_control)
+        : "rax"
+    );
+}
+
 void psys::main ()
 {
     using namespace x86;
@@ -137,52 +152,20 @@ void psys::main ()
 
     // processor is executing in 32 bit long mode.
 
-    // run 64 bit code.
+    // call 64 bit code.
 
     _test_control = step++;
 
     auto code_segment_64 = segment_selector{3,false,0};
 
-    // switch to 64-bit code segment.
-
     __asm__ (
-        ".code32         \n"
-        "mov %0, %%eax   \n"
-        "push %%eax      \n"
-        "mov $%=f, %%eax \n"
-        "push %%eax      \n"
-        "lretl           \n"
-        "%=:             \n"
+        "push %k0       \n"
+        "push %k1       \n"
+        "lcall *(%%esp) \n"
+        "add $8, %%esp  \n"
         :
-        : "mr"(code_segment_64)
-        : "eax"
+        : "r"(code_segment_64), "r"(test_64)
     );
-
-    // run 64-bit code.
-
-    __asm__ (
-        ".code64         \n"
-        "mov %1, %%rax   \n"
-        "mov %%rax, %0   \n"
-        :
-        : "m"(_test_control), "mr"(step++)
-        : "rax"
-    );
-
-    // switch back to 32 bit code segment.
-
-    __asm__ (
-        ".code64         \n"
-        "mov %0, %%rax   \n"
-        "push %%rax      \n"
-        "mov $%=f, %%rax \n"
-        "push %%rax      \n"
-        "lretq           \n"
-        "%=:             \n"
-        :
-        : "mr"(code_segment_32)
-        : "rax"
-   );
 
    _test_control = -1;
 }
