@@ -2240,79 +2240,79 @@ namespace x86::_32
 
 namespace x86::_32
 {
-    TEST(long_paging, zero)
+    TEST(extended_paging, zero)
     {
-        auto test = [] (long_paging& value) {
+        auto test = [] (extended_paging& value) {
             ASSERT_FALSE(value.write_through());
             ASSERT_FALSE(value.cache());
             ASSERT_EQ(0,value.address());
         };
 
         size4 memory = 0;
-        auto& reference = reinterpret_cast<long_paging&>(memory);
+        auto& reference = reinterpret_cast<extended_paging&>(memory);
         test(reference);
 
-        auto fields = long_paging { 0, 0, 0 };
+        auto fields = extended_paging { 0, 0, 0 };
         test(fields);
 
-        auto semantic = long_paging { {}, false, false, 0 };
+        auto semantic = extended_paging { {}, false, false, 0 };
         test(semantic);
     }
 
-    TEST(long_paging, write_through)
+    TEST(extended_paging, write_through)
     {
-        auto test = [] (long_paging& value) {
+        auto test = [] (extended_paging& value) {
             ASSERT_TRUE(value.write_through());
             ASSERT_FALSE(value.cache());
             ASSERT_EQ(0,value.address());
         };
 
         size4 memory = size4{1} << 3;
-        auto& reference = reinterpret_cast<long_paging&>(memory);
+        auto& reference = reinterpret_cast<extended_paging&>(memory);
         test(reference);
 
-        auto fields = long_paging { 1, 0, 0 };
+        auto fields = extended_paging { 1, 0, 0 };
         test(fields);
 
-        auto semantic = long_paging { {}, true, false, 0 };
+        auto semantic = extended_paging { {}, true, false, 0 };
         test(semantic);
     }
 
-    TEST(long_paging, cache)
+    TEST(extended_paging, cache)
     {
-        auto test = [] (long_paging& value) {
+        auto test = [] (extended_paging& value) {
             ASSERT_FALSE(value.write_through());
             ASSERT_TRUE(value.cache());
             ASSERT_EQ(0,value.address());
         };
 
         size4 memory = size4{1} << 4;
-        auto& reference = reinterpret_cast<long_paging&>(memory);
+        auto& reference = reinterpret_cast<extended_paging&>(memory);
         test(reference);
 
-        auto fields = long_paging { 0, 1, 0 };
+        auto fields = extended_paging { 0, 1, 0 };
         test(fields);
 
-        auto semantic = long_paging { {}, false, true, 0 };
+        auto semantic = extended_paging { {}, false, true, 0 };
         test(semantic);
     }
 
-    TEST(long_paging, address)
+    TEST(extended_paging, address)
     {
-        auto test = [] (long_paging& value) {
+        auto test = [] (extended_paging& value) {
             ASSERT_FALSE(value.write_through());
             ASSERT_FALSE(value.cache());
             ASSERT_EQ(0xFEDCBA80,value.address());
         };
 
         size4 memory = 0xFEDCBA80;
-        auto& reference = reinterpret_cast<long_paging&>(memory);
+        auto& reference = reinterpret_cast<extended_paging&>(memory);
         test(reference);
 
-        auto fields = long_paging { 0, 0, 0x7F6E5D4 };
+        auto fields = extended_paging { 0, 0, 0x7F6E5D4 };
         test(fields);
 
-        auto semantic = long_paging { {}, false, false, 0xFEDCBA80 };
+        auto semantic = extended_paging { {}, false, false, 0xFEDCBA80 };
         test(semantic);
     }
 }

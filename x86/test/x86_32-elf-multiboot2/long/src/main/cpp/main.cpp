@@ -127,7 +127,7 @@ void psys::main ()
     }
     enable_large_pages();
     enable_long_addresses();
-    set_paging( _32::long_paging { {}, false, false, reinterpret_cast<size4>(page_map) } );
+    set_paging( _32::extended_paging { {}, false, false, reinterpret_cast<size4>(page_map) } );
 
     // enable long mode.
 

@@ -764,9 +764,9 @@ namespace x86::_32
 
     static_assert(sizeof(short_paging) == 4, "unexpected size of short_paging");
 
-    //! Long (i.e. PAE) paging control.
+    //! Extended (i.e. PAE) paging control.
 
-    class long_paging
+    class extended_paging
     {
         size4 _zero_0        : 3  { 0 };
         size4 _write_through : 1  {};
@@ -778,12 +778,12 @@ namespace x86::_32
         //! Default constructor.
 
         constexpr
-        long_paging () = default;
+        extended_paging () = default;
 
         //! Field constructor.
 
         constexpr
-        long_paging (
+        extended_paging (
             unsigned _ExtInt(1) write_through,
             unsigned _ExtInt(1) cache,
             unsigned _ExtInt(27) address
@@ -792,7 +792,7 @@ namespace x86::_32
         //! Semantic constructor.
 
         constexpr
-        long_paging (
+        extended_paging (
             decltype(nullptr) ignored,
             bool write_through,
             bool cache,
@@ -813,7 +813,7 @@ namespace x86::_32
 
     };
 
-    static_assert(sizeof(long_paging) == 4, "unexpected size of long_paging");
+    static_assert(sizeof(extended_paging) == 4, "unexpected size of extended_paging");
 
     //! @}
 
@@ -824,9 +824,9 @@ namespace x86::_32
 
     auto get_short_paging () -> short_paging;
 
-    //! Gets the paging control register (CR3) interpreted as long paging.
+    //! Gets the paging control register (CR3) interpreted as extended paging.
 
-    auto get_long_paging () -> long_paging;
+    auto get_extended_paging () -> extended_paging;
 
     //! Sets the paging control register (CR3).
 
@@ -834,7 +834,7 @@ namespace x86::_32
 
     //! Sets the paging control register (CR3).
 
-    void set_paging (long_paging value);
+    void set_paging (extended_paging value);
 
     //! @}
 }
@@ -1004,6 +1004,8 @@ namespace x86::_32
     auto short_small_page_directory_entry::address () const -> size4 { return size4{_address} << 12; }
 }
 
+// Implementation: short_large_page_directory_entry
+
 namespace x86::_32
 {
     constexpr inline
@@ -1096,6 +1098,58 @@ namespace x86::_32
     inline
     auto short_large_page_directory_entry::address () const -> size8 { return (size8{_address_high} << 32) | (size8{_address_low} << 22); }
 }
+
+// Implementation: short_paging
+
+namespace x86::_32
+{
+    constexpr inline
+    short_paging::short_paging (
+        unsigned _ExtInt(1) write_through,
+        unsigned _ExtInt(1) cache,
+        unsigned _ExtInt(20) address
+    ) :
+        _write_through{write_through},
+        _cache{cache},
+        _address{address}
+    { }
+
+    constexpr inline
+    short_paging::short_paging (
+        decltype(nullptr),
+        bool write_through,
+        bool cache,
+        size4 address
+    ) :
+        _write_through{write_through},
+        _cache{cache},
+        _address{address >> 12}
+    { }
+
+    inline
+    auto short_paging::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto short_paging::cache () const -> bool { return _cache; }
+
+    inline
+    auto short_paging::address () const -> size4 { return size4{_address} << 12; }
+
+    inline
+    auto get_short_paging () -> short_paging
+    {
+        size value = cr3();
+        return reinterpret_cast<short_paging&>(value);
+    }
+
+    inline
+    void set_paging (short_paging value)
+    {
+        cr3( reinterpret_cast<size&>(value) );
+    }
+}
+
+// Implementation: extended_page_entry
 
 namespace x86::_32
 {
@@ -1195,6 +1249,8 @@ namespace x86::_32
     auto extended_page_entry::nonexecutable () const -> bool { return _nonexecutable; }
 }
 
+// Implementation: extended_small_page_directory_entry
+
 namespace x86::_32
 {
     constexpr inline
@@ -1271,6 +1327,8 @@ namespace x86::_32
     inline
     auto extended_small_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
 }
+
+// Implementation: extended_large_page_directory_entry
 
 namespace x86::_32
 {
@@ -1370,6 +1428,8 @@ namespace x86::_32
     auto extended_large_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
 }
 
+// Implementation: extended_page_directory_pointer_entry
+
 namespace x86::_32
 {
     constexpr inline
@@ -1419,45 +1479,12 @@ namespace x86::_32
     auto extended_page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
 }
 
-namespace x86::_32
-{
-    constexpr inline
-    short_paging::short_paging (
-        unsigned _ExtInt(1) write_through,
-        unsigned _ExtInt(1) cache,
-        unsigned _ExtInt(20) address
-    ) :
-        _write_through{write_through},
-        _cache{cache},
-        _address{address}
-    { }
-
-    constexpr inline
-    short_paging::short_paging (
-        decltype(nullptr),
-        bool write_through,
-        bool cache,
-        size4 address
-    ) :
-        _write_through{write_through},
-        _cache{cache},
-        _address{address >> 12}
-    { }
-
-    inline
-    auto short_paging::write_through () const -> bool { return _write_through; }
-
-    inline
-    auto short_paging::cache () const -> bool { return _cache; }
-
-    inline
-    auto short_paging::address () const -> size4 { return size4{_address} << 12; }
-}
+// Implementation: extended_paging
 
 namespace x86::_32
 {
     constexpr inline
-    long_paging::long_paging (
+    extended_paging::extended_paging (
         unsigned _ExtInt(1) write_through,
         unsigned _ExtInt(1) cache,
         unsigned _ExtInt(27) address
@@ -1468,7 +1495,7 @@ namespace x86::_32
     { }
 
     constexpr inline
-    long_paging::long_paging (
+    extended_paging::extended_paging (
         decltype(nullptr),
         bool write_through,
         bool cache,
@@ -1480,36 +1507,23 @@ namespace x86::_32
     { }
 
     inline
-    auto long_paging::write_through () const -> bool { return _write_through; }
+    auto extended_paging::write_through () const -> bool { return _write_through; }
 
     inline
-    auto long_paging::cache () const -> bool { return _cache; }
+    auto extended_paging::cache () const -> bool { return _cache; }
 
     inline
-    auto long_paging::address () const -> size4 { return size4{_address} << 5; }
+    auto extended_paging::address () const -> size4 { return size4{_address} << 5; }
 
     inline
-    auto get_short_paging () -> short_paging
+    auto get_extended_paging () -> extended_paging
     {
         size value = cr3();
-        return reinterpret_cast<short_paging&>(value);
+        return reinterpret_cast<extended_paging&>(value);
     }
 
     inline
-    auto get_long_paging () -> long_paging
-    {
-        size value = cr3();
-        return reinterpret_cast<long_paging&>(value);
-    }
-
-    inline
-    void set_paging (short_paging value)
-    {
-        cr3( reinterpret_cast<size&>(value) );
-    }
-
-    inline
-    void set_paging (long_paging value)
+    void set_paging (extended_paging value)
     {
         cr3( reinterpret_cast<size&>(value) );
     }
