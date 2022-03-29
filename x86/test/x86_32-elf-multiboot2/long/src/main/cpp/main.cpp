@@ -152,20 +152,10 @@ void psys::main ()
 
     // processor is executing in 32 bit long mode.
 
-    // call 64 bit code.
+    // far call 64 bit code.
 
     _test_control = step++;
-
-    auto code_segment_64 = segment_selector{3,false,0};
-
-    __asm__ (
-        "push %k0       \n"
-        "push %k1       \n"
-        "lcall *(%%esp) \n"
-        "add $8, %%esp  \n"
-        :
-        : "r"(code_segment_64), "r"(test_64)
-    );
+    far_call(segment_selector{3,false,0}, test_64);
 
    _test_control = -1;
 }

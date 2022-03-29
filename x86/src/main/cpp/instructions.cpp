@@ -24,6 +24,11 @@ namespace x86
     struct carrier8 { size8 data {}; };
     static_assert(sizeof(carrier8) == sizeof(size8), "unexpected size of carrier8");
 
+    void call ( far_reference target )
+    {
+        __asm__ ( "lcall *%0" : : "m"(target) );
+    }
+
     auto cpuid2 (size feature, size variant) -> cpuid_type
     {
         carrier a { feature }, b {}, c { variant }, d {};

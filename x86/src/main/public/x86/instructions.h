@@ -9,6 +9,18 @@
 
 namespace x86
 {
+    //! Far memory reference.
+
+    struct far_reference
+    {
+        size offset  {};
+        size segment {};
+    };
+
+    //! Far call.
+
+    void call ( far_reference );
+
     //! Processor identification.
 
     struct cpuid_type { size a {}; size b {}; size c {}; size d {}; };

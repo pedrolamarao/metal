@@ -3,6 +3,7 @@
 #pragma once
 
 #include <x86/common.h>
+#include <x86/instructions.h>
 #include <x86/registers.h>
 
 #include <x86/_32/segments.h>
@@ -59,6 +60,10 @@ namespace x86
 
   void set_stack_segment ( segment_selector value );
 
+    //! Call to far memory reference.
+
+    void far_call ( segment_selector segment, void (* target) () );
+
   //! @}
 }
 
@@ -114,5 +119,11 @@ namespace x86
         fs(value);
         gs(value);
         ss(value);
+    }
+
+    inline
+    void far_call ( segment_selector segment, void (* target) () )
+    {
+        call({ reinterpret_cast<size>(target), static_cast<size2>(segment) });
     }
 }
