@@ -1,80 +1,34 @@
+// Copyright (C) 2012,2020,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+
 #pragma once
 
-#include <x86/cpuid.h>
+#include <x86/instructions.h>
 
-//! Declarations
 
-namespace x86
-{
-    using ps::size4;
-    using ps::size8;
-
-    //! Data types.
-    //! @{
-
-    //! @}
-
-    //! Primitive procedures.
-    //! @{
-
-    auto rdmsr (size4 id) -> size8;
-
-    void wrmsr (size4 id, size8 value);
-
-    //! @}
-
-    //! Interface types.
-    //! @{
-
-    //! @}
-
-  //! Standard procedures.
-  //! @{
-
-  //! True if model specific registers are supported
-  //! @pre x = cpuid(1)
-
-  constexpr
-  auto has_msr (cpuid x) -> bool ;
-
-  //! True if model specific registers are supported
-  //! @pre has_cpuid()
-
-  auto has_msr () -> bool ;
-
-  //! Model specific registers
-
-  enum class msr : size4
-  {
-    IA32_APIC_BASE   = 0x001B,
-    IA32_MISC_ENABLE = 0x01A0,
-  };
-
-  //! Read value of model specific register
-  //! @pre has_msr()
-
-  inline
-  auto read_msr (msr id) -> size8
-  {
-    return rdmsr( static_cast<size4>(id) );
-  }
-
-  //! @}
-}
-
-//! Inline definitions
+//! Interface.
 
 namespace x86
 {
-  inline constexpr
-  auto has_msr (cpuid x) -> bool
-  {
-    return (x.d() & 0b10000) != 0 ;
-  }
+    //! Model-specific registers (MSR).
 
-  inline
-  auto has_msr () -> bool
-  {
-    return has_msr(cpuid::load(1));
-  }
+    enum class msr : size4
+    {
+        APIC_BASE   = 0x0000001B,
+        MISC_ENABLE = 0x000001A0,
+        EFER        = 0xC0000080,
+    };
+
+    //! Get model-specific register (MSR).
+
+    auto get_msr (msr id) -> size8
+    {
+        return rdmsr( static_cast<size4>(id) );
+    }
+
+    //! Set model-specific register (MSR).
+
+    void set_msr (msr id, size8 value)
+    {
+        wrmsr( static_cast<size4>(id), value );
+    }
 }

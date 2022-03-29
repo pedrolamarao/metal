@@ -147,6 +147,7 @@ abstract class MultibootTestImageTask : DefaultTask()
         gdbExecutable.convention( if (gdbPath != null) "${gdbPath}/gdb" else "gdb" )
 
         qemuArgs.apply {
+            debug.set("cpu_reset,int")
             display.set("none")
             kernel.set(imageFile)
             this.gdb.set("tcp:localhost:${port}")

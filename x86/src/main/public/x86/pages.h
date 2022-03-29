@@ -4,6 +4,7 @@
 
 #include <x86/registers.h>
 #include <x86/_32/pages.h>
+#include <x86/_64/pages.h>
 
 
 // Interface.
