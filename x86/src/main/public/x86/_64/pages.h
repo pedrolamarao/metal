@@ -8,7 +8,7 @@
 
 // Interface.
 
-namespace x86::_64
+namespace x86
 {
     //! Types.
     //! @{
@@ -490,7 +490,7 @@ namespace x86::_64
 
 // Implementation: long_page_table_entry
 
-namespace x86::_64
+namespace x86
 {
     constexpr inline
     long_page_table_entry::long_page_table_entry (
@@ -599,7 +599,7 @@ namespace x86::_64
 
 // Implementation: long_small_page_directory_entry
 
-namespace x86::_64
+namespace x86
 {
     constexpr inline
     long_small_page_directory_entry::long_small_page_directory_entry (
@@ -680,7 +680,7 @@ namespace x86::_64
 
 // Implementation: long_small_page_directory_pointer_entry
 
-namespace x86::_64
+namespace x86
 {
     constexpr inline
     long_small_page_directory_pointer_entry::long_small_page_directory_pointer_entry (
@@ -761,7 +761,7 @@ namespace x86::_64
 
 // Implementation: long_page_map_entry
 
-namespace x86::_64
+namespace x86
 {
     constexpr inline
     long_page_map_entry::long_page_map_entry (
@@ -842,7 +842,7 @@ namespace x86::_64
 
 // Implementation: long_paging
 
-namespace x86::_64
+namespace x86
 {
     constexpr inline
     long_paging::long_paging (

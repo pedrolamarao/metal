@@ -5,7 +5,7 @@
 
 // short_page_entry
 
-namespace x86::_32
+namespace x86
 {
     TEST(short_page_entry, zero)
     {
@@ -358,7 +358,7 @@ namespace x86::_32
 
 // short_small_page_directory_entry
 
-namespace x86::_32
+namespace x86
 {
     TEST(short_small_page_directory_entry, zero)
     {
@@ -597,7 +597,7 @@ namespace x86::_32
 
 // short_large_page_directory_entry
 
-namespace x86::_32
+namespace x86
 {
     TEST(short_large_page_directory_entry, zero)
     {
@@ -963,7 +963,7 @@ namespace x86::_32
 
 // short_paging
 
-namespace x86::_32
+namespace x86
 {
     TEST(short_paging, zero)
     {
@@ -1044,7 +1044,7 @@ namespace x86::_32
 
 // extended_page_entry
 
-namespace x86::_32
+namespace x86
 {
     TEST(extended_page_entry, zero)
     {
@@ -1437,7 +1437,7 @@ namespace x86::_32
 
 // extended_small_page_directory_entry
 
-namespace x86::_32
+namespace x86
 {
     TEST(extended_small_page_directory_entry, zero)
     {
@@ -1712,7 +1712,7 @@ namespace x86::_32
 
 // extended_large_page_directory_entry
 
-namespace x86::_32
+namespace x86
 {
     TEST(extended_large_page_directory_entry, zero)
     {
@@ -2107,7 +2107,7 @@ namespace x86::_32
 
 // extended_page_directory_pointer_entry
 
-namespace x86::_32
+namespace x86
 {
     TEST(extended_page_directory_pointer_entry, zero)
     {
@@ -2238,7 +2238,7 @@ namespace x86::_32
 
 // extended_paging
 
-namespace x86::_32
+namespace x86
 {
     TEST(extended_paging, zero)
     {
@@ -2319,7 +2319,7 @@ namespace x86::_32
 
 // long_page_table_entry
     
-namespace x86::_64
+namespace x86
 {
     TEST(long_page_table_entry_64, zero)
     {
@@ -2758,7 +2758,7 @@ namespace x86::_64
 
 // long_small_page_directory_entry
     
-namespace x86::_64
+namespace x86
 {
     TEST(long_small_page_directory_entry_64, zero)
     {
@@ -3033,7 +3033,7 @@ namespace x86::_64
 
 // long_small_page_directory_pointer_entry
     
-namespace x86::_64
+namespace x86
 {
     TEST(long_small_page_directory_pointer_entry_64, zero)
     {
@@ -3308,7 +3308,7 @@ namespace x86::_64
 
 // long_page_map_entry
     
-namespace x86::_64
+namespace x86
 {
     TEST(long_page_map_entry_64, zero)
     {

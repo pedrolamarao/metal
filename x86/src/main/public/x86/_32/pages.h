@@ -8,7 +8,7 @@
 
 // Interface.
 
-namespace x86::_32
+namespace x86
 {
     //! Types.
     //! @{
@@ -841,7 +841,7 @@ namespace x86::_32
 
 // Implementation: short_page_entry
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     short_page_entry::short_page_entry (
@@ -934,7 +934,7 @@ namespace x86::_32
 
 // Implementation: short_small_page_directory_entry
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     short_small_page_directory_entry::short_small_page_directory_entry (
@@ -1006,7 +1006,7 @@ namespace x86::_32
 
 // Implementation: short_large_page_directory_entry
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     short_large_page_directory_entry::short_large_page_directory_entry (
@@ -1101,7 +1101,7 @@ namespace x86::_32
 
 // Implementation: short_paging
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     short_paging::short_paging (
@@ -1151,7 +1151,7 @@ namespace x86::_32
 
 // Implementation: extended_page_entry
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     extended_page_entry::extended_page_entry (
@@ -1251,7 +1251,7 @@ namespace x86::_32
 
 // Implementation: extended_small_page_directory_entry
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     extended_small_page_directory_entry::extended_small_page_directory_entry (
@@ -1330,7 +1330,7 @@ namespace x86::_32
 
 // Implementation: extended_large_page_directory_entry
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     extended_large_page_directory_entry::extended_large_page_directory_entry (
@@ -1430,7 +1430,7 @@ namespace x86::_32
 
 // Implementation: extended_page_directory_pointer_entry
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     extended_page_directory_pointer_entry::extended_page_directory_pointer_entry (
@@ -1481,7 +1481,7 @@ namespace x86::_32
 
 // Implementation: extended_paging
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     extended_paging::extended_paging (
