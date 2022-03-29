@@ -18,8 +18,14 @@ namespace
 
     // segments.
 
-    extern
-    _32::segment_descriptor global_descriptor_table [ 4 ];
+    struct
+    {
+        size8                   null_descriptor    {};
+        data_segment_descriptor data_segment       { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true };
+        code_segment_descriptor short_code_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, false, true, true };
+        code_segment_descriptor long_code_segment  { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true, true };
+    }
+    global_descriptor_table;
 
     // protected mode.
 
@@ -84,7 +90,7 @@ void psys::main ()
     // prepare segments.
 
     _test_control = step++;
-    set_global_descriptor_table(global_descriptor_table);
+    set_global_descriptor_table(&global_descriptor_table,sizeof(global_descriptor_table));
     set_data_segments(segment_selector{1,false,0});
     auto code_segment_32 = segment_selector{2,false,0};
     set_code_segment(code_segment_32);
@@ -162,21 +168,6 @@ void psys::main ()
 
 namespace
 {
-    // protected mode segments.
-
-    constinit
-    _32::segment_descriptor global_descriptor_table [ 4 ] =
-    {
-        // null descriptor
-        { },
-        // data segment
-        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
-        // 32 bit code segment
-        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
-        // 64 bit code segment
-        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, false, true, },
-    };
-
     // protected mode interrupts.
 
     constinit

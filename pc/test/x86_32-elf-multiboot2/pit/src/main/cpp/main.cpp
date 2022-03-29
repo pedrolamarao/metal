@@ -211,23 +211,20 @@ namespace
 
     // Segments.
 
-    [[gnu::section(".gdt")]]
-    constinit
-    segment_descriptor global_descriptor_table [5] =
+    struct
     {
-        { },
-        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
-        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
-        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
-        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
-    };
+        size8                   null_descriptor {};
+        data_segment_descriptor data_segment    { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true };
+        code_segment_descriptor code_segment    { 0, 0xFFFFF, true, true, true, 0, true, 0, false, true, true };
+    }
+    global_descriptor_table;
 
     void set_global_descriptor_table_register ()
     {
-        set_global_descriptor_table(global_descriptor_table);
-        auto const cs = segment_selector(1, false, 0);
+        set_global_descriptor_table(&global_descriptor_table,sizeof(global_descriptor_table));
+        auto const cs = segment_selector(2, false, 0);
         set_code_segment(cs);
-        auto const ds = segment_selector(2, false, 0);
+        auto const ds = segment_selector(1, false, 0);
         set_data_segments(ds);
     }
 
@@ -332,7 +329,7 @@ namespace
 
     void set_interrupt_descriptor_table ()
     {
-        auto const interrupt_segment = segment_selector(1, false, 0);
+        auto const interrupt_segment = segment_selector(2, false, 0);
 
         interrupt_descriptor_table[0x00] = { interrupt_segment, fault_handler<0x00>, true, true, 0, true };
         interrupt_descriptor_table[0x01] = { interrupt_segment, fault_handler<0x01>, true, true, 0, true };

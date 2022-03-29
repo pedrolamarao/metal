@@ -11,7 +11,6 @@
 namespace
 {
     using namespace x86;
-    using namespace x86::_32;
 
     constexpr unsigned global_descriptor_table_size = 6;
 
@@ -32,7 +31,6 @@ namespace
 void psys::main ()
 {
     using namespace x86;
-    using namespace x86::_32;
 
     unsigned step { 1 };
 
