@@ -108,72 +108,72 @@ namespace x86
     auto cs () -> segment_selector
     {
         segment_selector value {};
-        __asm__ ( "mov %%cs, %0" : "=m"(value) );
+        __asm__ ( "mov %%cs, %0" : "=r"(value) );
         return value;
     }
 
     void cs (segment_selector value)
     {
-        __asm__ ( "mov %%ss, %0" : : "m"(value) : );
+        __asm__ ( "mov %0, %%cs" : : "r"(value) : );
     }
 
     auto ds () -> segment_selector
     {
         segment_selector value {};
-        __asm__ ( "mov %%ds, %0" : "=m"(value) );
+        __asm__ ( "mov %%ds, %0" : "=r"(value) );
         return value;
     }
 
     void ds (segment_selector value)
     {
-        __asm__ ( "mov %%ds, %0" : : "m"(value) : );
+        __asm__ ( "mov %0, %%ds" : : "r"(value) : );
     }
 
     auto es () -> segment_selector
     {
         segment_selector value {};
-        __asm__ ( "mov %%es, %0" : "=m"(value) );
+        __asm__ ( "mov %%es, %0" : "=r"(value) );
         return value;
     }
 
     void es (segment_selector value)
     {
-        __asm__ ( "mov %%es, %0" : : "m"(value) : );
+        __asm__ ( "mov %0, %%es" : : "r"(value) : );
     }
 
     auto fs () -> segment_selector
     {
         segment_selector value {};
-        __asm__ ( "mov %%fs, %0" : "=m"(value) );
+        __asm__ ( "mov %%fs, %0" : "=r"(value) );
         return value;
     }
 
     void fs (segment_selector value)
     {
-        __asm__ ( "mov %%fs, %0" : : "m"(value) : );
+        __asm__ ( "mov %0, %%fs" : : "r"(value) : );
     }
 
     auto gs () -> segment_selector
     {
         segment_selector value {};
-        __asm__ ( "mov %%gs, %0" : "=m"(value) );
+        __asm__ ( "mov %%gs, %0" : "=r"(value) );
         return value;
     }
 
     void gs (segment_selector value)
     {
-        __asm__ ( "mov %%gs, %0" : : "m"(value) : );
+        __asm__ ( "mov %0, %%gs" : : "r"(value) : );
     }
 
     auto ss () -> segment_selector
     {
         segment_selector value {};
-        __asm__ ( "mov %%ss, %0" : "=m"(value) );
+        __asm__ ( "mov %%ss, %0" : "=r"(value) );
         return value;
     }
 
     void ss (segment_selector value)
     {
-        __asm__ ( "mov %%ss, %0" : : "m"(value) : );
+        __asm__ ( "mov %0, %%ss" : : "r"(value) : );
     }
 }

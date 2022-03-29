@@ -16,7 +16,17 @@ namespace
 
     // Segments.
 
-    extern segment_descriptor global_descriptor_table [8];
+    struct
+    {
+        size8                   null_descriptor   {};
+        data_segment_descriptor flat_data_segment { 0, 0xFFFFF, true, true, true, 0, true,  0, true,  true };
+        code_segment_descriptor flat_code_segment { 0, 0xFFFFF, true, true, true, 0, true,  0, false, true, true };
+        data_segment_descriptor bad_data_segment  { 0, 0xFFFFF, true, true, true, 0, false, 0, true,  true };
+        code_segment_descriptor bad_code_segment  { 0, 0xFFFFF, true, true, true, 0, true,  0, false, true, true };
+    }
+    global_descriptor_table;
+
+    static_assert(sizeof(global_descriptor_table) == 40, "unexpected size of global_descriptor_table");
 
     void set_segment_registers ( segment_selector code, segment_selector data );
 
@@ -66,9 +76,9 @@ void psys::main ()
 
     _test_control = 2;
 
-    set_global_descriptor_table(global_descriptor_table);
+    set_global_descriptor_table(&global_descriptor_table, sizeof(global_descriptor_table));
 
-    set_segment_registers(segment_selector(2, false, 0), segment_selector(3, false, 0));
+    set_segment_registers(segment_selector(2, false, 0), segment_selector(1, false, 0));
 
     // set the IDT register
 
@@ -161,28 +171,6 @@ namespace
 {
     using namespace x86;
     using namespace x86::_32;
-
-    [[gnu::section(".gdt")]]
-    constinit
-    segment_descriptor global_descriptor_table [8] =
-    {
-        // required null descriptor
-        { },
-        // unexpected null descriptor!
-        { },
-        // system flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
-        // system flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
-        // user flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
-        // user flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
-        // test segment: data non-present
-        { 0, 0xFFFFF, data_segment(true, true, true), 0, false, true, true, true, },
-        // test segment: code execute-only
-        { 0, 0xFFFFF, code_segment(true, false, true), 0, true, true, true, true, },
-    };
 
     void set_segment_registers ( segment_selector code, segment_selector data )
     {
@@ -507,7 +495,11 @@ namespace
             nop
             nop
             // restore
+            mov _test_debug, 2
+            mov _test_debug, gs
             pop gs
+            mov _test_debug, 3
+            mov _test_debug, gs
             pop eax
             ret
         }
@@ -542,7 +534,9 @@ namespace
             push eax
             push gs
             // prepare segment selector for non-present data segment
-            mov ax, 0x30
+            mov _test_debug, 1
+            mov _test_debug, gs
+            mov ax, 0x18
             jmp raise_NP_bad
         }
 #elif defined(__x86_64__)
@@ -552,7 +546,7 @@ namespace
             push rax
             push gs
             // prepare segment selector for non-present data segment
-            mov ax, 0x30
+            mov ax, 0x18
             jmp raise_NP_bad
         }
 #else
@@ -565,33 +559,29 @@ namespace
 #if defined(__i386__)
         __asm__
         {
-            // save
-            push eax
             // "fix" caller: rewrite with NOPS
+            push eax
             mov eax, 0x90909090
             mov raise_NP_bad, eax
+            pop eax
             // increment interrupt counter
             inc interrupt_0B_counter
             // discard error code from stack
             add esp, 4
-            // restore
-            pop eax
             iretd
         }
 #elif defined(__x86_64__)
         __asm__
         {
-            // save
-            push rax
             // "fix" caller: rewrite with NOPS
+            push rax
             mov rax, 0x9090909090909090
             mov raise_NP_bad, rax
+            pop rax
             // increment interrupt counter
             inc interrupt_0B_counter
             // discard error code from stack
             add rsp, 4
-            // restore
-            pop rax
             iretd
         }
 #else

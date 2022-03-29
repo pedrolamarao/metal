@@ -7,14 +7,13 @@ namespace x86
 {
     void set_code_segment ( segment_selector value )
     {
-        unsigned int const _value { size2 { value } };
         __asm__ (
             "push %0   \n"
             "push $%=f \n"
             "lret      \n"
-            "%=:        \n"
+            "%=:       \n"
             :
-            : "mr"(_value)
+            : "m"(value)
             :
        );
     }

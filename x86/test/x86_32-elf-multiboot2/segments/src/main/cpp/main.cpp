@@ -11,141 +11,248 @@
 namespace
 {
     using namespace x86;
-    using namespace x86::_32;
 
     constexpr unsigned global_descriptor_table_size = 6;
 
-    [[gnu::section(".gdt")]]
-    constinit
-    segment_descriptor global_descriptor_table [ global_descriptor_table_size ] =
+    struct [[gnu::packed]]
     {
-        // required null descriptor
-        { },
-        // unexpected null descriptor!
-        { },
-        // system flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
-        // system flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
-        // user flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
-        // user flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
-    };
+        size8                   null_descriptor   {};
+        size8                   null_descriptor_2 {};
+        data_segment_descriptor flat_data_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true };
+        code_segment_descriptor flat_code_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, false, true, true };
+        data_segment_descriptor more_data_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true };
+        code_segment_descriptor more_code_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, false, true, true };
+    }
+    global_descriptor_table;
+
+    static_assert(sizeof(global_descriptor_table) == 48, "unexpected size of global_descriptor_table");
 }
 
 void psys::main ()
 {
     using namespace x86;
-    using namespace x86::_32;
 
-    // test: data structures
+    unsigned step { 1 };
 
-    auto& segment = global_descriptor_table[4];
+    // Verify we can manipulate the global descriptor table register.
 
-    _test_control = 1;
-    if (segment.type() != code_segment(true, true, true)) {
+    _test_control = step++;
+    auto old_gdtr = gdtr();
+
+    _test_control = step++;
+    set_global_descriptor_table(&global_descriptor_table, sizeof(global_descriptor_table));
+
+    _test_control = step++;
+    auto new_gdtr = gdtr();
+
+    _test_control = step++;
+    if (old_gdtr.size == new_gdtr.size || old_gdtr.offset == new_gdtr.offset) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 2;
-    if (segment.privilege() != 3) {
+    // Verify we can manipulate the data segment registers.
+
+    // Verify we can manipulate the DS register.
+
+    step = 10;
+
+    _test_control = step++;
+    ds( segment_selector{2,false,0} );
+
+    _test_control = step++;
+    auto ds_2 = ds();
+
+    _test_control = step++;
+    if (ds_2 != segment_selector{2,false,0}) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 3;
-    if (segment.is_system()) {
+    _test_control = step++;
+    ds( segment_selector{4,false,0} );
+
+    _test_control = step++;
+    auto ds_4 = ds();
+
+    _test_control = step++;
+    if (ds_4 != segment_selector{4,false,0}) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 4;
-    if (segment.privilege() != 3) {
+    _test_control = step++;
+    if (ds_2 == ds_4) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 5;
-    if (! segment.is_present()) {
+    // Verify we can manipulate the ES register.
+
+    step = 20;
+
+    _test_control = step++;
+    es( segment_selector{2,false,0} );
+
+    _test_control = step++;
+    auto es_2 = es();
+
+    _test_control = step++;
+    if (es_2 != segment_selector{2,false,0}) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 6;
-    if (! segment.is_available()) {
+    _test_control = step++;
+    es( segment_selector{4,false,0} );
+
+    _test_control = step++;
+    auto es_4 = es();
+
+    _test_control = step++;
+    if (es_4 != segment_selector{4,false,0}) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 8;
-    if (! segment.is_32bit()) {
+    _test_control = step++;
+    if (es_2 == es_4) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 9;
-    if (! segment.is_4kb()) {
+    // Verify we can manipulate the FS register.
+
+    step = 30;
+
+    _test_control = step++;
+    fs( segment_selector{2,false,0} );
+
+    _test_control = step++;
+    auto fs_2 = fs();
+
+    _test_control = step++;
+    if (fs_2 != segment_selector{2,false,0}) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 10;
-    if (segment.base() != 0) {
-        _test_debug = segment.base();
+    _test_control = step++;
+    fs( segment_selector{4,false,0} );
+
+    _test_control = step++;
+    auto fs_4 = fs();
+
+    _test_control = step++;
+    if (fs_4 != segment_selector{4,false,0}) {
         _test_control = 0;
         return;
     }
 
-    _test_control = 11;
-    if (segment.limit() != 0x000FFFFF) {
-        _test_debug = segment.limit();
+    _test_control = step++;
+    if (fs_2 == fs_4) {
         _test_control = 0;
         return;
     }
 
-    // set GDT register
+    // Verify we can manipulate the GS register.
 
-    _test_control = 20;
+    step = 40;
 
-    set_global_descriptor_table(global_descriptor_table);
+    _test_control = step++;
+    gs( segment_selector{2,false,0} );
 
-    // test: did we successfully update the GDT register?
+    _test_control = step++;
+    auto gs_2 = gs();
 
-    _test_control = 21;
-
-    auto expected_size = ((global_descriptor_table_size * sizeof(segment_descriptor)) - 1);
-    auto expected_offset = reinterpret_cast<size>(global_descriptor_table);
-
-    auto [actual_size, actual_offset] = get_global_descriptor_table();
-
-    if (actual_size != expected_size || actual_offset != expected_offset) {
-        _test_debug = expected_size;
-        _test_debug = expected_offset;
-        _test_debug = actual_size;
-        _test_debug = actual_offset;
+    _test_control = step++;
+    if (gs_2 != segment_selector{2,false,0}) {
         _test_control = 0;
         return;
     }
 
-    // set CS register
+    _test_control = step++;
+    gs( segment_selector{4,false,0} );
 
-    _test_control = 30;
+    _test_control = step++;
+    auto gs_4 = gs();
 
-    auto const expected_cs = x86::segment_selector(2, false, 0);
+    _test_control = step++;
+    if (gs_4 != segment_selector{4,false,0}) {
+        _test_control = 0;
+        return;
+    }
 
-    x86::set_code_segment( expected_cs );
+    _test_control = step++;
+    if (gs_2 == gs_4) {
+        _test_control = 0;
+        return;
+    }
 
-    // test: did we successfully update the CS register?
+    // Verify we can manipulate the SS register.
 
-    _test_control = 31;
+    step = 50;
 
-    segment_selector actual_cs { get_code_segment() };
+    _test_control = step++;
+    ss( segment_selector{2,false,0} );
 
-    if (expected_cs != actual_cs) {
-        _test_debug = size2{expected_cs};
-        _test_debug = size2{actual_cs};
+    _test_control = step++;
+    auto ss_2 = ss();
+
+    _test_control = step++;
+    if (ss_2 != segment_selector{2,false,0}) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = step++;
+    ss( segment_selector{4,false,0} );
+
+    _test_control = step++;
+    auto ss_4 = ss();
+
+    _test_control = step++;
+    if (ss_4 != segment_selector{4,false,0}) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = step++;
+    if (ss_2 == ss_4) {
+        _test_control = 0;
+        return;
+    }
+
+    // Verify we can manipulate the code segment register.
+
+    step = 100;
+
+    _test_control = step++;
+    set_code_segment( segment_selector{3,false,0} );
+
+    _test_control = step++;
+    auto cs_3 = cs();
+
+    _test_control = step++;
+    if (cs_3 != segment_selector{3,false,0}) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = step++;
+    set_code_segment( segment_selector{5,false,0} );
+
+    _test_control = step++;
+    auto cs_5 = cs();
+
+    _test_control = step++;
+    if (cs_5 != segment_selector{5,false,0}) {
+        _test_control = 0;
+        return;
+    }
+
+    _test_control = step++;
+    if (cs_3 == cs_5) {
         _test_control = 0;
         return;
     }

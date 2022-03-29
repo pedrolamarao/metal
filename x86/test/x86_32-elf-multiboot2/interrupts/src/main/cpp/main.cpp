@@ -14,23 +14,15 @@ namespace
     using namespace x86;
     using namespace x86::_32;;
 
-    [[gnu::section(".gdt")]]
-    constinit
-    segment_descriptor global_descriptor_table [6] =
+    struct
     {
-        // required null descriptor
-        { },
-        // unexpected null descriptor!
-        { },
-        // system flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 0, true, true, true, true, },
-        // system flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 0, true, true, true, true, },
-        // user flat code descriptor
-        { 0, 0xFFFFF, code_segment(true, true, true), 3, true, true, true, true, },
-        // user flat data descriptor
-        { 0, 0xFFFFF, data_segment(true, true, true), 3, true, true, true, true, },
-    };
+        size8                   null_descriptor   {};
+        data_segment_descriptor flat_data_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true };
+        code_segment_descriptor flat_code_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, false, true, true };
+    }
+    global_descriptor_table;
+
+    static_assert(sizeof(global_descriptor_table) == 24, "unexpected size of global_descriptor_table");
 
     void set_segment_registers ( segment_selector code, segment_selector data )
     {
@@ -69,9 +61,9 @@ void psys::main ()
 
     _test_control = 2;
 
-    set_global_descriptor_table(global_descriptor_table);
+    set_global_descriptor_table(&global_descriptor_table, sizeof(global_descriptor_table));
 
-    set_segment_registers(segment_selector(2, false, 0), segment_selector(3, false, 0));
+    set_segment_registers(segment_selector(2, false, 0), segment_selector(1, false, 0));
 
     // test: data structures
 
