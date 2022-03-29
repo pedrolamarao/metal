@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <x86/cpuid.h>
+#include <x86/identification.h>
 
 
 namespace x86
@@ -53,7 +53,7 @@ namespace x86
 	};
 
 	constexpr inline
-	auto has_apic (cpuid const &) -> bool
+	auto has_apic () -> bool
 	{
 		return false;
 	}

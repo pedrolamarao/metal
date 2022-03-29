@@ -4,7 +4,6 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/cpuid.h>
 #include <x86/identification.h>
 #include <x86/interrupts.h>
 #include <x86/msr.h>

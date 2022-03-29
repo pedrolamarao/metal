@@ -29,7 +29,7 @@ namespace x86
         __asm__ ( "lcall *%0" : : "m"(target) );
     }
 
-    auto cpuid2 (size feature, size variant) -> cpuid_type
+    auto cpuid (size feature, size variant) -> cpuid_type
     {
         carrier a { feature }, b {}, c { variant }, d {};
         __asm__ ( "cpuid" : "=a"(a), "=b"(b), "=c"(c), "=d"(d) : "a"(a), "c"(c) );

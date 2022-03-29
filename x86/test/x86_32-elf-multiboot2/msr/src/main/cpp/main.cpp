@@ -5,7 +5,6 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/cpuid.h>
 #include <x86/segments.h>
 #include <x86/identification.h>
 #include <x86/interrupts.h>
@@ -38,7 +37,7 @@ void psys::main ()
 
     _test_control = step++;
 
-    if (! cpuid_1::load().has_local_apic()) {
+    if (! has_local_apic()) {
         _test_control = 0;
         return;
     }

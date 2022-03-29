@@ -1,11 +1,11 @@
-// Copyright (C) 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <x86/cpuid.h>
+#include <x86/identification.h>
 
 namespace x86
 {
     [[gnu::naked]]
-    auto cpu_age () -> size
+    auto find_age () -> size
     {
 #if defined(__i386__)
         __asm__

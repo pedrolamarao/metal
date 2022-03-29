@@ -27,7 +27,7 @@ namespace x86
 
     //! Get processor identification.
 
-    auto cpuid2 (size feature, size variant = 0) -> cpuid_type;
+    auto cpuid (size feature, size variant = 0) -> cpuid_type;
 
     //! Halt processor.
 
