@@ -76,7 +76,7 @@ namespace x86
             unsigned _ExtInt(1) available,
             bool is_64bit,
             bool is_32bit,
-            bool is_4kib
+            bool is_4kb
         );
 
         auto base () const -> size4 ;
@@ -90,6 +90,8 @@ namespace x86
         auto conforming () const -> bool ;
 
         auto privilege () const -> unsigned _ExtInt(2) ;
+
+        auto present () const -> bool ;
 
         auto available () const -> unsigned _ExtInt(1) ;
 
@@ -162,7 +164,7 @@ namespace x86
             bool present,
             unsigned _ExtInt(1) available,
             bool is_32bit,
-            bool is_4kib
+            bool is_4kb
         );
 
         auto base () const -> size4 ;
@@ -176,6 +178,8 @@ namespace x86
         auto expand_down () const -> bool ;
 
         auto privilege () const -> unsigned _ExtInt(2) ;
+
+        auto present () const -> bool ;
 
         auto available () const -> unsigned _ExtInt(1) ;
 
@@ -296,6 +300,9 @@ namespace x86
     auto code_segment_descriptor::privilege () const -> unsigned _ExtInt(2) { return _privilege; };
 
     inline
+    auto code_segment_descriptor::present () const -> bool { return _present; };
+
+    inline
     auto code_segment_descriptor::available () const -> unsigned _ExtInt(1) { return _available; };
 
     inline
@@ -388,6 +395,9 @@ namespace x86
 
     inline
     auto data_segment_descriptor::privilege () const -> unsigned _ExtInt(2) { return _privilege; };
+
+    inline
+    auto data_segment_descriptor::present () const -> bool { return _present; };
 
     inline
     auto data_segment_descriptor::available () const -> unsigned _ExtInt(1) { return _available; };

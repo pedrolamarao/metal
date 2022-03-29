@@ -1,500 +1,670 @@
 #include <gtest/gtest.h>
 
-#include <x86/_32/segments.h>
-#include <x86/_64/segments.h>
+#include <x86/segments.h>
 
 
-namespace
+// code_segment_descriptor
+
+namespace x86
 {
-    TEST(segment_32, base)
+    TEST(code_segment_descriptor, zero)
     {
-        auto base = 0x76543210;
-
-        ASSERT_EQ(0x76, (base >> 24) & 0xFF);
-        ASSERT_EQ(0x54, (base >> 16) & 0xFF);
-        ASSERT_EQ(0x32, (base >>  8) & 0xFF);
-        ASSERT_EQ(0x10, (base >>  0) & 0xFF);
-
-        ps::size1 bytes [8] {
-            0x00, 0x00, 0x10, 0x32,
-            0x54, 0x00, 0x00, 0x76,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, 0 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(base,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, false, false, false, 0, false, 0, false, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_32, limit)
+    TEST(code_segment_descriptor, base)
     {
-        auto limit = 0x0EDCBA;
-
-        ASSERT_EQ(0x0E, (limit >> 16) & 0xFF);
-        ASSERT_EQ(0xDC, (limit >>  8) & 0xFF);
-        ASSERT_EQ(0xBA, (limit >>  0) & 0xFF);
-
-        ps::size1 bytes [8] {
-            0xBA, 0xDC, 0x00, 0x00,
-            0x00, 0x00, 0x0E, 0x00,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0xFFFFFFFF,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::segment_descriptor&>(bytes);
+        size4 memory [2] { 0xFFFF0000, 0xFF0000FF };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(limit,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0xFFFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0xFFFFFFFF, 0, false, false, false, 0, false, 0, false, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_32, is_present)
+    TEST(code_segment_descriptor, limit)
     {
-        ps::size1 bytes [8] {
-            0, 0, 0, 0,
-            0, 0b10000000, 0, 0,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0xFFFFF,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::segment_descriptor&>(bytes);
+        size4 memory [2] { 0x0000FFFF, 0x000F0000 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_TRUE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0xFFFF, 0, 0, 0, 0, 0, 0, 0, 0xF, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0xFFFFF, false, false, false, 0, false, 0, false, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_32, privilege)
+    TEST(code_segment_descriptor, accessed)
     {
-        ps::size1 bytes [8] {
-            0, 0, 0, 0,
-            0, 0b01000000, 0, 0,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_TRUE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 8 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(2,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, true, false, false, 0, false, 0, false, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_32, is_system)
+    TEST(code_segment_descriptor, readable)
     {
-        ps::size1 bytes [8] {
-            0, 0, 0, 0,
-            0, 0b00010000, 0, 0,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_TRUE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 9 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, false, true, false, 0, false, 0, false, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_32, type)
+    TEST(code_segment_descriptor, conforming)
     {
-        ps::size1 bytes [8] {
-            0, 0, 0, 0,
-            0, 0b00001000, 0, 0,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_TRUE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 10 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(8,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, false, false, true, 0, false, 0, false, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_32, is_4kb)
+    TEST(code_segment_descriptor, privilege)
     {
-        ps::size1 bytes [8] {
-            0, 0, 0, 0,
-            0, 0, 0b10000000, 0,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(3,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{3} << 13 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_TRUE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, false, false, false, 3, false, 0, false, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_32, is_32bit)
+    TEST(code_segment_descriptor, present)
     {
-        ps::size1 bytes [8] {
-            0, 0, 0, 0,
-            0, 0, 0b01000000, 0,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_TRUE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 15 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_TRUE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, false, false, false, 0, true, 0, false, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_32, max)
+    TEST(code_segment_descriptor, available)
     {
-        ps::size1 bytes [8] {
-            0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(1,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 20 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_TRUE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
-        ASSERT_EQ(3,descriptor.privilege());
-        ASSERT_EQ(15,descriptor.type());
-        ASSERT_EQ(0xFFFFFFFF,descriptor.base());
-        ASSERT_EQ(0xFFFFF,descriptor.limit());
-        ASSERT_TRUE(descriptor.is_available());
-        ASSERT_TRUE(descriptor.is_32bit());
-        ASSERT_TRUE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, false, false, false, 0, false, 1, false, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_32, zero)
+    TEST(code_segment_descriptor, long_mode)
     {
-        x86::_32::segment_descriptor descriptor {};
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
-    }
-
-    TEST(segment_32, flat)
-    {
-        x86::_32::segment_descriptor descriptor { 0, 0xFFFFF, 15, 3, true, true, true, true, };
-        ASSERT_TRUE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
-        ASSERT_EQ(3,descriptor.privilege());
-        ASSERT_EQ(15,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0xFFFFF,descriptor.limit());
-        ASSERT_TRUE(descriptor.is_available());
-        ASSERT_TRUE(descriptor.is_32bit());
-        ASSERT_TRUE(descriptor.is_4kb());
-    }
-
-    TEST(segment_32, weird)
-    {
-        x86::_32::segment_descriptor descriptor { 0x76543210, 0x0EDCBA, 15, 3, true, true, true, true, };
-        ASSERT_TRUE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
-        ASSERT_EQ(3,descriptor.privilege());
-        ASSERT_EQ(15,descriptor.type());
-        ASSERT_EQ(0x76543210,descriptor.base());
-        ASSERT_EQ(0x0EDCBA,descriptor.limit());
-        ASSERT_TRUE(descriptor.is_available());
-        ASSERT_TRUE(descriptor.is_32bit());
-        ASSERT_TRUE(descriptor.is_4kb());
-    }
-
-    TEST(segment_64, base)
-    {
-        auto base = 0xFEDCBA9876543210;
-
-        ASSERT_EQ(0xFE, (base >> 56) & 0xFF);
-        ASSERT_EQ(0xDC, (base >> 48) & 0xFF);
-        ASSERT_EQ(0xBA, (base >> 40) & 0xFF);
-        ASSERT_EQ(0x98, (base >> 32) & 0xFF);
-        ASSERT_EQ(0x76, (base >> 24) & 0xFF);
-        ASSERT_EQ(0x54, (base >> 16) & 0xFF);
-        ASSERT_EQ(0x32, (base >>  8) & 0xFF);
-        ASSERT_EQ(0x10, (base >>  0) & 0xFF);
-
-        ps::size1 bytes [16] {
-            0x00, 0x00, 0x10, 0x32,
-            0x54, 0x00, 0x00, 0x76,
-            0x98, 0xBA, 0xDC, 0xFE,
-            0, 0, 0, 0,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_TRUE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 21 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(base,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, false, false, false, 0, false, 0, true, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, limit)
+    TEST(code_segment_descriptor, operand_size)
     {
-        auto limit = 0x0EDCBA;
-
-        ASSERT_EQ(0x0E, (limit >> 16) & 0xFF);
-        ASSERT_EQ(0xDC, (limit >>  8) & 0xFF);
-        ASSERT_EQ(0xBA, (limit >>  0) & 0xFF);
-
-        ps::size1 bytes [16] {
-            0xBA, 0xDC, 0x00, 0x00,
-            0x00, 0x00, 0x0E, 0x00,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_TRUE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 22 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(limit,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, false, false, false, 0, false, 0, false, true, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, is_present)
+    TEST(code_segment_descriptor, granularity)
     {
-        ps::size1 bytes [16] {
-            0, 0, 0, 0,
-            0, 0b10000000, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
+        auto test = [] (code_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.readable());
+            ASSERT_FALSE(value.conforming());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_64bit());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_TRUE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 23 };
+        auto& reference = reinterpret_cast<code_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_TRUE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = code_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 };
+        test(fields);
+
+        auto semantic = code_segment_descriptor {
+            0, 0, false, false, false, 0, false, 0, false, false, true
+        };
+        test(semantic);
     }
+}
 
-    TEST(segment_64, privilege)
+// data_segment_descriptor
+
+namespace x86
+{
+    TEST(data_segment_descriptor, zero)
     {
-        ps::size1 bytes [16] {
-            0, 0, 0, 0,
-            0, 0b01000000, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, 0 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(2,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = data_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0, false, false, false, 0, false, 0, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, is_system)
+    TEST(data_segment_descriptor, base)
     {
-        ps::size1 bytes [16] {
-            0, 0, 0, 0,
-            0, 0b00010000, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0xFFFFFFFF,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::segment_descriptor&>(bytes);
+        size4 memory [2] { 0xFFFF0000, 0xFF0000FF };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = data_segment_descriptor { 0, 0xFFFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0xFFFFFFFF, 0, false, false, false, 0, false, 0, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, type)
+    TEST(data_segment_descriptor, limit)
     {
-        ps::size1 bytes [16] {
-            0, 0, 0, 0,
-            0, 0b00001000, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0xFFFFF,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::segment_descriptor&>(bytes);
+        size4 memory [2] { 0x0000FFFF, 0x000F0000 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(8,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = data_segment_descriptor { 0xFFFF, 0, 0, 0, 0, 0, 0, 0, 0xF, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0xFFFFF, false, false, false, 0, false, 0, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, is_4kb)
+    TEST(data_segment_descriptor, accessed)
     {
-        ps::size1 bytes [16] {
-            0, 0, 0, 0,
-            0, 0, 0b10000000, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_TRUE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 8 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_TRUE(descriptor.is_4kb());
+        auto fields = data_segment_descriptor { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0, true, false, false, 0, false, 0, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, is_32bit)
+    TEST(data_segment_descriptor, writable)
     {
-        ps::size1 bytes [16] {
-            0, 0, 0, 0,
-            0, 0, 0b01000000, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_TRUE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 9 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_TRUE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto fields = data_segment_descriptor { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0, false, true, false, 0, false, 0, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, max)
+    TEST(data_segment_descriptor, expand_down)
     {
-        ps::size1 bytes [16] {
-            0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF,
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_TRUE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::segment_descriptor&>(bytes);
+        size4 memory [2] { 0, size4{1} << 10 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
 
-        ASSERT_TRUE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
-        ASSERT_EQ(3,descriptor.privilege());
-        ASSERT_EQ(15,descriptor.type());
-        ASSERT_EQ(0xFFFFFFFFFFFFFFFF,descriptor.base());
-        ASSERT_EQ(0xFFFFF,descriptor.limit());
-        ASSERT_TRUE(descriptor.is_available());
-        ASSERT_TRUE(descriptor.is_32bit());
-        ASSERT_TRUE(descriptor.is_4kb());
+        auto fields = data_segment_descriptor { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0, false, false, true, 0, false, 0, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, zero)
+    TEST(data_segment_descriptor, privilege)
     {
-        x86::_64::segment_descriptor descriptor {};
-        ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
-        ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0,descriptor.limit());
-        ASSERT_FALSE(descriptor.is_available());
-        ASSERT_FALSE(descriptor.is_32bit());
-        ASSERT_FALSE(descriptor.is_4kb());
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(3,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
+        };
+
+        size4 memory [2] { 0, size4{3} << 13 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
+
+        auto fields = data_segment_descriptor { 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0, false, false, false, 3, false, 0, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, flat)
+    TEST(data_segment_descriptor, present)
     {
-        x86::_64::segment_descriptor descriptor { 0, 0xFFFFF, 15, 3, true, true, true, true, };
-        ASSERT_TRUE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
-        ASSERT_EQ(3,descriptor.privilege());
-        ASSERT_EQ(15,descriptor.type());
-        ASSERT_EQ(0,descriptor.base());
-        ASSERT_EQ(0xFFFFF,descriptor.limit());
-        ASSERT_TRUE(descriptor.is_available());
-        ASSERT_TRUE(descriptor.is_32bit());
-        ASSERT_TRUE(descriptor.is_4kb());
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_TRUE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
+        };
+
+        size4 memory [2] { 0, size4{1} << 15 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
+
+        auto fields = data_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0, false, false, false, 0, true, 0, false, false
+        };
+        test(semantic);
     }
 
-    TEST(segment_64, weird)
+    TEST(data_segment_descriptor, available)
     {
-        x86::_64::segment_descriptor descriptor { 0xFEDCBA9876543210, 0x0EDCBA, 15, 3, true, true, true, true, };
-        ASSERT_TRUE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
-        ASSERT_EQ(3,descriptor.privilege());
-        ASSERT_EQ(15,descriptor.type());
-        ASSERT_EQ(0xFEDCBA9876543210,descriptor.base());
-        ASSERT_EQ(0x0EDCBA,descriptor.limit());
-        ASSERT_TRUE(descriptor.is_available());
-        ASSERT_TRUE(descriptor.is_32bit());
-        ASSERT_TRUE(descriptor.is_4kb());
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(1,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
+        };
+
+        size4 memory [2] { 0, size4{1} << 20 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
+
+        auto fields = data_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0, false, false, false, 0, false, 1, false, false
+        };
+        test(semantic);
+    }
+
+    TEST(data_segment_descriptor, operand_size)
+    {
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_TRUE(value.is_32bit());
+            ASSERT_FALSE(value.is_4kb());
+        };
+
+        size4 memory [2] { 0, size4{1} << 22 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
+
+        auto fields = data_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0, false, false, false, 0, false, 0, true, false
+        };
+        test(semantic);
+    }
+
+    TEST(data_segment_descriptor, granularity)
+    {
+        auto test = [] (data_segment_descriptor& value) {
+            ASSERT_EQ(0,value.base());
+            ASSERT_EQ(0,value.limit());
+            ASSERT_FALSE(value.accessed());
+            ASSERT_FALSE(value.writable());
+            ASSERT_FALSE(value.expand_down());
+            ASSERT_EQ(0,value.privilege());
+            ASSERT_FALSE(value.present());
+            ASSERT_EQ(0,value.available());
+            ASSERT_FALSE(value.is_32bit());
+            ASSERT_TRUE(value.is_4kb());
+        };
+
+        size4 memory [2] { 0, size4{1} << 23 };
+        auto& reference = reinterpret_cast<data_segment_descriptor&>(memory);
+        test(reference);
+
+        auto fields = data_segment_descriptor { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 };
+        test(fields);
+
+        auto semantic = data_segment_descriptor {
+            0, 0, false, false, false, 0, false, 0, false, true
+        };
+        test(semantic);
     }
 }
