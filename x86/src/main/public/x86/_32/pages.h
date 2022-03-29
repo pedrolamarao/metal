@@ -839,7 +839,7 @@ namespace x86::_32
     //! @}
 }
 
-// Implementation.
+// Implementation: short_page_entry
 
 namespace x86::_32
 {
@@ -930,7 +930,12 @@ namespace x86::_32
 
     inline
     auto short_page_entry::address () const -> size4 { return size4{_address} << 12; }
+}
 
+// Implementation: short_small_page_directory_entry
+
+namespace x86::_32
+{
     constexpr inline
     short_small_page_directory_entry::short_small_page_directory_entry (
         unsigned _ExtInt(1)  present,
@@ -997,7 +1002,10 @@ namespace x86::_32
 
     inline
     auto short_small_page_directory_entry::address () const -> size4 { return size4{_address} << 12; }
+}
 
+namespace x86::_32
+{
     constexpr inline
     short_large_page_directory_entry::short_large_page_directory_entry (
         unsigned _ExtInt(1)  present,
@@ -1087,7 +1095,10 @@ namespace x86::_32
 
     inline
     auto short_large_page_directory_entry::address () const -> size8 { return (size8{_address_high} << 32) | (size8{_address_low} << 22); }
+}
 
+namespace x86::_32
+{
     constexpr inline
     extended_page_entry::extended_page_entry (
         unsigned _ExtInt(1)  present,
@@ -1182,7 +1193,10 @@ namespace x86::_32
 
     inline
     auto extended_page_entry::nonexecutable () const -> bool { return _nonexecutable; }
+}
 
+namespace x86::_32
+{
     constexpr inline
     extended_small_page_directory_entry::extended_small_page_directory_entry (
         unsigned _ExtInt(1)  present,
@@ -1256,7 +1270,10 @@ namespace x86::_32
 
     inline
     auto extended_small_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
+}
 
+namespace x86::_32
+{
     constexpr inline
     extended_large_page_directory_entry::extended_large_page_directory_entry (
         unsigned _ExtInt(1)  present,
@@ -1351,7 +1368,10 @@ namespace x86::_32
 
     inline
     auto extended_large_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
+}
 
+namespace x86::_32
+{
     constexpr inline
     extended_page_directory_pointer_entry::extended_page_directory_pointer_entry (
         unsigned _ExtInt(1)  present,
@@ -1397,7 +1417,10 @@ namespace x86::_32
 
     inline
     auto extended_page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
+}
 
+namespace x86::_32
+{
     constexpr inline
     short_paging::short_paging (
         unsigned _ExtInt(1) write_through,
@@ -1429,7 +1452,10 @@ namespace x86::_32
 
     inline
     auto short_paging::address () const -> size4 { return size4{_address} << 12; }
+}
 
+namespace x86::_32
+{
     constexpr inline
     long_paging::long_paging (
         unsigned _ExtInt(1) write_through,

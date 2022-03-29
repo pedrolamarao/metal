@@ -37,16 +37,16 @@ namespace
     // long mode.
 
     extern
-    _64::page_table_entry page_table [ 0x200 ];
+    _64::long_page_table_entry page_table [ 0x200 ];
 
     extern
-    _64::small_page_directory_entry page_directory [ 0x200 ];
+    _64::long_small_page_directory_entry page_directory [ 0x200 ];
 
     extern
-    _64::small_page_directory_pointer_entry page_directory_pointers [ 0x200 ];
+    _64::long_small_page_directory_pointer_entry page_directory_pointers [ 0x200 ];
 
     extern
-    _64::page_map_entry page_map [ 0x200 ];
+    _64::long_page_map_entry page_map [ 0x200 ];
 }
 
 [[gnu::naked, gnu::used]]
@@ -194,14 +194,14 @@ namespace
     // long mode pages.
 
     alignas(0x1000) constinit
-    _64::page_table_entry page_table [ 0x200 ];
+    _64::long_page_table_entry page_table [ 0x200 ];
 
     alignas(0x1000) constinit
-    _64::small_page_directory_entry page_directory [ 0x200 ];
+    _64::long_small_page_directory_entry page_directory [ 0x200 ];
 
     alignas(0x1000) constinit
-    _64::small_page_directory_pointer_entry page_directory_pointers [ 0x200 ];
+    _64::long_small_page_directory_pointer_entry page_directory_pointers [ 0x200 ];
 
     alignas(0x1000) constinit
-    _64::page_map_entry page_map [ 0x200 ];
+    _64::long_page_map_entry page_map [ 0x200 ];
 }
