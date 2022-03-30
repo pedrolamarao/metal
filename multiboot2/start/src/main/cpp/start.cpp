@@ -35,8 +35,6 @@ namespace multiboot2
     [[gnu::naked, gnu::section(".multiboot2.start"), gnu::used]]
     void multiboot2_start ()
     {
-        __asm__
-        {
 #if defined(__i386__)
         __asm__
         {
@@ -79,6 +77,5 @@ namespace multiboot2
 #else
 # error unsupported target
 #endif
-        }
     }
 }
