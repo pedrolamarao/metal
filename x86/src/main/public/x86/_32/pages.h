@@ -8,7 +8,7 @@
 
 // Interface.
 
-namespace x86::_32
+namespace x86
 {
     //! Types.
     //! @{
@@ -317,7 +317,7 @@ namespace x86::_32
 
     //! 64 bit page entry.
 
-    class long_page_entry
+    class extended_page_entry
     {
         size8 _present       :  1 {};
         size8 _writable      :  1 {};
@@ -338,12 +338,12 @@ namespace x86::_32
         //! Default constructor.
         
         constexpr
-        long_page_entry () = default;
+        extended_page_entry () = default;
 
         //! Field constructor.
 
         constexpr
-        long_page_entry (
+        extended_page_entry (
             unsigned _ExtInt(1)  present,
             unsigned _ExtInt(1)  writable,
             unsigned _ExtInt(1)  user,
@@ -363,7 +363,7 @@ namespace x86::_32
         // #XXX: useless extra parameter for overload disambiguation.
 
         constexpr
-        long_page_entry (
+        extended_page_entry (
             decltype(nullptr) ignored,
             bool present,
             bool writable,
@@ -428,11 +428,11 @@ namespace x86::_32
         auto nonexecutable () const -> bool;
     };
 
-    static_assert(sizeof(long_page_entry) == 8, "unexpected size of long_page_entry");
+    static_assert(sizeof(extended_page_entry) == 8, "unexpected size of extended_page_entry");
 
     //! 64 bit, 4 KiB page directory entry.
 
-    class long_small_page_directory_entry
+    class extended_small_page_directory_entry
     {
         size8 _present       :  1 {};
         size8 _writable      :  1 {};
@@ -451,12 +451,12 @@ namespace x86::_32
         //! Default constructor.
 
         constexpr
-        long_small_page_directory_entry () = default;
+        extended_small_page_directory_entry () = default;
 
         //! Field constructor.
 
         constexpr
-        long_small_page_directory_entry (
+        extended_small_page_directory_entry (
             unsigned _ExtInt(1)  present,
             unsigned _ExtInt(1)  writable,
             unsigned _ExtInt(1)  user,
@@ -473,7 +473,7 @@ namespace x86::_32
         // #XXX: useless extra parameter for overload disambiguation.
 
         constexpr
-        long_small_page_directory_entry (
+        extended_small_page_directory_entry (
             decltype(nullptr) ignored,
             bool present,
             bool writable,
@@ -523,11 +523,11 @@ namespace x86::_32
         auto nonexecutable () const -> bool;
     };
 
-    static_assert(sizeof(long_small_page_directory_entry) == 8, "unexpected size of long_small_page_directory_entry");
+    static_assert(sizeof(extended_small_page_directory_entry) == 8, "unexpected size of extended_small_page_directory_entry");
 
     //! 64 bit, 2 MiB page directory entry.
 
-    class long_large_page_directory_entry
+    class extended_large_page_directory_entry
     {
         size8 _present       :  1 {};
         size8 _writable      :  1 {};
@@ -550,12 +550,12 @@ namespace x86::_32
         //! Default constructor.
         
         constexpr
-        long_large_page_directory_entry () = default;
+        extended_large_page_directory_entry () = default;
 
         //! Field constructor.
 
         constexpr
-        long_large_page_directory_entry (
+        extended_large_page_directory_entry (
             unsigned _ExtInt(1)  present,
             unsigned _ExtInt(1)  writable,
             unsigned _ExtInt(1)  user,
@@ -575,7 +575,7 @@ namespace x86::_32
         // #XXX: useless extra parameter for overload disambiguation.
 
         constexpr
-        long_large_page_directory_entry (
+        extended_large_page_directory_entry (
             decltype(nullptr) ignored,
             bool present,
             bool writable,
@@ -640,11 +640,11 @@ namespace x86::_32
         auto nonexecutable () const -> bool;
     };
 
-    static_assert(sizeof(long_large_page_directory_entry) == 8, "unexpected size of long_large_page_directory_entry");
+    static_assert(sizeof(extended_large_page_directory_entry) == 8, "unexpected size of extended_large_page_directory_entry");
 
     //! Page directory pointer entry.
 
-    class page_directory_pointer_entry
+    class extended_page_directory_pointer_entry
     {
         size8 _present       :  1 {};
         size8 _zero_0        :  2 { 0 };
@@ -660,12 +660,12 @@ namespace x86::_32
         //! Default constructor.
 
         constexpr
-        page_directory_pointer_entry () = default;
+        extended_page_directory_pointer_entry () = default;
 
         //! Field constructor.
 
         constexpr
-        page_directory_pointer_entry (
+        extended_page_directory_pointer_entry (
             unsigned _ExtInt(1)  present,
             unsigned _ExtInt(1)  write_through,
             unsigned _ExtInt(1)  cache,
@@ -678,7 +678,7 @@ namespace x86::_32
         // #XXX: useless extra parameter for overload disambiguation.
 
         constexpr
-        page_directory_pointer_entry (
+        extended_page_directory_pointer_entry (
             decltype(nullptr) ignored,
             bool present,
             bool write_through,
@@ -708,7 +708,7 @@ namespace x86::_32
         auto address () const -> size8;
     };
 
-    static_assert(sizeof(page_directory_pointer_entry) == 8, "unexpected size of page_directory_pointer_entry");
+    static_assert(sizeof(extended_page_directory_pointer_entry) == 8, "unexpected size of extended_page_directory_pointer_entry");
 
     //! Short (i.e. non PAE) paging control.
 
@@ -764,9 +764,9 @@ namespace x86::_32
 
     static_assert(sizeof(short_paging) == 4, "unexpected size of short_paging");
 
-    //! Long (i.e. PAE) paging control.
+    //! Extended (i.e. PAE) paging control.
 
-    class long_paging
+    class extended_paging
     {
         size4 _zero_0        : 3  { 0 };
         size4 _write_through : 1  {};
@@ -778,12 +778,12 @@ namespace x86::_32
         //! Default constructor.
 
         constexpr
-        long_paging () = default;
+        extended_paging () = default;
 
         //! Field constructor.
 
         constexpr
-        long_paging (
+        extended_paging (
             unsigned _ExtInt(1) write_through,
             unsigned _ExtInt(1) cache,
             unsigned _ExtInt(27) address
@@ -792,7 +792,7 @@ namespace x86::_32
         //! Semantic constructor.
 
         constexpr
-        long_paging (
+        extended_paging (
             decltype(nullptr) ignored,
             bool write_through,
             bool cache,
@@ -813,7 +813,7 @@ namespace x86::_32
 
     };
 
-    static_assert(sizeof(long_paging) == 4, "unexpected size of long_paging");
+    static_assert(sizeof(extended_paging) == 4, "unexpected size of extended_paging");
 
     //! @}
 
@@ -824,9 +824,9 @@ namespace x86::_32
 
     auto get_short_paging () -> short_paging;
 
-    //! Gets the paging control register (CR3) interpreted as long paging.
+    //! Gets the paging control register (CR3) interpreted as extended paging.
 
-    auto get_long_paging () -> long_paging;
+    auto get_extended_paging () -> extended_paging;
 
     //! Sets the paging control register (CR3).
 
@@ -834,14 +834,14 @@ namespace x86::_32
 
     //! Sets the paging control register (CR3).
 
-    void set_paging (long_paging value);
+    void set_paging (extended_paging value);
 
     //! @}
 }
 
-// Implementation.
+// Implementation: short_page_entry
 
-namespace x86::_32
+namespace x86
 {
     constexpr inline
     short_page_entry::short_page_entry (
@@ -930,7 +930,12 @@ namespace x86::_32
 
     inline
     auto short_page_entry::address () const -> size4 { return size4{_address} << 12; }
+}
 
+// Implementation: short_small_page_directory_entry
+
+namespace x86
+{
     constexpr inline
     short_small_page_directory_entry::short_small_page_directory_entry (
         unsigned _ExtInt(1)  present,
@@ -997,7 +1002,12 @@ namespace x86::_32
 
     inline
     auto short_small_page_directory_entry::address () const -> size4 { return size4{_address} << 12; }
+}
 
+// Implementation: short_large_page_directory_entry
+
+namespace x86
+{
     constexpr inline
     short_large_page_directory_entry::short_large_page_directory_entry (
         unsigned _ExtInt(1)  present,
@@ -1087,317 +1097,12 @@ namespace x86::_32
 
     inline
     auto short_large_page_directory_entry::address () const -> size8 { return (size8{_address_high} << 32) | (size8{_address_low} << 22); }
+}
 
-    constexpr inline
-    long_page_entry::long_page_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(1)  dirty,
-        unsigned _ExtInt(1)  attribute,
-        unsigned _ExtInt(1)  global,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(40) address,
-        unsigned _ExtInt(1)  nonexecutable
-    ) :
-        _present{present},
-        _writable{writable},
-        _user{user},
-        _write_through{write_through},
-        _cache{cache},
-        _accessed{accessed},
-        _dirty{dirty},
-        _attribute{attribute},
-        _global{global},
-        _available{available},
-        _address{address},
-        _nonexecutable{nonexecutable}
-    { }
+// Implementation: short_paging
 
-    constexpr inline
-    long_page_entry::long_page_entry (
-        decltype(nullptr),
-        bool present,
-        bool writable,
-        bool user,
-        bool write_through,
-        bool cache,
-        bool accessed,
-        bool dirty,
-        unsigned _ExtInt(3) attribute,
-        bool global,
-        unsigned _ExtInt(3) available,
-        size8 address,
-        bool nonexecutable
-    ) :
-        _present{present},
-        _writable{writable},
-        _user{user},
-        _write_through{write_through},
-        _cache{cache},
-        _accessed{accessed},
-        _dirty{dirty},
-        _attribute{attribute>>2},
-        _global{global},
-        _available{available},
-        _address{address>>12},
-        _nonexecutable{nonexecutable}
-    { }
-    
-    inline
-    auto long_page_entry::present () const -> bool { return _present; }
-
-    inline
-    auto long_page_entry::writable () const -> bool { return _writable; }
-
-    inline
-    auto long_page_entry::user () const -> bool { return _user; }
-
-    inline
-    auto long_page_entry::write_through () const -> bool { return _write_through; }
-
-    inline
-    auto long_page_entry::cache () const -> bool { return _cache; }
-
-    inline
-    auto long_page_entry::accessed () const -> bool { return _accessed; }
-
-    inline
-    auto long_page_entry::dirty () const -> bool { return _dirty; }
-
-    inline
-    auto long_page_entry::attribute () const -> unsigned _ExtInt(3) { return _attribute << 2; }
-
-    inline
-    auto long_page_entry::global () const -> bool { return _global; }
-
-    inline
-    auto long_page_entry::available () const -> unsigned _ExtInt(3) { return _available; }
-
-    inline
-    auto long_page_entry::address () const -> size8 { return size8{_address} << 12; }
-
-    inline
-    auto long_page_entry::nonexecutable () const -> bool { return _nonexecutable; }
-
-    constexpr inline
-    long_small_page_directory_entry::long_small_page_directory_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(40) address,
-        unsigned _ExtInt(1)  nonexecutable
-    ) :
-        _present{present},
-        _writable{writable},
-        _user{user},
-        _write_through{write_through},
-        _cache{cache},
-        _accessed{accessed},
-        _available{available},
-        _address{address},
-        _nonexecutable{nonexecutable}
-    { }
-
-    constexpr inline
-    long_small_page_directory_entry::long_small_page_directory_entry (
-        decltype(nullptr),
-        bool present,
-        bool writable,
-        bool user,
-        bool write_through,
-        bool cache,
-        bool accessed,
-        unsigned _ExtInt(3) available,
-        size8 address,
-        bool nonexecutable
-    ) :
-        _present{present},
-        _writable{writable},
-        _user{user},
-        _write_through{write_through},
-        _cache{cache},
-        _accessed{accessed},
-        _available{available},
-        _address{address>>12},
-        _nonexecutable{nonexecutable}
-    { }
-    
-    inline
-    auto long_small_page_directory_entry::present () const -> bool { return _present; }
-
-    inline
-    auto long_small_page_directory_entry::writable () const -> bool { return _writable; }
-
-    inline
-    auto long_small_page_directory_entry::user () const -> bool { return _user; }
-
-    inline
-    auto long_small_page_directory_entry::write_through () const -> bool { return _write_through; }
-
-    inline
-    auto long_small_page_directory_entry::cache () const -> bool { return _cache; }
-
-    inline
-    auto long_small_page_directory_entry::accessed () const -> bool { return _accessed; }
-
-    inline
-    auto long_small_page_directory_entry::available () const -> unsigned _ExtInt(3) { return _available; }
-
-    inline
-    auto long_small_page_directory_entry::address () const -> size8 { return size8{_address} << 12; }
-
-    inline
-    auto long_small_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
-
-    constexpr inline
-    long_large_page_directory_entry::long_large_page_directory_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(1)  dirty,
-        unsigned _ExtInt(1)  global,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(1)  attribute,
-        unsigned _ExtInt(31) address,
-        unsigned _ExtInt(1)  nonexecutable
-    ) :
-        _present{present},
-        _writable{writable},
-        _user{user},
-        _write_through{write_through},
-        _cache{cache},
-        _accessed{accessed},
-        _dirty{dirty},
-        _global{global},
-        _available{available},
-        _attribute{attribute},
-        _address{address},
-        _nonexecutable{nonexecutable}
-    { }
-
-    constexpr inline
-    long_large_page_directory_entry::long_large_page_directory_entry (
-        decltype(nullptr),
-        bool present,
-        bool writable,
-        bool user,
-        bool write_through,
-        bool cache,
-        bool accessed,
-        bool dirty,
-        bool global,
-        unsigned _ExtInt(3) available,
-        unsigned _ExtInt(3) attribute,
-        size8 address,
-        bool nonexecutable
-    ) :
-        _present{present},
-        _writable{writable},
-        _user{user},
-        _write_through{write_through},
-        _cache{cache},
-        _accessed{accessed},
-        _dirty{dirty},
-        _global{global},
-        _available{available},
-        _attribute{attribute},
-        _address{address>>21},
-        _nonexecutable{nonexecutable}
-    { }
-    
-    inline
-    auto long_large_page_directory_entry::present () const -> bool { return _present; }
-
-    inline
-    auto long_large_page_directory_entry::writable () const -> bool { return _writable; }
-
-    inline
-    auto long_large_page_directory_entry::user () const -> bool { return _user; }
-
-    inline
-    auto long_large_page_directory_entry::write_through () const -> bool { return _write_through; }
-
-    inline
-    auto long_large_page_directory_entry::cache () const -> bool { return _cache; }
-
-    inline
-    auto long_large_page_directory_entry::accessed () const -> bool { return _accessed; }
-
-    inline
-    auto long_large_page_directory_entry::dirty () const -> bool { return _dirty; }
-
-    inline
-    auto long_large_page_directory_entry::global () const -> bool { return _global; }
-
-    inline
-    auto long_large_page_directory_entry::available () const -> unsigned _ExtInt(3) { return _available; }
-
-    inline
-    auto long_large_page_directory_entry::attribute () const -> unsigned _ExtInt(3) { return _attribute << 2; }
-
-    inline
-    auto long_large_page_directory_entry::address () const -> size8 { return size8{_address} << 21; }
-
-    inline
-    auto long_large_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
-
-    constexpr inline
-    page_directory_pointer_entry::page_directory_pointer_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(40) address
-    ) :
-        _present{present},
-        _write_through{write_through},
-        _cache{cache},
-        _available{available},
-        _address{address}
-    { }
-
-    constexpr inline
-    page_directory_pointer_entry::page_directory_pointer_entry (
-        decltype(nullptr),
-        bool present,
-        bool write_through,
-        bool cache,
-        unsigned _ExtInt(3) available,
-        size8 address
-    ) :
-        _present{present},
-        _write_through{write_through},
-        _cache{cache},
-        _available{available},
-        _address{address>>12}
-    { }
-
-    inline
-    auto page_directory_pointer_entry::present () const -> bool { return _present; }
-
-    inline
-    auto page_directory_pointer_entry::write_through () const -> bool { return _write_through; }
-
-    inline
-    auto page_directory_pointer_entry::cache () const -> bool { return _cache; }
-
-    inline
-    auto page_directory_pointer_entry::available () const -> unsigned _ExtInt(3) { return _available; }
-
-    inline
-    auto page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
-
+namespace x86
+{
     constexpr inline
     short_paging::short_paging (
         unsigned _ExtInt(1) write_through,
@@ -1430,8 +1135,356 @@ namespace x86::_32
     inline
     auto short_paging::address () const -> size4 { return size4{_address} << 12; }
 
+    inline
+    auto get_short_paging () -> short_paging
+    {
+        size value = cr3();
+        return reinterpret_cast<short_paging&>(value);
+    }
+
+    inline
+    void set_paging (short_paging value)
+    {
+        cr3( reinterpret_cast<size&>(value) );
+    }
+}
+
+// Implementation: extended_page_entry
+
+namespace x86
+{
     constexpr inline
-    long_paging::long_paging (
+    extended_page_entry::extended_page_entry (
+        unsigned _ExtInt(1)  present,
+        unsigned _ExtInt(1)  writable,
+        unsigned _ExtInt(1)  user,
+        unsigned _ExtInt(1)  write_through,
+        unsigned _ExtInt(1)  cache,
+        unsigned _ExtInt(1)  accessed,
+        unsigned _ExtInt(1)  dirty,
+        unsigned _ExtInt(1)  attribute,
+        unsigned _ExtInt(1)  global,
+        unsigned _ExtInt(3)  available,
+        unsigned _ExtInt(40) address,
+        unsigned _ExtInt(1)  nonexecutable
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _dirty{dirty},
+        _attribute{attribute},
+        _global{global},
+        _available{available},
+        _address{address},
+        _nonexecutable{nonexecutable}
+    { }
+
+    constexpr inline
+    extended_page_entry::extended_page_entry (
+        decltype(nullptr),
+        bool present,
+        bool writable,
+        bool user,
+        bool write_through,
+        bool cache,
+        bool accessed,
+        bool dirty,
+        unsigned _ExtInt(3) attribute,
+        bool global,
+        unsigned _ExtInt(3) available,
+        size8 address,
+        bool nonexecutable
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _dirty{dirty},
+        _attribute{attribute>>2},
+        _global{global},
+        _available{available},
+        _address{address>>12},
+        _nonexecutable{nonexecutable}
+    { }
+    
+    inline
+    auto extended_page_entry::present () const -> bool { return _present; }
+
+    inline
+    auto extended_page_entry::writable () const -> bool { return _writable; }
+
+    inline
+    auto extended_page_entry::user () const -> bool { return _user; }
+
+    inline
+    auto extended_page_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto extended_page_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto extended_page_entry::accessed () const -> bool { return _accessed; }
+
+    inline
+    auto extended_page_entry::dirty () const -> bool { return _dirty; }
+
+    inline
+    auto extended_page_entry::attribute () const -> unsigned _ExtInt(3) { return _attribute << 2; }
+
+    inline
+    auto extended_page_entry::global () const -> bool { return _global; }
+
+    inline
+    auto extended_page_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+
+    inline
+    auto extended_page_entry::address () const -> size8 { return size8{_address} << 12; }
+
+    inline
+    auto extended_page_entry::nonexecutable () const -> bool { return _nonexecutable; }
+}
+
+// Implementation: extended_small_page_directory_entry
+
+namespace x86
+{
+    constexpr inline
+    extended_small_page_directory_entry::extended_small_page_directory_entry (
+        unsigned _ExtInt(1)  present,
+        unsigned _ExtInt(1)  writable,
+        unsigned _ExtInt(1)  user,
+        unsigned _ExtInt(1)  write_through,
+        unsigned _ExtInt(1)  cache,
+        unsigned _ExtInt(1)  accessed,
+        unsigned _ExtInt(3)  available,
+        unsigned _ExtInt(40) address,
+        unsigned _ExtInt(1)  nonexecutable
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _available{available},
+        _address{address},
+        _nonexecutable{nonexecutable}
+    { }
+
+    constexpr inline
+    extended_small_page_directory_entry::extended_small_page_directory_entry (
+        decltype(nullptr),
+        bool present,
+        bool writable,
+        bool user,
+        bool write_through,
+        bool cache,
+        bool accessed,
+        unsigned _ExtInt(3) available,
+        size8 address,
+        bool nonexecutable
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _available{available},
+        _address{address>>12},
+        _nonexecutable{nonexecutable}
+    { }
+    
+    inline
+    auto extended_small_page_directory_entry::present () const -> bool { return _present; }
+
+    inline
+    auto extended_small_page_directory_entry::writable () const -> bool { return _writable; }
+
+    inline
+    auto extended_small_page_directory_entry::user () const -> bool { return _user; }
+
+    inline
+    auto extended_small_page_directory_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto extended_small_page_directory_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto extended_small_page_directory_entry::accessed () const -> bool { return _accessed; }
+
+    inline
+    auto extended_small_page_directory_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+
+    inline
+    auto extended_small_page_directory_entry::address () const -> size8 { return size8{_address} << 12; }
+
+    inline
+    auto extended_small_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
+}
+
+// Implementation: extended_large_page_directory_entry
+
+namespace x86
+{
+    constexpr inline
+    extended_large_page_directory_entry::extended_large_page_directory_entry (
+        unsigned _ExtInt(1)  present,
+        unsigned _ExtInt(1)  writable,
+        unsigned _ExtInt(1)  user,
+        unsigned _ExtInt(1)  write_through,
+        unsigned _ExtInt(1)  cache,
+        unsigned _ExtInt(1)  accessed,
+        unsigned _ExtInt(1)  dirty,
+        unsigned _ExtInt(1)  global,
+        unsigned _ExtInt(3)  available,
+        unsigned _ExtInt(1)  attribute,
+        unsigned _ExtInt(31) address,
+        unsigned _ExtInt(1)  nonexecutable
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _dirty{dirty},
+        _global{global},
+        _available{available},
+        _attribute{attribute},
+        _address{address},
+        _nonexecutable{nonexecutable}
+    { }
+
+    constexpr inline
+    extended_large_page_directory_entry::extended_large_page_directory_entry (
+        decltype(nullptr),
+        bool present,
+        bool writable,
+        bool user,
+        bool write_through,
+        bool cache,
+        bool accessed,
+        bool dirty,
+        bool global,
+        unsigned _ExtInt(3) available,
+        unsigned _ExtInt(3) attribute,
+        size8 address,
+        bool nonexecutable
+    ) :
+        _present{present},
+        _writable{writable},
+        _user{user},
+        _write_through{write_through},
+        _cache{cache},
+        _accessed{accessed},
+        _dirty{dirty},
+        _global{global},
+        _available{available},
+        _attribute{attribute},
+        _address{address>>21},
+        _nonexecutable{nonexecutable}
+    { }
+    
+    inline
+    auto extended_large_page_directory_entry::present () const -> bool { return _present; }
+
+    inline
+    auto extended_large_page_directory_entry::writable () const -> bool { return _writable; }
+
+    inline
+    auto extended_large_page_directory_entry::user () const -> bool { return _user; }
+
+    inline
+    auto extended_large_page_directory_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto extended_large_page_directory_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto extended_large_page_directory_entry::accessed () const -> bool { return _accessed; }
+
+    inline
+    auto extended_large_page_directory_entry::dirty () const -> bool { return _dirty; }
+
+    inline
+    auto extended_large_page_directory_entry::global () const -> bool { return _global; }
+
+    inline
+    auto extended_large_page_directory_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+
+    inline
+    auto extended_large_page_directory_entry::attribute () const -> unsigned _ExtInt(3) { return _attribute << 2; }
+
+    inline
+    auto extended_large_page_directory_entry::address () const -> size8 { return size8{_address} << 21; }
+
+    inline
+    auto extended_large_page_directory_entry::nonexecutable () const -> bool { return _nonexecutable; }
+}
+
+// Implementation: extended_page_directory_pointer_entry
+
+namespace x86
+{
+    constexpr inline
+    extended_page_directory_pointer_entry::extended_page_directory_pointer_entry (
+        unsigned _ExtInt(1)  present,
+        unsigned _ExtInt(1)  write_through,
+        unsigned _ExtInt(1)  cache,
+        unsigned _ExtInt(3)  available,
+        unsigned _ExtInt(40) address
+    ) :
+        _present{present},
+        _write_through{write_through},
+        _cache{cache},
+        _available{available},
+        _address{address}
+    { }
+
+    constexpr inline
+    extended_page_directory_pointer_entry::extended_page_directory_pointer_entry (
+        decltype(nullptr),
+        bool present,
+        bool write_through,
+        bool cache,
+        unsigned _ExtInt(3) available,
+        size8 address
+    ) :
+        _present{present},
+        _write_through{write_through},
+        _cache{cache},
+        _available{available},
+        _address{address>>12}
+    { }
+
+    inline
+    auto extended_page_directory_pointer_entry::present () const -> bool { return _present; }
+
+    inline
+    auto extended_page_directory_pointer_entry::write_through () const -> bool { return _write_through; }
+
+    inline
+    auto extended_page_directory_pointer_entry::cache () const -> bool { return _cache; }
+
+    inline
+    auto extended_page_directory_pointer_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+
+    inline
+    auto extended_page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
+}
+
+// Implementation: extended_paging
+
+namespace x86
+{
+    constexpr inline
+    extended_paging::extended_paging (
         unsigned _ExtInt(1) write_through,
         unsigned _ExtInt(1) cache,
         unsigned _ExtInt(27) address
@@ -1442,7 +1495,7 @@ namespace x86::_32
     { }
 
     constexpr inline
-    long_paging::long_paging (
+    extended_paging::extended_paging (
         decltype(nullptr),
         bool write_through,
         bool cache,
@@ -1454,36 +1507,23 @@ namespace x86::_32
     { }
 
     inline
-    auto long_paging::write_through () const -> bool { return _write_through; }
+    auto extended_paging::write_through () const -> bool { return _write_through; }
 
     inline
-    auto long_paging::cache () const -> bool { return _cache; }
+    auto extended_paging::cache () const -> bool { return _cache; }
 
     inline
-    auto long_paging::address () const -> size4 { return size4{_address} << 5; }
+    auto extended_paging::address () const -> size4 { return size4{_address} << 5; }
 
     inline
-    auto get_short_paging () -> short_paging
+    auto get_extended_paging () -> extended_paging
     {
         size value = cr3();
-        return reinterpret_cast<short_paging&>(value);
+        return reinterpret_cast<extended_paging&>(value);
     }
 
     inline
-    auto get_long_paging () -> long_paging
-    {
-        size value = cr3();
-        return reinterpret_cast<long_paging&>(value);
-    }
-
-    inline
-    void set_paging (short_paging value)
-    {
-        cr3( reinterpret_cast<size&>(value) );
-    }
-
-    inline
-    void set_paging (long_paging value)
+    void set_paging (extended_paging value)
     {
         cr3( reinterpret_cast<size&>(value) );
     }

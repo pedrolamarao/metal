@@ -37,16 +37,16 @@ namespace
     // long mode.
 
     extern
-    _64::page_table_entry page_table [ 0x200 ];
+    long_page_table_entry page_table [ 0x200 ];
 
     extern
-    _64::small_page_directory_entry page_directory [ 0x200 ];
+    long_small_page_directory_entry page_directory [ 0x200 ];
 
     extern
-    _64::small_page_directory_pointer_entry page_directory_pointers [ 0x200 ];
+    long_small_page_directory_pointer_entry page_directory_pointers [ 0x200 ];
 
     extern
-    _64::page_map_entry page_map [ 0x200 ];
+    long_page_map_entry page_map [ 0x200 ];
 }
 
 [[gnu::naked, gnu::used]]
@@ -127,7 +127,7 @@ void psys::main ()
     }
     enable_large_pages();
     enable_long_addresses();
-    set_paging( _32::long_paging { {}, false, false, reinterpret_cast<size4>(page_map) } );
+    set_paging( extended_paging { {}, false, false, reinterpret_cast<size4>(page_map) } );
 
     // enable long mode.
 
@@ -194,14 +194,14 @@ namespace
     // long mode pages.
 
     alignas(0x1000) constinit
-    _64::page_table_entry page_table [ 0x200 ];
+    long_page_table_entry page_table [ 0x200 ];
 
     alignas(0x1000) constinit
-    _64::small_page_directory_entry page_directory [ 0x200 ];
+    long_small_page_directory_entry page_directory [ 0x200 ];
 
     alignas(0x1000) constinit
-    _64::small_page_directory_pointer_entry page_directory_pointers [ 0x200 ];
+    long_small_page_directory_pointer_entry page_directory_pointers [ 0x200 ];
 
     alignas(0x1000) constinit
-    _64::page_map_entry page_map [ 0x200 ];
+    long_page_map_entry page_map [ 0x200 ];
 }

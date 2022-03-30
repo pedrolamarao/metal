@@ -47,24 +47,24 @@ namespace
     alignas(0x1000) constinit
     short_large_page_directory_entry short_large_page_directory_table [ 0x400 ] {};
 
-    // long small paging.
+    // extended small paging.
 
     alignas(0x1000) constinit
-    long_page_entry long_page_table [ 0x200 ] {};
+    extended_page_entry long_page_table [ 0x200 ] {};
 
     alignas(0x1000) constinit
-    long_small_page_directory_entry long_small_page_directory_table [ 0x200 ] {};
+    extended_small_page_directory_entry long_small_page_directory_table [ 0x200 ] {};
 
     alignas(0x1000) constinit
-    page_directory_pointer_entry small_page_directory_pointer_table [ 4 ] {};
+    extended_page_directory_pointer_entry small_page_directory_pointer_table [ 4 ] {};
 
-    // long large paging.
-
-    alignas(0x1000) constinit
-    long_large_page_directory_entry long_large_page_directory_table [ 0x200 ] {};
+    // extended large paging.
 
     alignas(0x1000) constinit
-    page_directory_pointer_entry large_page_directory_pointer_table [ 4 ] {};
+    extended_large_page_directory_entry long_large_page_directory_table [ 0x200 ] {};
+
+    alignas(0x1000) constinit
+    extended_page_directory_pointer_entry large_page_directory_pointer_table [ 4 ] {};
 }
 
 void psys::main ()
@@ -174,7 +174,7 @@ void psys::main ()
     get_short_paging();
 
     _test_control = step++;
-    get_long_paging();
+    get_extended_paging();
 
     _test_control = step++;
     set_paging( short_paging { 0, 0, 0 } );
@@ -323,7 +323,7 @@ void psys::main ()
     enable_long_addresses();
 
     _test_control = step++;
-    set_paging( long_paging { {}, false, false, reinterpret_cast<size4>(small_page_directory_pointer_table) } );
+    set_paging( extended_paging { {}, false, false, reinterpret_cast<size4>(small_page_directory_pointer_table) } );
 
     _test_control = step++;
     enable_paging();
@@ -360,7 +360,7 @@ void psys::main ()
     enable_long_addresses();
 
     _test_control = step++;
-    set_paging( long_paging { {}, false, false, reinterpret_cast<size4>(large_page_directory_pointer_table) } );
+    set_paging( extended_paging { {}, false, false, reinterpret_cast<size4>(large_page_directory_pointer_table) } );
 
     _test_control = step++;
     enable_paging();
