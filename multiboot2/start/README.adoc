@@ -1,0 +1,17 @@
+= multiboot2 start library
+
+This library enables defining Multiboot2 applications entirely in C++.
+
+Multiboot2 does not provide an execution environment appropriate for conventional C++ generated code.
+
+This library provides an entry point to receive control from a Multiboot2 loader,
+minimally prepare the execution environment for running compiler generated code,
+then call a well-known C++ procedure.
+
+To use this library:
+
+- link with the library
+- set the entry point to `multiboot2_start`
+- provide a definition for `multiboot2::main`
+
+See `multiboot2/start.h` for the declaration of `multiboot2::main`.
