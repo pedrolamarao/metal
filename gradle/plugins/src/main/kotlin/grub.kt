@@ -28,7 +28,7 @@ class GrubConfigurationEditor
 
     val entries : MutableList<GrubConfigurationEntryEditor> = mutableListOf()
 
-    override fun toString () = options.map{(k,v) -> "$k = $v"}.joinToString("\r\n", "", "\r\n") +
+    override fun toString () = options.map{(k,v) -> "$k=$v"}.joinToString("\r\n", "", "\r\n") +
         entries.joinToString("\r\n", "", "\r\n")
 }
 

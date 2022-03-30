@@ -45,11 +45,12 @@ abstract class MultibootCreateImageTask : DefaultTask()
     {
         val configurationFile = File(temporaryDir, "grub.cfg").apply {
             createNewFile()
-            appendText(
+            writeText(
                 GrubConfigurationEditor().apply {
                     options["default"] = "0"
                     options["timeout"] = "0"
                     entries += GrubConfigurationEntryEditor().apply {
+                        name = "psys"
                         multiboot2("(memdisk)/program")
                     }
                 }
