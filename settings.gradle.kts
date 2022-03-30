@@ -37,10 +37,10 @@ include("googletest")
 
 include("multiboot2:foo")
 include("multiboot2:start")
-rootProject.projectDir.resolve("multiboot2/test/x86_32-elf").toPath().apply {
+rootProject.projectDir.resolve("multiboot2/test").toPath().apply {
     Files.list(this).forEach {
         if (Files.isDirectory(it))
-            include("multiboot2:test:x86_32-elf:${it.fileName}")
+            include("multiboot2:test:${it.fileName}")
     }
 }
 
