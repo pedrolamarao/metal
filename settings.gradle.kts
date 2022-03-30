@@ -35,7 +35,7 @@ include("acpi")
 
 include("googletest")
 
-include("multiboot2")
+include("multiboot2:foo")
 include("multiboot2:start")
 rootProject.projectDir.resolve("multiboot2/test/x86_32-elf").toPath().apply {
     Files.list(this).forEach {

@@ -2,7 +2,7 @@ import dev.nokee.platform.cpp.CppApplication
 import dev.nokee.platform.nativebase.ExecutableBinary
 
 plugins {
-    base
+    id("psys-component")
 }
 
 subprojects {
@@ -17,7 +17,7 @@ subprojects {
         )
 
         dependencies {
-            implementation(project(":multiboot2"))
+            implementation(project(":multiboot2:foo"))
         }
 
         val baseArgs = listOf(
