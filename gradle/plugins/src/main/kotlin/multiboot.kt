@@ -40,21 +40,21 @@ abstract class MultibootCreateImageTask : DefaultTask()
         outputFile.convention( inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${it.asFile.name}/image") } )
     }
 
-    @Internal
-    val grub_cfg =
-        "default=0\r\n" +
-        "timeout=0\r\n" +
-        "\r\n" +
-        "menuentry psys {\r\n" +
-        "   multiboot2 (memdisk)/program\r\n" +
-        "}\r\n"
-
     @TaskAction
     fun action ()
     {
         val configurationFile = File(temporaryDir, "grub.cfg").apply {
             createNewFile()
-            appendText(grub_cfg)
+            appendText(
+                GrubConfigurationEditor().apply {
+                    options["default"] = "0"
+                    options["timeout"] = "0"
+                    entries += GrubConfigurationEntryEditor().apply {
+                        multiboot2("(memdisk)/program")
+                    }
+                }
+                .toString()
+            )
         }
 
         val builder = project.objects.newInstance<GrubMakeImageEditor>()

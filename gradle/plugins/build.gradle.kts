@@ -16,10 +16,15 @@ dependencies {
     implementation("dev.nokee.cpp-application:dev.nokee.cpp-application.gradle.plugin:${nokee}")
     implementation("dev.nokee.cpp-library:dev.nokee.cpp-library.gradle.plugin:${nokee}")
     implementation("dev.nokee.native-unit-testing:dev.nokee.native-unit-testing.gradle.plugin:${nokee}")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "11"
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
