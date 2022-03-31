@@ -17,42 +17,23 @@ namespace x86
 {
     // segments.
 
-    struct
-    {
-        size8                   null_descriptor    {};
-        data_segment_descriptor data_segment       { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true };
-        code_segment_descriptor short_code_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, false, true, true };
-        code_segment_descriptor long_code_segment  { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true, true };
-    }
-    global_descriptor_table;
+    extern
+    segment_selector code_segment_32;
+
+    extern
+    segment_selector code_segment_64;
+
+    void install_segments_32 ();
 
     // interrupts.
 
-    extern
-    _32::interrupt_gate_descriptor interrupt_descriptor_table_32 [ 256 ];
+    void install_interrupts_32 ();
 
-    [[gnu::naked]]
-    void interrupt_handler_32 ();
-
-    extern
-    _64::interrupt_gate_descriptor interrupt_descriptor_table_64 [ 256 ];
-
-    [[gnu::naked]]
-    void interrupt_handler_64 ();
+    void install_interrupts_64 ();
 
     // pages.
 
-    extern
-    long_page_table_entry page_table [ 0x200 ];
-
-    extern
-    long_small_page_directory_entry page_directory [ 0x200 ];
-
-    extern
-    long_small_page_directory_pointer_entry page_directory_pointers [ 0x200 ];
-
-    extern
-    long_page_map_entry page_map [ 0x200 ];
+    void install_pages_64 ();
 
     // operators.
 
@@ -121,11 +102,7 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
 
     // Prepare x86 segments.
 
-    auto code_segment_32 = segment_selector{2,false,0};
-    auto code_segment_64 = segment_selector{3,false,0};
-    set_global_descriptor_table(&global_descriptor_table,sizeof(global_descriptor_table));
-    set_data_segments(segment_selector{1,false,0});
-    set_code_segment(code_segment_32);
+    install_segments_32();
 
     // Call module entry point.
 
@@ -133,13 +110,10 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
     {
         // Prepare x86 interrupts.
 
-        for (auto i = 0U, j = 256U; i != j; ++i) {
-            interrupt_descriptor_table_32[i] = { code_segment_32, interrupt_handler_32, true, true, 0, true };
-        }
-        set_interrupt_descriptor_table(interrupt_descriptor_table_32);
+        install_interrupts_32();
 
         debug("32>");
-        trampoline_call_32( segment_selector{2,false,0}, module.entry );
+        trampoline_call_32(code_segment_32, module.entry);
         debug("!");
     }
     else if (module.bitness == 64) // call 64-bit entry
@@ -148,36 +122,11 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
 
         // Prepare x86 interrupts.
 
-        for (auto i = 0U, j = 256U; i != j; ++i) {
-            interrupt_descriptor_table_64[i] = { code_segment_64, interrupt_handler_64, true, true, 0, true };
-        }
-        set_interrupt_descriptor_table(interrupt_descriptor_table_64);
+        install_interrupts_64();
 
         // prepare long mode pages.
 
-        for (size i = 0; i != 0x200; ++i) {
-            page_table[i] = {
-                true, true, true, false, false, false, false, 0, false, 0, (0x1000 * i), 0, false
-            };
-        }
-        for (size i = 0; i != 0x200; ++i) {
-            page_directory[i] = {
-                true, true, true, false, false, false, 0, reinterpret_cast<size8>(page_table), false
-            };
-        }
-        for (size i = 0; i != 0x200; ++i) {
-            page_directory_pointers[i] = {
-                true, true, true, false, false, false, 0, reinterpret_cast<size8>(page_directory), false
-            };
-        }
-        for (size i = 0; i != 0x200; ++i) {
-            page_map[i] = {
-                true, true, true, false, false, false, 0, reinterpret_cast<size8>(page_directory_pointers), false
-            };
-        }
-        enable_large_pages();
-        enable_long_addresses();
-        set_paging( extended_paging { {}, false, false, reinterpret_cast<size4>(page_map) } );
+        install_pages_64();
 
         // enable long mode.
 
@@ -196,7 +145,7 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
         if ((get_msr(msr::EFER) & (1 << 10)) == 0) { return; }
 
         debug("64>");
-        trampoline_call_64( segment_selector{3,false,0}, module.entry );
+        trampoline_call_64(code_segment_64, module.entry);
         debug("!");
     }
     else // !!!
@@ -306,6 +255,33 @@ namespace multiboot2
 
 namespace x86
 {
+    // segments.
+
+    struct
+    {
+        size8                   null_descriptor    {};
+        data_segment_descriptor data_segment       { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true };
+        code_segment_descriptor short_code_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, false, true, true };
+        code_segment_descriptor long_code_segment  { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true, true };
+    }
+    global_descriptor_table;
+
+    constinit
+    segment_selector data_segment { 1, false, 0 };
+
+    constinit
+    segment_selector code_segment_32 { 2, false, 0 };
+
+    constinit
+    segment_selector code_segment_64 { 3, false, 0 };
+
+    void install_segments_32 ()
+    {
+        set_global_descriptor_table(&global_descriptor_table,sizeof(global_descriptor_table));
+        set_data_segments(data_segment);
+        set_code_segment(code_segment_32);
+    }
+
     // interrupts.
 
     constinit
@@ -322,6 +298,14 @@ namespace x86
             hlt
             jmp loop
         }
+    }
+
+    void install_interrupts_32 ()
+    {
+        for (auto i = 0U, j = 256U; i != j; ++i) {
+            interrupt_descriptor_table_32[i] = { code_segment_32, interrupt_handler_32, true, true, 0, true };
+        }
+        set_interrupt_descriptor_table(interrupt_descriptor_table_32);
     }
 
     constinit
@@ -341,6 +325,14 @@ namespace x86
         }
     }
 
+    void install_interrupts_64 ()
+    {
+        for (auto i = 0U, j = 256U; i != j; ++i) {
+            interrupt_descriptor_table_64[i] = { code_segment_64, interrupt_handler_64, true, true, 0, true };
+        }
+        set_interrupt_descriptor_table(interrupt_descriptor_table_64);
+    }
+
     // pages.
 
     alignas(0x1000) constinit
@@ -354,6 +346,33 @@ namespace x86
 
     alignas(0x1000) constinit
     long_page_map_entry page_map [ 0x200 ];
+
+    void install_pages_64 ()
+    {
+        for (size i = 0; i != 0x200; ++i) {
+            page_table[i] = {
+                true, true, true, false, false, false, false, 0, false, 0, (0x1000 * i), 0, false
+            };
+        }
+        for (size i = 0; i != 0x200; ++i) {
+            page_directory[i] = {
+                true, true, true, false, false, false, 0, reinterpret_cast<size8>(page_table), false
+            };
+        }
+        for (size i = 0; i != 0x200; ++i) {
+            page_directory_pointers[i] = {
+                true, true, true, false, false, false, 0, reinterpret_cast<size8>(page_directory), false
+            };
+        }
+        for (size i = 0; i != 0x200; ++i) {
+            page_map[i] = {
+                true, true, true, false, false, false, 0, reinterpret_cast<size8>(page_directory_pointers), false
+            };
+        }
+        enable_large_pages();
+        enable_long_addresses();
+        set_paging( extended_paging { {}, false, false, reinterpret_cast<size4>(page_map) } );
+    }
 
     // operators.
 
