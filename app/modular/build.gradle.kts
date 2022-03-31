@@ -10,9 +10,10 @@ application {
     dependencies {
         implementation(project(":elf"))
         implementation(project(":multiboot2:start"))
+        implementation(project(":x86"))
     }
 
-    val args = listOf("-std=c++20", "-flto", "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2")
+    val args = listOf("-std=c++20", "-fasm-blocks", "-flto", "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2")
 
     binaries.configureEach {
         if (this is dev.nokee.platform.nativebase.ExecutableBinary) {
