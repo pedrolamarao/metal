@@ -62,6 +62,10 @@ namespace x86
         while (true)
             halt();
     }
+
+    void trampoline_call_32 ( segment_selector segment, size target );
+
+    void trampoline_call_64 ( segment_selector segment, size target );
 }
 
 namespace multiboot2
@@ -135,7 +139,7 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
         set_interrupt_descriptor_table(interrupt_descriptor_table_32);
 
         debug("32>");
-        far_call( segment_selector{2,false,0}, reinterpret_cast<void (*)()>(module.entry) );
+        trampoline_call_32( segment_selector{2,false,0}, module.entry );
         debug("!");
     }
     else if (module.bitness == 64) // call 64-bit entry
@@ -192,7 +196,7 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
         if ((get_msr(msr::EFER) & (1 << 10)) == 0) { return; }
 
         debug("64>");
-        far_call( segment_selector{3,false,0}, reinterpret_cast<void (*)()>(module.entry) );
+        trampoline_call_64( segment_selector{3,false,0}, module.entry );
         debug("!");
     }
     else // !!!
@@ -350,6 +354,51 @@ namespace x86
 
     alignas(0x1000) constinit
     long_page_map_entry page_map [ 0x200 ];
+
+    // operators.
+
+    constinit
+    decltype(sizeof(nullptr)) trampoline_target {};
+
+    [[gnu::naked]]
+    void trampoline_32 ()
+    {
+        __asm__
+        {
+            .code32
+            push eax
+            mov eax, trampoline_target
+            call eax
+            pop eax
+            retf
+        }
+    }
+
+    [[gnu::naked]]
+    void trampoline_64 ()
+    {
+        __asm__
+        {
+            .code64
+            push rax
+            mov rax, trampoline_target
+            call rax
+            pop rax
+            retf
+        }
+    }
+
+    void trampoline_call_32 ( segment_selector segment, size target )
+    {
+        trampoline_target = target; // #TODO: use stack
+        far_call(segment, trampoline_32);
+    }
+
+    void trampoline_call_64 ( segment_selector segment, size target )
+    {
+        trampoline_target = target; // #TODO: use stack
+        far_call(segment, trampoline_64);
+    }
 }
 
 namespace
