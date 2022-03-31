@@ -63,7 +63,28 @@ final x86_32_elf_multiboot2 = {
     staticLibArchiver.executable = 'llvm-ar'
 }
 
-final multiboot_x86_64 = {
+final x86_64_elf = {
+    assembler.executable = 'clang'
+    assembler.withArguments {
+        addAll '-target', 'x86_64-elf', '-gdwarf'
+    }
+    cCompiler.executable = 'clang'
+    cCompiler.withArguments {
+        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
+    }
+    cppCompiler.executable = 'clang++'
+    cppCompiler.withArguments {
+        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
+    }
+    linker.executable = 'clang++'
+    // #XXX: clang can't link target x86_64-elf with lld
+    linker.withArguments {
+        addAll '-target', 'x86_64-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib', '-static'
+    }
+    staticLibArchiver.executable = 'llvm-ar'
+}
+
+final x86_64_elf_multiboot2 = {
     assembler.executable = 'clang'
     assembler.withArguments {
         addAll '-target', 'x86_64-elf', '-gdwarf'
@@ -116,13 +137,11 @@ project.model
             if (llvmPath.isPresent()) { it.path(llvmPath) }
             final os = System.getProperty("os.name")
             if (os.containsIgnoreCase("linux")) {
-                rootProject.logger.lifecycle("oops")
                 it.target("linuxx86-64", llvm_linux)
             }
             else {
                 it.target("windowsx86-64", llvm)
             }
-
         }
         llvm_x86_32_multiboot(Clang)
         {
@@ -134,10 +153,15 @@ project.model
             if (llvmPath.isPresent()) { it.path(llvmPath) }
             it.target('host-x86_32-elf-multiboot2', x86_32_elf_multiboot2)
         }
-        llvm_x86_64_multiboot(Clang)
+        llvm_x86_64_elf(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target('host-x86_64-elf-multiboot2', multiboot_x86_64)
+            it.target('host-x86_64-elf', x86_64_elf)
+        }
+        llvm_x86_64_elf_multiboot(Clang)
+        {
+            if (llvmPath.isPresent()) { it.path(llvmPath) }
+            it.target('host-x86_64-elf-multiboot2', x86_64_elf_multiboot2)
         }
         llvm_x86_64_uefi(Clang)
         {

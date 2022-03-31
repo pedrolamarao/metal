@@ -87,7 +87,7 @@ namespace elf
     {
         prologue ident;
         size2    type;
-        size2    machine;
+        machine  machine;
         size4    version;
         size8    entry;
         size8    phoff;
@@ -102,4 +102,20 @@ namespace elf
      };
 
     static_assert(sizeof(header_64) == 64, "unexpected size of header_64");
+
+    //! ELF 64-bit segment header.
+
+    struct segment_64
+    {
+        segment type;
+        size4 flags;
+        size8 offset;
+        size8 vaddr;
+        size8 paddr;
+        size8 filesz;
+        size8 memsz;
+        size8 align;
+    };
+
+    static_assert(sizeof(segment_64) == 56, "unexpected size of segment_64");
 };
