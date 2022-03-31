@@ -20,7 +20,28 @@ final llvm_linux = {
     staticLibArchiver.executable = 'llvm-ar'
 }
 
-final multiboot_x86_32 = {
+final x86_32_elf = {
+    assembler.executable = 'clang'
+    assembler.withArguments {
+        addAll '-target', 'i386-elf', '-gdwarf'
+    }
+    cCompiler.executable = 'clang'
+    cCompiler.withArguments {
+        addAll '-target', 'i386-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
+    }
+    cppCompiler.executable = 'clang++'
+    cppCompiler.withArguments {
+        addAll '-target', 'i386-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
+    }
+    linker.executable = 'clang++'
+    // #XXX: clang can't link target i386-elf with lld
+    linker.withArguments {
+        addAll '-target', 'i386-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib', '-static'
+    }
+    staticLibArchiver.executable = 'llvm-ar'
+}
+
+final x86_32_elf_multiboot2 = {
     assembler.executable = 'clang'
     assembler.withArguments {
         addAll '-target', 'i386-elf', '-gdwarf'
@@ -106,7 +127,12 @@ project.model
         llvm_x86_32_multiboot(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target('host-x86_32-elf-multiboot2', multiboot_x86_32)
+            it.target('host-x86_32-elf', x86_32_elf)
+        }
+        llvm_x86_32_elf_multiboot(Clang)
+        {
+            if (llvmPath.isPresent()) { it.path(llvmPath) }
+            it.target('host-x86_32-elf-multiboot2', x86_32_elf_multiboot2)
         }
         llvm_x86_64_multiboot(Clang)
         {
