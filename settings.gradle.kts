@@ -31,7 +31,7 @@ rootProject.name = "psys"
 
 // components
 
-include("acpi")
+include("elf")
 
 include("googletest")
 
