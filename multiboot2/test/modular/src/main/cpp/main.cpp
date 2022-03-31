@@ -14,6 +14,8 @@ namespace multiboot2
 {
     void main ( ps::size4 magic, multiboot2::information_list & response )
     {
+        using namespace ps;
+
         _test_start();
         unsigned step { 1 };
 
@@ -51,7 +53,7 @@ namespace multiboot2
             return;
         }
 
-        // Validate module: expect ELF32 x86_32 with nonnull entry.
+        // Validate module: ELF32, x86_32 machine, segments, entry.
 
         _test_control = step++;
         auto elf = reinterpret_cast<elf::prologue const *>(module->start);
@@ -68,19 +70,30 @@ namespace multiboot2
         if (elf_32->machine != elf::machine::EM_386) { _test_control = 0; return; }
 
         _test_control = step++;
+        if (elf_32->phoff == 0) { _test_control = 0; return; }
+
+        _test_control = step++;
         if (elf_32->entry == 0) { _test_control = 0; return; }
 
         // Load module segments.
 
         _test_control = step++;
-        // #TODO: load module segments.
-        _test_control = 0;
+        for (int i = 0; i != elf_32->phnum; ++i) {
+            auto segment = reinterpret_cast<elf::segment_32 const *>(module->start + elf_32->phoff + (elf_32->phentsize * i));
+            if (segment->type != elf::segment::load) continue;
+            auto file = reinterpret_cast<size1 *>(module->start + segment->offset);
+            auto memory = reinterpret_cast<size1 *>(segment->vaddr);
+            for (int i = 0; i != segment->filesz; ++i)
+                memory[i] = file[i];
+            for (int i = segment->filesz; i != segment->memsz; ++i)
+                memory[i] = 0;
+        }
 
         // Call module entry point: expect nonnull C++ void (*)().
 
         _test_control = step++;
-        // #TODO: call module entry point.
-        _test_control = 0;
+        auto entry = reinterpret_cast<void (*)()>(elf_32->entry);
+        entry();
 
         _test_control = -1;
         _test_finish();

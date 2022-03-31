@@ -12,6 +12,8 @@ namespace elf
 
     constexpr auto EI_NIDENT { 16 };
 
+    //! ELF header prologue.
+
     struct prologue
     {
         size1 mag0;
@@ -34,6 +36,8 @@ namespace elf
         EM_X86_64 = 62,
     };
 
+    //! ELF 32-bit header.
+
     struct header_32
     {
         prologue ident;
@@ -52,7 +56,32 @@ namespace elf
         size2    shstrndx;
      };
 
-     static_assert(sizeof(header_32) == 52, "unexpected size of header_32");
+    static_assert(sizeof(header_32) == 52, "unexpected size of header_32");
+
+    //! ELF segment type.
+
+    enum class segment : size1
+    {
+        load = 1,
+    };
+
+    //! ELF 32-bit segment header.
+
+    struct segment_32
+    {
+        segment type;
+        size4 offset;
+        size4 vaddr;
+        size4 paddr;
+        size4 filesz;
+        size4 memsz;
+        size4 flags;
+        size4 align;
+    };
+
+    static_assert(sizeof(segment_32) == 32, "unexpected size of segment_32");
+
+    //! ELF 64-bit header.
 
     struct header_64
     {
@@ -72,5 +101,5 @@ namespace elf
         size2    shstrndx;
      };
 
-     static_assert(sizeof(header_64) == 64, "unexpected size of header_64");
+    static_assert(sizeof(header_64) == 64, "unexpected size of header_64");
 };
