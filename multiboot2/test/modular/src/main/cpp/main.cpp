@@ -1,5 +1,7 @@
 // Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
+#include <elf/elf.h>
+
 #include <multiboot2/information.h>
 #include <multiboot2/start.h>
 
@@ -49,10 +51,34 @@ namespace multiboot2
             return;
         }
 
-        // Call module entry point: expect them to be regular procedures.
+        // Validate module: expect ELF32 x86_32 with nonnull entry.
 
         _test_control = step++;
-        // #TODO: locate module entry point.
+        auto elf = reinterpret_cast<elf::prologue const *>(module->start);
+        if (elf->mag0 != 0x7F) { _test_control = 0; return; }
+        if (elf->mag1 != 'E') { _test_control = 0; return; }
+        if (elf->mag2 != 'L') { _test_control = 0; return; }
+        if (elf->mag3 != 'F') { _test_control = 0; return; }
+
+        _test_control = step++;
+        if (elf->type != 1) { _test_control = 0; return; }
+
+        _test_control = step++;
+        auto elf_32 = reinterpret_cast<elf::header_32 const *>(module->start);
+        if (elf_32->machine != elf::machine::EM_386) { _test_control = 0; return; }
+
+        _test_control = step++;
+        if (elf_32->entry == 0) { _test_control = 0; return; }
+
+        // Load module segments.
+
+        _test_control = step++;
+        // #TODO: load module segments.
+        _test_control = 0;
+
+        // Call module entry point: expect nonnull C++ void (*)().
+
+        _test_control = step++;
         // #TODO: call module entry point.
         _test_control = 0;
 

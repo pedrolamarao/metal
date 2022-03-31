@@ -13,6 +13,7 @@ dependencies {
 
 application {
     dependencies {
+        implementation(project(":elf"))
         implementation(project(":multiboot2:start"))
     }
 }

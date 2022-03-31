@@ -31,6 +31,8 @@ rootProject.name = "psys"
 
 // components
 
+include("elf")
+
 include("googletest")
 
 include("multiboot2:foo")
