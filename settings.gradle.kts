@@ -31,8 +31,6 @@ rootProject.name = "psys"
 
 // components
 
-include("acpi")
-
 include("googletest")
 
 include("multiboot2:foo")
