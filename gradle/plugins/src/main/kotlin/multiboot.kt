@@ -3,6 +3,7 @@ import br.dev.pedrolamarao.gdb.gradle.GdbExtension
 import br.dev.pedrolamarao.gdb.mi.GdbMiMessage
 import br.dev.pedrolamarao.gdb.mi.GdbMiProperties
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
@@ -31,6 +32,9 @@ abstract class MultibootCreateImageTask : DefaultTask()
     @get:Inject
     abstract val execOperations: ExecOperations
 
+    @get:InputFiles
+    abstract val moduleFiles : ConfigurableFileCollection
+
     init
     {
         val layout = project.layout
@@ -40,21 +44,23 @@ abstract class MultibootCreateImageTask : DefaultTask()
         outputFile.convention( inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${it.asFile.name}/image") } )
     }
 
-    @Internal
-    val grub_cfg =
-        "default=0\r\n" +
-        "timeout=0\r\n" +
-        "\r\n" +
-        "menuentry psys {\r\n" +
-        "   multiboot2 (memdisk)/program\r\n" +
-        "}\r\n"
-
     @TaskAction
     fun action ()
     {
         val configurationFile = File(temporaryDir, "grub.cfg").apply {
             createNewFile()
-            appendText(grub_cfg)
+            writeText(
+                GrubConfigurationEditor().apply {
+                    options["default"] = "0"
+                    options["timeout"] = "0"
+                    entries += GrubConfigurationEntryEditor().apply {
+                        name = "psys"
+                        multiboot2("(memdisk)/program")
+                        moduleFiles.forEach { module2("/modules/${it.name}") }
+                    }
+                }
+                .toString()
+            )
         }
 
         val builder = project.objects.newInstance<GrubMakeImageEditor>()
@@ -63,6 +69,7 @@ abstract class MultibootCreateImageTask : DefaultTask()
         builder.installModules.addAll("configfile", "memdisk", "multiboot2", "normal")
         builder.source("/boot/grub/grub.cfg", configurationFile)
         builder.source("/program", inputFile)
+        moduleFiles.forEach { builder.source("/modules/${it.name}", it) }
 
         execOperations.exec {
             executable = command.get()

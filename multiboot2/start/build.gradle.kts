@@ -18,7 +18,7 @@ library {
     )
 
     dependencies {
-        api(project(":multiboot2"))
+        api(project(":multiboot2:foo"))
     }
 
     binaries.configureEach {
