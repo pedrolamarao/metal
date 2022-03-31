@@ -3,9 +3,8 @@ import br.dev.pedrolamarao.gdb.gradle.GdbExtension
 import br.dev.pedrolamarao.gdb.mi.GdbMiMessage
 import br.dev.pedrolamarao.gdb.mi.GdbMiProperties
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.RegularFile
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.get
@@ -34,7 +33,7 @@ abstract class MultibootCreateImageTask : DefaultTask()
     abstract val execOperations: ExecOperations
 
     @get:InputFiles
-    abstract val moduleFiles : ListProperty<RegularFile>
+    abstract val moduleFiles : ConfigurableFileCollection
 
     init
     {
@@ -57,7 +56,7 @@ abstract class MultibootCreateImageTask : DefaultTask()
                     entries += GrubConfigurationEntryEditor().apply {
                         name = "psys"
                         multiboot2("(memdisk)/program")
-                        moduleFiles.get().forEach { module2("/modules/${it.asFile.name}") }
+                        moduleFiles.forEach { module2("/modules/${it.name}") }
                     }
                 }
                 .toString()
@@ -70,7 +69,7 @@ abstract class MultibootCreateImageTask : DefaultTask()
         builder.installModules.addAll("configfile", "memdisk", "multiboot2", "normal")
         builder.source("/boot/grub/grub.cfg", configurationFile)
         builder.source("/program", inputFile)
-        moduleFiles.get().forEach { builder.source("/modules/${it.asFile.name}", it) }
+        moduleFiles.forEach { builder.source("/modules/${it.name}", it) }
 
         execOperations.exec {
             executable = command.get()
