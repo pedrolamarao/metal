@@ -100,6 +100,7 @@ abstract class MultibootRunImageTask : DefaultTask()
         val path = tools["br.dev.pedrolamarao.psys.qemu.path"]
         qemuExecutable.convention( if (path != null) "${path}/qemu-system-x86_64" else "qemu-system-x86_64" )
 
+        qemuArgs.debug.convention("cpu_reset,int")
         qemuArgs.debugConsole.convention("vc")
         qemuArgs.kernel.convention(imageFile)
         qemuArgs.gdb.convention("tcp:localhost:12345")
