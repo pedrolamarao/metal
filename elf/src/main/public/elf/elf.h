@@ -30,7 +30,7 @@ namespace elf
 
     static_assert(sizeof(prologue) == 16, "unexpected size of prologue");
 
-    enum class machine : size1
+    enum class machine : size2
     {
         EM_386    = 3,
         EM_X86_64 = 62,
