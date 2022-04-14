@@ -1,4 +1,4 @@
-Date: 2022-03-17
+Date: 2022-04-14
 
 ![ubuntu-latest](https://github.com/pedrolamarao/psys/actions/workflows/ubuntu.yml/badge.svg)
 ![windows-latest](https://github.com/pedrolamarao/psys/actions/workflows/windows.yml/badge.svg)
@@ -13,7 +13,7 @@ For more information on this project's mission, ambitions and aims, see [GOAL](d
 
 # quick start
 
-Put JDK 11 and LLVM 13 in your `${PATH}`.
+Put JDK 17 and LLVM 13 in your `${PATH}`.
 
 From the source root, run: `./gradlew build`
 
@@ -53,5 +53,7 @@ Psys is verified by automated tests.
 For more information, see [TEST](doc/TEST.md).
 
 To verify all unit tests: `./gradlew check`
+
+Psys system tests require QEMU; for more information, see [TOOLS](doc/TOOLS.md)
 
 To verify all psys tests: `./gradlew test-image`

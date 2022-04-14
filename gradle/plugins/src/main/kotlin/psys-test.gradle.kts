@@ -1,7 +1,6 @@
 import dev.nokee.platform.nativebase.ExecutableBinary
 
 plugins {
-    id("br.dev.pedrolamarao.gdb")
     id("psys-application")
 }
 
@@ -30,7 +29,6 @@ project.afterEvaluate {
             val test = project.tasks.register<MultibootTestImageTask>("test-image-${name}") {
                 group = "psys"
                 description = "tests image"
-                gdbArchitecture.set("i386:x86-64")
                 imageFile.set(image)
                 executableFile.set(executable)
             }
