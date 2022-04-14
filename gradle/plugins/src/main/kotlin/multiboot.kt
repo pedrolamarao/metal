@@ -1,7 +1,7 @@
-import br.dev.pedrolamarao.gdb.gradle.GdbExec
-import br.dev.pedrolamarao.gdb.gradle.GdbExtension
-import br.dev.pedrolamarao.gdb.mi.GdbMiMessage
-import br.dev.pedrolamarao.gdb.mi.GdbMiProperties
+import br.dev.pedrolamarao.elf.*
+import br.dev.pedrolamarao.gdb.rsp.GdbRemote
+import br.dev.pedrolamarao.gdb.rsp.GdbRemoteParser
+import br.dev.pedrolamarao.gdb.rsp.GdbRemoteStopSignal
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -10,10 +10,12 @@ import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.ExecOperations
-import org.gradle.workers.WorkerExecutor
 import java.io.File
-import java.time.Duration
-import java.util.concurrent.ForkJoinPool
+import java.lang.String.format
+import java.net.InetSocketAddress
+import java.nio.ByteOrder
+import java.nio.channels.FileChannel
+import java.nio.channels.FileChannel.MapMode
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -119,16 +121,110 @@ abstract class MultibootRunImageTask : DefaultTask()
     }
 }
 
+private data class Symbol (val name : String, val size : Long, val address : Long) { }
+
+private class SymbolTable (val addresses : Map<Long,Symbol>, val names : Map<String,Symbol>)
+{
+    fun findByAddress (address : Long) = addresses[address]
+
+    fun findByName (name : String) = names[name]
+
+    companion object
+    {
+        fun from (symbols : List<Symbol>) : SymbolTable
+        {
+            val addresses = mutableMapOf<Long,Symbol>()
+            val names = mutableMapOf<String,Symbol>()
+            for (symbol in symbols) {
+                addresses[symbol.address] = symbol
+                names[symbol.name] = symbol
+            }
+            return SymbolTable(addresses,names)
+        }
+
+        fun parse32 (file : FileChannel, byteOrder : ByteOrder) : SymbolTable
+        {
+            val elf = ElfFileView32(file.map(MapMode.READ_ONLY, 0, 52).order(byteOrder))
+            val sectionTable = ElfSectionTableView32(
+                file.map(
+                    MapMode.READ_ONLY, elf.sectionTableOffset().toLong(), elf.sectionEntrySize().toLong() * elf.sectionTableSize()
+                )
+                .order(byteOrder),
+                elf.sectionEntrySize()
+            )
+            var strings = null as ElfStringTable?
+            val symbolTables = java.util.ArrayList<ElfSymbolTableView32>()
+            for (section in sectionTable) {
+                val bytes = file.map(MapMode.READ_ONLY, section.offset().toLong(), section.size().toLong()).order(byteOrder)
+                when (section.type()) {
+                    2 -> symbolTables.add(ElfSymbolTableView32(bytes, section.entrySize()))
+                    3 -> strings = ElfStringTable(bytes)
+                }
+            }
+            val list = mutableListOf<Symbol>()
+            if (strings != null) {
+                for (symbolTable in symbolTables) {
+                    for (symbol in symbolTable) {
+                        val name = strings[symbol.name()].toString()
+                        list.add(Symbol(name, symbol.size().toLong(), symbol.value().toLong()))
+                    }
+                }
+            }
+            return from(list)
+        }
+
+        fun parse64 (file : FileChannel, byteOrder : ByteOrder) : SymbolTable
+        {
+            val elf = ElfFileView64(file.map(MapMode.READ_ONLY, 0, 64).order(byteOrder))
+            val sectionTable = ElfSectionTableView64(
+                file.map(
+                    MapMode.READ_ONLY, elf.sectionTableOffset(), elf.sectionEntrySize().toLong() * elf.sectionTableSize()
+                )
+                .order(byteOrder),
+                elf.sectionEntrySize()
+            )
+            var strings = null as ElfStringTable?
+            val symbolTables = java.util.ArrayList<ElfSymbolTableView64>()
+            for (section in sectionTable) {
+                val bytes = file.map(MapMode.READ_ONLY, section.offset(), section.size()).order(byteOrder)
+                when (section.type()) {
+                    2 -> symbolTables.add(ElfSymbolTableView64(bytes, section.entrySize().toInt()))
+                    3 -> strings = ElfStringTable(bytes)
+                }
+            }
+            val list = mutableListOf<Symbol>()
+            if (strings != null){
+                for (symbolTable in symbolTables) {
+                    for (symbol in symbolTable) {
+                        val name = strings[symbol.name()].toString()
+                        list.add(Symbol(name, symbol.size(), symbol.value()))
+                    }
+                }
+            }
+            return from(list)
+        }
+
+        fun parse (file : FileChannel) : SymbolTable
+        {
+            val elf = ElfFileView(file.map(MapMode.READ_ONLY, 0, 16))
+            val byteOrder = when (elf.encoding().toInt()) {
+                1 -> ByteOrder.LITTLE_ENDIAN
+                2 -> ByteOrder.BIG_ENDIAN
+                else -> throw RuntimeException("file is not an ELF")
+            }
+            return when (elf.format().toInt()) {
+                1 -> parse32(file,byteOrder)
+                2 -> parse64(file,byteOrder)
+                else -> throw RuntimeException("file is neither ELF32 nor ELF64")
+            }
+        }
+    }
+}
+
 abstract class MultibootTestImageTask : DefaultTask()
 {
     @get:InputFile
     abstract val executableFile : RegularFileProperty
-
-    @get:Input @get:Optional
-    abstract val gdbArchitecture : Property<String>
-
-    @get:Input
-    abstract val gdbExecutable : Property<String>
 
     @get:InputFile
     abstract val imageFile : RegularFileProperty
@@ -142,16 +238,10 @@ abstract class MultibootTestImageTask : DefaultTask()
     @get:Nested
     abstract val qemuExecutable : Property<String>
 
-    @get:Inject
-    abstract val workers : WorkerExecutor
-
     init
     {
         val tools = project.rootProject.extensions["tools"] as java.util.Properties
-        val gdbPath = tools["br.dev.pedrolamarao.psys.gdb.path"]
         val qemuPath = tools["br.dev.pedrolamarao.psys.qemu.path"]
-
-        gdbExecutable.convention( if (gdbPath != null) "${gdbPath}/gdb" else "gdb" )
 
         qemuArgs.apply {
             debug.set("cpu_reset,int")
@@ -179,116 +269,97 @@ abstract class MultibootTestImageTask : DefaultTask()
         logger.info("${project.path}:${this.name}: executableFile = ${executableFile.get()}")
         logger.info("${project.path}:${this.name}: imageFile = ${imageFile.get()}")
 
-        val qemuCommand = mutableListOf<String>()
-        qemuCommand += qemuExecutable.get()
-        qemuCommand += qemuArgs.build()
+        val symbols = FileChannel.open( executableFile.asFile.get().toPath() ).use { SymbolTable.parse(it) }
+        val control = symbols.findByName("_test_control") ?: throw RuntimeException("_test_control not found")
+        val debug = symbols.findByName("_test_debug") ?: throw RuntimeException("_test_debug not found")
+        val finish = symbols.findByName("_test_finish") ?: throw RuntimeException("_test_finish not found")
+        val start = symbols.findByName("_test_start") ?: throw RuntimeException("_test_start not found")
 
         val qemuProcess = ProcessBuilder()
-            .command(qemuCommand)
+            .command( listOf(qemuExecutable.get()) + qemuArgs.build() )
             .redirectError( File(temporaryDir, "qemu.error.txt") )
             .redirectOutput( File(temporaryDir, "qemu.out.txt") )
             .start()
 
-        val gdb = (project.extensions["gdb"] as GdbExtension).exec {
-            command.set(gdbExecutable)
-            debugOutput.set(File(temporaryDir,"gdb.mi.txt").outputStream())
-            timeLimit.set(Duration.ofSeconds(10))
-        }
-
-        gdb.handle { onTestStart(gdb, this) }
-        gdb.handle { onTestControl(gdb, this) }
-        gdb.handle { onTestDebug(gdb, this) }
-        gdb.handle { onTestFinish(gdb, this) }
+        qemuProcess.waitFor(750, TimeUnit.MILLISECONDS)
 
         try
         {
-            if (gdbArchitecture.isPresent) gdb.gdbSet("architecture", gdbArchitecture.get()) {}
-            gdb.gdbSet("confirm", "off") {}
-            gdb.gdbSet("mi-async", "on") {}
-            gdb.gdbSet("osabi", "none") {}
-            gdb.gdbSet("output-radix", "10") {}
-            gdb.fileExecAndSymbols(executableFile.get().toString().replace("\\", "/")) {}
-            gdb.targetSelectTcp("localhost", "${port}") {}
-            gdb.breakInsertAtSymbol("_test_start") {}
-            gdb.execContinue() {}
-            val complete = qemuProcess.waitFor(5, TimeUnit.SECONDS)
-            if (! complete) { logger.error("${project.path}:${this.name}: [FAILURE]: timeout") }
+            GdbRemote.from( InetSocketAddress("localhost",port) ).use {
+                gdb ->
+
+                // learn server features
+                gdb.exchange("qSupported:hwbreak+;swbreak+;xmlRegisters+")
+
+                // discover initial status
+                gdb.exchange("?")
+
+                // break once at _test_start
+                gdb.exchange(format("Z1,%X,0",start.address))
+                gdb.exchange("c")
+                gdb.exchange(format("z1,%X,0",start.address))
+
+                logger.info("! Test ${this}: START")
+
+                // watch psys test data
+                gdb.exchange(format("Z2,%X,%d",control.address,control.size))
+                gdb.exchange(format("Z2,%X,%d",debug.address,debug.size))
+
+                // continue up to _test_finish...
+                gdb.exchange(format("Z1,%X,0",finish.address))
+
+                // ...watching _test_control and _test_debug
+                var previous = 0
+                while (true)
+                {
+                    // continue until next stop
+                    val response = gdb.exchange("c")
+                    val stop = GdbRemoteParser.parseStop(response.content()) ?: throw RuntimeException("expected stop, got null")
+
+                    // expect stop by TRAP
+                    if (stop !is GdbRemoteStopSignal) throw RuntimeException("expected signal, got $stop")
+                    if (! "05".contentEquals(stop.signal())) throw RuntimeException("expected TRAP, got ${stop.signal()}")
+
+                    // if not watch then break, assume _test_finish
+                    if (! stop.attributes().containsKey("watch")) break
+
+                    // evaluate watch, assuming little-endian
+                    val address = stop.attributes()["watch"]?.toLong(16)
+                    val symbol = address?.let { it1 -> symbols.findByAddress(it1) } ?: continue
+                    val memory = gdb.exchange(format("m%X,%d",address,symbol.size))
+                    val value = Integer.reverseBytes( Integer.parseUnsignedInt( memory.content(),16 ) )
+
+                    // interpret watch
+                    if (symbol == control) {
+                        if      (previous == 0 && value == 0) { }
+                        else if (previous == 0 && value != 0) {
+                            logger.info("! Test ${this.path}: stage ${previous}: ENTERING...")
+                        }
+                        else if (previous != 0 && value == 0) {
+                            logger.error("! Test ${this.path}: stage ${previous}: FAILED")
+                            throw RuntimeException("test ${this.path}: stage ${previous}: FAILED")
+                        }
+                        else {
+                            logger.lifecycle("! Test ${this.path}: stage ${previous}: SUCCESS")
+                            logger.info("! Test ${this.path}: stage ${previous}: ENTERING...")
+                        }
+                        previous = value
+                    }
+                    else if (symbol == debug) {
+                        logger.info("! Test ${this.path}: stage ${previous}: DEBUG = ${value}")
+                    }
+                }
+
+                // terminate
+                logger.info("! Test ${this.path}: FINISH")
+                gdb.exchange("k")
+            }
         }
         finally
         {
-            qemuProcess.destroyForcibly()
-            gdb.close()
+            qemuProcess.destroy()
         }
 
         logger.info("${project.path}:${this.name}: QEMU completed with status = ${qemuProcess.exitValue()}")
-        logger.info("${project.path}:${this.name}: GDB completed with status = ${gdb.exitValue()}")
-    }
-
-    private fun onTestStart (gdb : GdbExec, message : GdbMiMessage)
-    {
-        if (message !is GdbMiMessage.RecordMessage) return
-        val properties = message.content().properties()
-        if (properties.get("reason", String::class.java) != "breakpoint-hit") return
-        val frame = properties.get("frame", GdbMiProperties::class.java) ?: return
-        if (frame.get("func", String::class.java) != "_test_start") return
-        logger.info("${project.path}:${this.name}: [START]")
-        ForkJoinPool.commonPool().submit {
-            gdb.breakInsertAtSymbol("_test_finish") {}
-            gdb.breakWatch("_test_control") {}
-            gdb.breakWatch("_test_debug") {}
-            gdb.execContinue {}
-        }
-    }
-
-    fun onTestControl (gdb : GdbExec, message : GdbMiMessage)
-    {
-        if (message !is GdbMiMessage.RecordMessage) return
-        val properties = message.content().properties()
-        if (properties.get("reason", String::class.java) != "watchpoint-trigger") return
-        val wpt = properties.get("wpt", GdbMiProperties::class.java) ?: return
-        if (wpt.get("exp", String::class.java) != "_test_control") return
-        val value = properties.get("value", GdbMiProperties::class.java) ?: return
-        val old = value.get("old", String::class.java) ?: return
-        val new = value.get("new", String::class.java) ?: return
-        logger.info("${project.path}:${this.name}: [CONTROL]: ${old} -> ${new}")
-        if (old == "0") {
-            logger.info("${project.path}:${this.name}: [ENTER]: ${new}")
-        }
-        else if (new == "0") {
-            logger.error("${project.path}:${this.name}: [FAILURE]: ${old}")
-        }
-        else {
-            logger.lifecycle("${project.path}:${this.name}: [SUCCESS]: ${old}")
-            logger.info("${project.path}:${this.name}: [ENTER]: ${new}")
-        }
-        ForkJoinPool.commonPool().submit { gdb.execContinue {} }
-    }
-
-    fun onTestDebug (gdb : GdbExec, message : GdbMiMessage)
-    {
-        if (message !is GdbMiMessage.RecordMessage) return
-        val properties = message.content().properties()
-        if (properties.get("reason", String::class.java) != "watchpoint-trigger") return
-        val wpt = properties.get("wpt", GdbMiProperties::class.java) ?: return
-        if (wpt.get("exp", String::class.java) != "_test_debug") return
-        val value = properties.get("value", GdbMiProperties::class.java) ?: return
-        val old = value.get("old", String::class.java) ?: return
-        val new = value.get("new", String::class.java) ?: return
-        logger.info("${project.path}:${this.name}: [DEBUG]: ${old} -> ${new}")
-        ForkJoinPool.commonPool().submit { gdb.execContinue {} }
-    }
-
-    private fun onTestFinish (gdb : GdbExec, message : GdbMiMessage)
-    {
-        if (message !is GdbMiMessage.RecordMessage) return
-        val properties = message.content().properties()
-        if (properties.get("reason", String::class.java) != "breakpoint-hit") return
-        val frame = properties.get("frame", GdbMiProperties::class.java) ?: return
-        if (frame.get("func", String::class.java) != "_test_finish") return
-        logger.info("${project.path}:${this.name}: [FINISH]")
-        ForkJoinPool.commonPool().submit {
-            gdb.interpreterExec("mi", "kill")
-            gdb.gdbExit() {}
-        }
     }
 }
