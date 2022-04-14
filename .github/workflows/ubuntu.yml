@@ -16,7 +16,7 @@ jobs:
           java-version: "11"
           distribution: "temurin"
       - name: "Install LLVM 13"
-        uses: KyleMayes/install-llvm-action@v1.5.1
+        uses: KyleMayes/install-llvm-action@v1.5.2
         with:
           ubuntu-version: 18.04
           version: 13
@@ -39,7 +39,7 @@ jobs:
           java-version: "11"
           distribution: "temurin"
       - name: "Install LLVM 14"
-        uses: KyleMayes/install-llvm-action@v1.5.1
+        uses: KyleMayes/install-llvm-action@v1.5.2
         with:
           ubuntu-version: 18.04
           version: 14
