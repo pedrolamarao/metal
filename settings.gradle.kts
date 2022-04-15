@@ -66,3 +66,5 @@ rootProject.projectDir.resolve("x86/test/x86_32-elf-multiboot2").toPath().apply 
 // applications
 
 include("app:sandbox")
+
+include("sandbox:x86-32")

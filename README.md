@@ -17,6 +17,8 @@ Put JDK 17 and LLVM 13 in your `${PATH}`.
 
 From the source root, run: `./gradlew build`
 
+To play with code, look inside the `sandbox` folder for a variety of projects you can play with!
+
 # prepare
 
 Psys is built with an LLVM based toolset.

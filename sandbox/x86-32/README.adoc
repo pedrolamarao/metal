@@ -1,0 +1,11 @@
+= x86-32 sandbox
+
+This project provides a sandbox for programming x86 in protected mode.
+
+Look for the `psys::sandbox` procedure in `sandbox.cpp`!
+
+You can run this code in QEMU from the root directory with:
+
+`./gradlew :sandbox:x86-32:run-image`
+
+Look for output in the "debugcon console"!
