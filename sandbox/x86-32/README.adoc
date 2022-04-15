@@ -9,3 +9,13 @@ You can run this code in QEMU from the root directory with:
 `./gradlew :sandbox:x86-32:run-image`
 
 Look for output in the "debugcon console"!
+
+== debugging
+
+QEMU will listen for a GDB remote serial protocol client at `tcp:localhost:12345`.
+
+In order to give time for the debugger to connect, you must instruct QEMU to wait.
+
+In the `build.gradle.kts` file, look for `qemuArgs.stop.set(false)`.
+
+If you change that value to `true`, QEMU will immediately pause after starting.
