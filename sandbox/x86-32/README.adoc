@@ -10,29 +10,28 @@ You can run this code in QEMU from the root directory with:
 
 Look for output in QEMU debugcon console!
 
-== debug
+== machine
 
-QEMU will listen for a GDB remote serial protocol client at `tcp:localhost:12345`.
+The sandbox procedure is called with the machine in the following state:
 
-In order to give time for the debugger to connect, you must instruct QEMU to wait.
-
-In the `build.gradle.kts` file, look for `qemuArgs.stop.set(false)`.
-
-If you change that value to `true`, QEMU will pause immediately after starting.
-You may manually continue by untoggling QEMU > Machine > Pause.
+- protected mode
+- flat segments
+- 4 KiB stack
+- ignore interrupts
+- disabled paging
 
 == start
 
 Start code is located in `start.cpp`.
 
+The target is `x86_32-bios-multiboot2-elf`.
+This target generates code for x86 processors in protected mode,
+program images in ELF32 format for `EM_386` machines,
+and system images in GRUB2 format for `i386-pc` systems.
+
 This sandbox is loaded by a Multiboot2 loader.
-The Multiboot2 request object is defined in the `psys:start` library.
+The loader receives control from BIOS in real mode
+and delivers control to the application in protected mode.
 
-The linker shall set the ELF entry point to `multiboot2_start`.
-This is defined in the `x86_32-elf-multiboot2` target specification.
-
-The Multiboot2 loader shall jump to the ELF entry point.
-This is the default behaviour for Multiboot2 loading ELF programs.
-
-The `multiboot2_start` procedure is provided by the `psys:start` library.
-It shall minimally validate the load and jump to `psys::main`.
+The `multiboot2:start` library provides the Multiboot2 request object and entry point.
+It minimally prepares the machine for running C++ generated code.

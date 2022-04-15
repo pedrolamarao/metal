@@ -8,8 +8,7 @@ application {
     targetMachines.add( machines.os("host").architecture("-x86_32-elf-multiboot2") )
 
     dependencies {
-        implementation(project(":psys:start"))
-        implementation(project(":x86"))
+        implementation(project(":multiboot2:start"))
     }
 
     val baseArgs = listOf("-std=c++20", "-fasm-blocks", "-flto")

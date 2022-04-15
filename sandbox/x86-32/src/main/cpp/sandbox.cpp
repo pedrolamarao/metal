@@ -3,9 +3,9 @@
 
 //! Play here!
 
-namespace psys
+namespace sandbox
 {
-    void sandbox ()
+    void main ()
     {
         // Look for output in QEMU debugcon!
 

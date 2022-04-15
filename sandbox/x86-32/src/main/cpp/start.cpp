@@ -1,16 +1,21 @@
 // Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <psys/start.h>
+#include <multiboot2/start.h>
 
 
-//! Sandbox startup code.
+//! Start code.
 
-namespace psys
+namespace sandbox
 {
-    void sandbox ();
+    void main ();
+}
 
-    void main ()
+//! The multiboot2 loader has done all the work!
+
+namespace multiboot2
+{
+    void main (ps::size4 magic, multiboot2::information_list & information)
     {
-        sandbox();
+        sandbox::main();
     }
 }
