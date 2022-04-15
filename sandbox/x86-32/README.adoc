@@ -2,15 +2,15 @@
 
 This project provides a sandbox for programming x86 in protected mode.
 
-Look for the `psys::sandbox` procedure in `sandbox.cpp`!
+Feel free to mess with the `sandbox.cpp` file!
 
 You can run this code in QEMU from the root directory with:
 
 `./gradlew :sandbox:x86-32:run-image`
 
-Look for output in the "debugcon console"!
+Look for output in QEMU debugcon console!
 
-== debugging
+== debug
 
 QEMU will listen for a GDB remote serial protocol client at `tcp:localhost:12345`.
 
@@ -18,4 +18,21 @@ In order to give time for the debugger to connect, you must instruct QEMU to wai
 
 In the `build.gradle.kts` file, look for `qemuArgs.stop.set(false)`.
 
-If you change that value to `true`, QEMU will immediately pause after starting.
+If you change that value to `true`, QEMU will pause immediately after starting.
+You may manually continue by untoggling QEMU > Machine > Pause.
+
+== start
+
+Start code is located in `start.cpp`.
+
+This sandbox is loaded by a Multiboot2 loader.
+The Multiboot2 request object is defined in the `psys:start` library.
+
+The linker shall set the ELF entry point to `multiboot2_start`.
+This is defined in the `x86_32-elf-multiboot2` target specification.
+
+The Multiboot2 loader shall jump to the ELF entry point.
+This is the default behaviour for Multiboot2 loading ELF programs.
+
+The `multiboot2_start` procedure is provided by the `psys:start` library.
+It shall minimally validate the load and jump to `psys::main`.
