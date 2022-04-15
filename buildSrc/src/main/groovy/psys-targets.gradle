@@ -70,16 +70,16 @@ final multiboot_x86_64 = {
     }
     cCompiler.executable = 'clang'
     cCompiler.withArguments {
-        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-m32', '-nostdinc'
+        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
     cppCompiler.executable = 'clang++'
     cppCompiler.withArguments {
-        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-m32', '-nostdinc'
+        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
     linker.executable = 'clang++'
     // #XXX: clang can't link target x86_64-elf with lld
     linker.withArguments {
-        addAll '-target', 'x86_64-linux-elf', '-fuse-ld=lld', '-gdwarf', '-m32', '-nostdlib', '-static',
+        addAll '-target', 'x86_64-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib', '-static',
             "-Wl,--script=${x86_64_elf_multiboot2_ld}"
     }
     staticLibArchiver.executable = 'llvm-ar'
