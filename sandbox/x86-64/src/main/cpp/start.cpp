@@ -24,12 +24,7 @@ namespace x86
     }
     constexpr global_descriptor_table;
 
-    struct [[gnu::packed]]
-    {
-        unsigned short size   { sizeof(x86::global_descriptor_table) - 1 };
-        unsigned int   offset { /* reinterpret_cast<int>(& x86::global_descriptor_table) */ };
-    }
-    constinit global_descriptor_table_register;
+    constexpr auto global_descriptor_table_size = sizeof(global_descriptor_table) - 1;
 
     constexpr segment_selector data_segment { 2, false, 0 };
 
@@ -88,19 +83,20 @@ namespace multiboot2
             // set stack
             mov esp, offset stack + 0x4000
             // reset eflags
-            xor ecx, ecx
-            push ecx
+            xor eax, eax
+            push eax
             popfd
-            // #TODO: validate eax and ebx
             // TRACE
             mov al, '0'
             out 0xE9, al
             // load global descriptor table register
             mov eax, offset x86::global_descriptor_table
-            mov ebx, offset x86::global_descriptor_table_register.offset
-            mov [ebx], eax
-            mov eax, offset x86::global_descriptor_table_register
-            lgdt [eax]
+            push eax
+            mov ebx, offset x86::global_descriptor_table_size
+            mov eax, [ebx]
+            push ax
+            lgdt [esp]
+            add esp, 6
             // TRACE
             mov al, '1'
             out 0xE9, al
