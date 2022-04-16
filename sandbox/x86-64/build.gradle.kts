@@ -12,7 +12,7 @@ application {
         implementation(project(":x86"))
     }
 
-    val baseArgs = listOf("-std=c++20", "-fasm-blocks", "-flto", "-masm=intel", "-Wno-deprecated-type")
+    val baseArgs = listOf("-std=c++20", "-fasm-blocks", "-flto")
 
     binaries.configureEach {
         if (this is ExecutableBinary) {
