@@ -116,13 +116,13 @@ namespace multiboot2
             mov al, '2'
             out 0xE9, al
         }
+        // far return to short code segment
         __asm__ (
-            // far return to short code segment
             ".code32           \n"
             "push %0           \n"
-            "push offset .Lfoo \n"
-            "retf              \n"
-            ".Lfoo:            \n"
+            "push $%=f         \n"
+            "lret              \n"
+            "%=:               \n"
             :
             : "r"(x86::short_code_segment)
             :
