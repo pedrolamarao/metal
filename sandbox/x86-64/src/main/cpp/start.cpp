@@ -90,7 +90,7 @@ namespace multiboot2
             // reset eflags
             xor ecx, ecx
             push ecx
-            popf
+            popfd
             // #TODO: validate eax and ebx
             // TRACE
             mov al, '0'
@@ -126,7 +126,7 @@ namespace multiboot2
             :
             : "r"(x86::short_code_segment)
             :
-       );
+        );
         __asm__
         {
             // TRACE
