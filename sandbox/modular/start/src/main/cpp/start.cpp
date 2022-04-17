@@ -25,15 +25,9 @@ namespace x86
 
     void install_segments ();
 
-    // interrupts.
-
-    void install_interrupts_32 ();
-
-    void install_interrupts_64 ();
-
     // pages.
 
-    void install_pages_64 ();
+    void install_pages ();
 
     // operators.
 
@@ -66,11 +60,6 @@ namespace multiboot2
     auto load_module ( modules_information const * module ) -> module_type;
 }
 
-namespace
-{
-    void debug ( char const * s );
-}
-
 void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response )
 {
     using namespace ps;
@@ -80,7 +69,6 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
     // Test if loaded from the expected loader.
 
     if (magic != information_magic) {
-        debug("?");
         abort();
         return;
     }
@@ -88,7 +76,6 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
     // Test if has cpuid.
 
     if (! has_cpuid()) {
-        debug("?");
         abort();
         return;
     }
@@ -96,7 +83,6 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
     // Test if has long mode.
 
     if (! has_long_mode()) {
-        debug("?");
         abort();
         return;
     }
@@ -107,7 +93,7 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
 
     // Install long mode pages.
 
-    install_pages_64();
+    install_pages();
 
     // Enable long mode.
 
@@ -121,7 +107,6 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
 
     auto module_information = find_module(response);
     if (module_information == nullptr) {
-        debug("?");
         abort();
     }
 
@@ -129,7 +114,6 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
 
     auto module = load_module(module_information);
     if (module.entry == 0) {
-        debug("?");
         abort();
     }
 
@@ -137,19 +121,14 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
 
     if (module.bitness == 32) // call 32-bit entry
     {
-        debug("32>");
         trampoline_call_32(code_segment_32, module.entry);
-        debug("!");
     }
     else if (module.bitness == 64) // call 64-bit entry
     {
-        debug("64>");
         trampoline_call_64(code_segment_64, module.entry);
-        debug("!");
     }
     else // !!!
     {
-        debug("?");
         abort();
     }
 }
@@ -282,57 +261,6 @@ namespace x86
         set_code_segment(code_segment_32);
     }
 
-    // interrupts.
-
-    constinit
-    _32::interrupt_gate_descriptor interrupt_descriptor_table_32 [ 256 ]
-    { };
-
-    [[gnu::naked]]
-    void interrupt_handler_32 ()
-    {
-        __asm__
-        {
-            cli
-        loop:
-            hlt
-            jmp loop
-        }
-    }
-
-    void install_interrupts_32 ()
-    {
-        for (auto i = 0U, j = 256U; i != j; ++i) {
-            interrupt_descriptor_table_32[i] = { code_segment_32, interrupt_handler_32, true, true, 0, true };
-        }
-        set_interrupt_descriptor_table(interrupt_descriptor_table_32);
-    }
-
-    constinit
-    _64::interrupt_gate_descriptor interrupt_descriptor_table_64 [ 256 ]
-    { };
-
-    [[gnu::naked]]
-    void interrupt_handler_64 ()
-    {
-        __asm__
-        {
-            .code64
-            cli
-        loop:
-            hlt
-            jmp loop
-        }
-    }
-
-    void install_interrupts_64 ()
-    {
-        for (auto i = 0U, j = 256U; i != j; ++i) {
-            interrupt_descriptor_table_64[i] = { code_segment_64, interrupt_handler_64, true, true, 0, true };
-        }
-        set_interrupt_descriptor_table(interrupt_descriptor_table_64);
-    }
-
     // pages.
 
     alignas(0x1000) constinit
@@ -347,7 +275,7 @@ namespace x86
     alignas(0x1000) constinit
     long_page_map_entry page_map [ 0x200 ];
 
-    void install_pages_64 ()
+    void install_pages ()
     {
         for (size i = 0; i != 0x200; ++i) {
             page_table[i] = {
@@ -420,15 +348,5 @@ namespace x86
     {
         trampoline_target_64 = target; // #TODO: use stack
         far_call(segment, trampoline_64);
-    }
-}
-
-namespace
-{
-    char table [16] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-
-    void debug ( char const * s )
-    {
-        while (*s != 0) x86::out1(0xE9, *s++);
     }
 }
