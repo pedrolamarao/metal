@@ -4,7 +4,7 @@ plugins {
 
 application {
     targetMachines.addAll(
-        machines.os("host").architecture("-x86_32-elf-multiboot2"),
+        machines.os("host").architecture("-x86_32-multiboot2-elf"),
     )
 
     dependencies {
