@@ -7,7 +7,7 @@ plugins {
 application {
     targetMachines.addAll(
         // #XXX: build on any for x86_32-elf-multiboot2
-        machines.os("host").architecture("-x86_32-elf-multiboot2"),
+        machines.os("host").architecture("-x86_32-multiboot2-elf"),
     )
 
     dependencies {

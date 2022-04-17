@@ -153,7 +153,7 @@ project.model
         llvm_x86_32_multiboot2_elf(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target('host-x86_32-elf-multiboot2', x86_32_multiboot2_elf)
+            it.target('host-x86_32-multiboot2-elf', x86_32_multiboot2_elf)
         }
         llvm_x86_64_elf(Clang)
         {
@@ -163,12 +163,12 @@ project.model
         llvm_x86_64_multiboot2_elf(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target('host-x86_64-elf-multiboot2', x86_64_multiboot2_elf)
+            it.target('host-x86_64-multiboot2-elf', x86_64_multiboot2_elf)
         }
-        llvm_x86_64_uefi(Clang)
+        llvm_x86_64_uefi_pe(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target('host-x86_64-pe-uefi', uefi_x86_64)
+            it.target('host-x86_64-uefi-pe', uefi_x86_64)
         }
     }
 }
