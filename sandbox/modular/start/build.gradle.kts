@@ -33,7 +33,7 @@ val modules: Configuration by configurations.creating {
 }
 
 dependencies {
-    modules(project(":app:module"))
+    modules(project(":sandbox:modular:module"))
 }
 
 afterEvaluate {

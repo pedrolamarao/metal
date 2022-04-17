@@ -1,0 +1,29 @@
+= modular sandbox
+
+This project provides a sandbox for programming a modular application.
+
+Feel free to mess with the modules!
+
+You can run this code in QEMU from the root directory with:
+
+`./gradlew :sandbox:modular:run-image`
+
+Look for output in QEMU debugcon console!
+
+== machine
+
+Module entry point procedures are called with the machine in the following state:
+
+- long mode
+- flat segments
+- 4 KiB stack
+- ignored interrupts
+- identity-mapped paging
+
+== start
+
+Start code is located in `start`.
+
+It prepares the machine by activating long mode.
+
+With the machine ready, it locates

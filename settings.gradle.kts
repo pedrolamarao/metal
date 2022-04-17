@@ -65,12 +65,7 @@ rootProject.projectDir.resolve("x86/test").toPath().apply {
 
 // applications
 
-rootProject.projectDir.resolve("app").toPath().apply {
-    Files.list(this).forEach {
-        if (Files.isDirectory(it))
-            include("app:${it.fileName}")
-    }
-}
-
+include("sandbox:modular:module")
+include("sandbox:modular:start")
 include("sandbox:x86-32")
 include("sandbox:x86-64")
