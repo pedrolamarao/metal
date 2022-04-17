@@ -9,14 +9,14 @@
 
 // Interface.
 
-namespace x86::_32
+namespace x86
 {
   //! Types.
   //! @{
 
   //! Interrupt gate descriptor.
 
-  class short_interrupt_gate_descriptor : public descriptor
+  class short_interrupt_gate_descriptor : public _32::descriptor
   {
   public:
 
@@ -71,7 +71,7 @@ namespace x86::_32
 
 // Implementation.
 
-namespace x86::_32
+namespace x86
 {
   constexpr inline
   short_interrupt_gate_descriptor::short_interrupt_gate_descriptor () : descriptor {}

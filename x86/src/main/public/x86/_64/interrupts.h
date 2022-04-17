@@ -8,14 +8,14 @@
 
 // Interface.
 
-namespace x86::_64
+namespace x86
 {
   //! Types.
   //! @{
 
   //! Interrupt gate descriptor.
 
-  class long_interrupt_gate_descriptor : public descriptor
+  class long_interrupt_gate_descriptor : public _64::descriptor
   {
   public:
 
@@ -70,7 +70,7 @@ namespace x86::_64
 
 // Implementation.
 
-namespace x86::_64
+namespace x86
 {
   constexpr inline
   long_interrupt_gate_descriptor::long_interrupt_gate_descriptor () : descriptor {}

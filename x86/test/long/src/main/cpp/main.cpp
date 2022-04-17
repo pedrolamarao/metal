@@ -29,7 +29,7 @@ namespace
     // protected mode.
 
     extern
-    _32::short_interrupt_gate_descriptor interrupt_descriptor_table_32 [ 256 ];
+    short_interrupt_gate_descriptor interrupt_descriptor_table_32 [ 256 ];
 
     [[gnu::naked]]
     void interrupt_handler_32 ();
@@ -165,7 +165,7 @@ namespace
     // protected mode interrupts.
 
     constinit
-    _32::short_interrupt_gate_descriptor interrupt_descriptor_table_32 [ 256 ]
+    short_interrupt_gate_descriptor interrupt_descriptor_table_32 [ 256 ]
     { };
 
     [[gnu::naked]]
