@@ -18,6 +18,8 @@ library {
         machines.os("host").architecture("-x86_32-elf"),
         // #XXX: build on any for x86_32-elf-multiboot2
         machines.os("host").architecture("-x86_32-elf-multiboot2"),
+        // #XXX: build on any for x86_64-elf
+        machines.os("host").architecture("-x86_64-elf"),
         // #XXX: build on any for x86_64-elf-multiboot2
         machines.os("host").architecture("-x86_64-elf-multiboot2"),
     )
