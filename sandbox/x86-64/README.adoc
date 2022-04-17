@@ -17,7 +17,7 @@ The sandbox procedure is called with the machine in an undefined state, except a
 - long mode
 - flat segments
 - 4 KiB stack
-- ignore interrupts
+- ignored interrupts
 - identity paging
 
 == start
