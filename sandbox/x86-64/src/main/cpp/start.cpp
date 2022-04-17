@@ -89,9 +89,6 @@ namespace multiboot2
             push eax
             popfd
             // #TODO: validate magic number
-            // TRACE
-            mov al, '0'
-            out 0xE9, al
         }
         // Load global descriptor table register.
         __asm__
@@ -104,9 +101,6 @@ namespace multiboot2
             push ax
             lgdt [esp]
             add esp, 6
-            // TRACE
-            mov al, '1'
-            out 0xE9, al
         }
         // Load data segment selector registers.
         __asm__
@@ -119,21 +113,16 @@ namespace multiboot2
             mov fs, dx
             mov gs, dx
             mov ss, dx
-            // TRACE
-            mov al, '2'
-            out 0xE9, al
         }
         // Load code segment selector register with a far return.
         __asm__ (
-            ".code32           \n"
-            "push %0           \n"
-            "push $%=f         \n"
-            "lret              \n"
-            "%=:               \n"
-            // TRACE
-            "outb %1, $0xE9    \n"
+            ".code32    \n"
+            "push %k0   \n"
+            "push $%=f  \n"
+            "lret       \n"
+            "%=:        \n"
             :
-            : "r"(x86::short_code_segment), "a"('3')
+            : "r"(x86::short_code_segment)
             :
         );
         // Prepare page directory -- assume small addresses.
@@ -193,9 +182,6 @@ namespace multiboot2
             .code32
             mov eax, offset x86::page_map
             mov cr3, eax
-            // TRACE
-            mov al, '4'
-            out 0xE9, al
         }
         // Enable physical address extensions.
         __asm__
@@ -204,9 +190,6 @@ namespace multiboot2
             mov eax, cr4
             or eax, 0x20
             mov cr4, eax
-            // TRACE
-            mov al, '5'
-            out 0xE9, al
         }
         // Enable long mode.
         __asm__
@@ -216,9 +199,6 @@ namespace multiboot2
             rdmsr
             or eax, 0x100
             wrmsr
-            // TRACE
-            mov al, '6'
-            out 0xE9, al
         }
         // Activate long mode.
         __asm__
@@ -227,17 +207,23 @@ namespace multiboot2
             mov eax, cr0
             or eax, 0x80000000
             mov cr0, eax
-            // TRACE
-            mov al, '7'
-            out 0xE9, al
         }
-        // #TODO: Far call to sandbox in long code segment via trampoline.
+        // Load code segment selector register with a far return.
+        __asm__ (
+            ".code32    \n"
+            "push %k0   \n"
+            "push $%=f  \n"
+            "lret       \n"
+            "%=:        \n"
+            :
+            : "r"(x86::long_code_segment)
+            :
+        );
+        // Call sandbox.
         __asm__
         {
             .code64
-            // TRACE
-            mov rax, '8'
-            out 0xE9, al
+            call sandbox::main
         }
         // Finish.
         __asm__

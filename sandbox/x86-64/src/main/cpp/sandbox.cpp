@@ -3,9 +3,9 @@
 
 //! Play here!
 
-namespace ps
+namespace sandbox
 {
-    void sandbox ()
+    void main ()
     {
         // Look for output in QEMU debugcon!
 
@@ -19,22 +19,6 @@ namespace ps
         __asm__ ( "outb %0, %1" : : "a"('S'), "Nd"(debugcon) : );
         __asm__ ( "outb %0, %1" : : "a"('Y'), "Nd"(debugcon) : );
         __asm__ ( "outb %0, %1" : : "a"('S'), "Nd"(debugcon) : );
-
-        // Microsoft assembly block default syntax is Intel.
-
-//        __asm__
-//        {
-//            push eax
-//            mov al, 'P'
-//            out 0xE9, al
-//            mov al, 'S'
-//            out 0xE9, al
-//            mov al, 'Y'
-//            out 0xE9, al
-//            mov al, 'S'
-//            out 0xE9, al
-//            pop eax
-//        }
     }
 }
 
