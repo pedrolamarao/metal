@@ -45,10 +45,10 @@ rootProject.projectDir.resolve("multiboot2/test").toPath().apply {
 }
 
 include("pc")
-rootProject.projectDir.resolve("pc/test/x86_32-elf-multiboot2").toPath().apply {
+rootProject.projectDir.resolve("pc/test").toPath().apply {
     Files.list(this).forEach {
         if (Files.isDirectory(it))
-            include("pc:test:x86_32-elf-multiboot2:${it.fileName}")
+            include("pc:test:${it.fileName}")
     }
 }
 
@@ -56,10 +56,10 @@ include("psys")
 include("psys:start")
 
 include("x86")
-rootProject.projectDir.resolve("x86/test/x86_32-elf-multiboot2").toPath().apply {
+rootProject.projectDir.resolve("x86/test").toPath().apply {
     Files.list(this).forEach {
         if (Files.isDirectory(it))
-            include("x86:test:x86_32-elf-multiboot2:${it.fileName}")
+            include("x86:test:${it.fileName}")
     }
 }
 
