@@ -65,7 +65,8 @@ rootProject.projectDir.resolve("x86/test").toPath().apply {
 
 // applications
 
-include("sandbox:modular:module")
+include("sandbox:modular:module-32")
+include("sandbox:modular:module-64")
 include("sandbox:modular:start")
 include("sandbox:x86-32")
 include("sandbox:x86-64")

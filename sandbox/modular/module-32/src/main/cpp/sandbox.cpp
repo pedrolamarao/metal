@@ -13,4 +13,8 @@ void _start ()
     out1(0xE9,'S');
     out1(0xE9,'Y');
     out1(0xE9,'S');
+    out1(0xE9,'3');
+    out1(0xE9,'2');
+    out1(0xE9,'\r');
+    out1(0xE9,'\n');
 }

@@ -60,7 +60,7 @@ namespace multiboot2
     auto load_module ( modules_information const * module ) -> module_type;
 }
 
-void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response )
+void multiboot2::main ( ps::size4 magic, multiboot2::information_list & information )
 {
     using namespace ps;
     using namespace x86;
@@ -103,33 +103,32 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
 
     enable_paging();
 
-    // Find module: assumes exactly one.
+    // Find modules.
 
-    auto module_information = find_module(response);
-    if (module_information == nullptr) {
-        abort();
-    }
-
-    // Load module.
-
-    auto module = load_module(module_information);
-    if (module.entry == 0) {
-        abort();
-    }
-
-    // Call module entry point.
-
-    if (module.bitness == 32) // call 32-bit entry
+    for (auto i = begin(information), j = end(information); i != j; i = next(i))
     {
-        trampoline_call_32(code_segment_32, module.entry);
-    }
-    else if (module.bitness == 64) // call 64-bit entry
-    {
-        trampoline_call_64(code_segment_64, module.entry);
-    }
-    else // !!!
-    {
-        abort();
+        if (i->type != information_type::modules) continue;
+        auto module_information = reinterpret_cast<modules_information const *>(i);
+
+        // Load module.
+
+        auto module = load_module(module_information);
+        if (module.entry == 0) continue;
+
+        // Call module entry point.
+
+        if (module.bitness == 32) // call 32-bit entry
+        {
+            trampoline_call_32(code_segment_32, module.entry);
+        }
+        else if (module.bitness == 64) // call 64-bit entry
+        {
+            trampoline_call_64(code_segment_64, module.entry);
+        }
+        else // !!!
+        {
+            abort();
+        }
     }
 }
 
