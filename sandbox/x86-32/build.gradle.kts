@@ -5,17 +5,13 @@ plugins {
 }
 
 application {
-    targetMachines.addAll(
-        // #XXX: build on any for x86_32-elf-multiboot2
-        machines.os("host").architecture("-x86_32-multiboot2-elf"),
-    )
+    targetMachines.add( machines.os("host").architecture("-x86_32-multiboot2-elf") )
 
     dependencies {
-        implementation(project(":psys:start"))
-        implementation(project(":x86"))
+        implementation(project(":multiboot2:start"))
     }
 
-    val baseArgs = listOf("-std=c++20", "-flto")
+    val baseArgs = listOf("-std=c++20", "-fasm-blocks", "-flto", "-mno-mmx", "-mno-sse", "-mno-sse2")
 
     binaries.configureEach {
         if (this is ExecutableBinary) {
@@ -40,6 +36,8 @@ afterEvaluate {
             project.tasks.register<MultibootRunImageTask>("run-image-${name}") {
                 group = "psys"
                 imageFile.set( create.flatMap { it.outputFile } )
+                qemuArgs.debug.set("cpu_reset,int")
+                qemuArgs.stop.set(false)
             }
         }
     }

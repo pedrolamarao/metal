@@ -11,14 +11,15 @@ library {
     targetLinkages.add(linkages.static)
 
     targetMachines.addAll(
-        // #XXX: build on any for x86_32-elf-multiboot2
-        machines.os("host").architecture("-x86_32-elf-multiboot2"),
-        // #XXX: build on any for x86_64-elf-multiboot2
-        machines.os("host").architecture("-x86_64-elf-multiboot2"),
+        // #XXX: build on any for x86_32-multiboot2-elf
+        machines.os("host").architecture("-x86_32-multiboot2-elf"),
+        // #XXX: build on any for x86_64-multiboot2-elf
+        machines.os("host").architecture("-x86_64-multiboot2-elf"),
     )
 
     dependencies {
         api(project(":multiboot2:foo"))
+        compileOnly(project(":x86"))
     }
 
     binaries.configureEach {

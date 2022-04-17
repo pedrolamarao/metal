@@ -13,10 +13,14 @@ library {
         // #XXX: build on any for same
         machines.linux.x86_64,
         machines.windows.x86_64,
+        // #XXX: build on any for x86_32-elf
+        machines.os("host").architecture("-x86_32-elf"),
         // #XXX: build on any for x86_32-elf-multiboot2
-        machines.os("host").architecture("-x86_32-elf-multiboot2"),
+        machines.os("host").architecture("-x86_32-multiboot2-elf"),
+        // #XXX: build on any for x86_64-elf
+        machines.os("host").architecture("-x86_64-elf"),
         // #XXX: build on any for x86_64-elf-multiboot2
-        machines.os("host").architecture("-x86_64-elf-multiboot2"),
+        machines.os("host").architecture("-x86_64-multiboot2-elf"),
     )
 
     dependencies { api(project(":psys")) }

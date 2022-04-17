@@ -11,7 +11,40 @@ then call a well-known C++ procedure.
 To use this library:
 
 - link with the library
-- set the entry point to `multiboot2_start`
+- set the program image entry point to `multiboot2_start`
+- ensure sections `.multiboot2.*` are located in the initial 32 KiB of the program image
 - provide a definition for `multiboot2::main`
 
 See `multiboot2/start.h` for the declaration of `multiboot2::main`.
+
+== targets
+
+=== x86-32
+
+`main` shall receive control with the machine as specified by Multiboot2 for `I386` with the following extensions.
+
+The stack ( `esp`, `ebp`) shall be set to 4 KiB.
+
+The flags register (`eflags`) shall be cleared.
+
+=== x86-64
+
+`main` shall receive control with the machine as specified by Multiboot2 for `I386` with the following extensions.
+
+The stack (`rsp`, `rbp`) shall be set to 4 KiB.
+
+The flags register (`rflags`) shall be cleared.
+
+The global descriptor table register (`gdtr`) shall be set to the following:
+
+- null segment
+- null segment (yes, another one)
+- flat data segment
+- flat 32-bit code segment
+- flat 64-bit code segment
+
+The data segment registers (`ds`, `es`, `fs`, `gs`, `ss`) shall be loaded with the data segment selector.
+
+The code segment register (`cs`) shall be loaded with the 64-bit code segment selector.
+
+Long mode shall be active (`cr4.pae`, `efer.lme`, `cr0.pg`) with paging set (`cr3`) to identity-mapped pages.

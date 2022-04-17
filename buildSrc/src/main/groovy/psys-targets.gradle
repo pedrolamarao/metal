@@ -41,7 +41,7 @@ final x86_32_elf = {
     staticLibArchiver.executable = 'llvm-ar'
 }
 
-final x86_32_elf_multiboot2 = {
+final x86_32_multiboot2_elf = {
     assembler.executable = 'clang'
     assembler.withArguments {
         addAll '-target', 'i386-elf', '-gdwarf'
@@ -84,23 +84,23 @@ final x86_64_elf = {
     staticLibArchiver.executable = 'llvm-ar'
 }
 
-final x86_64_elf_multiboot2 = {
+final x86_64_multiboot2_elf = {
     assembler.executable = 'clang'
     assembler.withArguments {
         addAll '-target', 'x86_64-elf', '-gdwarf'
     }
     cCompiler.executable = 'clang'
     cCompiler.withArguments {
-        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-m32', '-nostdinc'
+        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
     cppCompiler.executable = 'clang++'
     cppCompiler.withArguments {
-        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-m32', '-nostdinc'
+        addAll '-target', 'x86_64-elf', '-ffreestanding', '-gdwarf', '-nostdinc'
     }
     linker.executable = 'clang++'
     // #XXX: clang can't link target x86_64-elf with lld
     linker.withArguments {
-        addAll '-target', 'x86_64-linux-elf', '-fuse-ld=lld', '-gdwarf', '-m32', '-nostdlib', '-static',
+        addAll '-target', 'x86_64-linux-elf', '-fuse-ld=lld', '-gdwarf', '-nostdlib', '-static',
             "-Wl,--script=${x86_64_elf_multiboot2_ld}"
     }
     staticLibArchiver.executable = 'llvm-ar'
@@ -143,30 +143,30 @@ project.model
                 it.target("windowsx86-64", llvm)
             }
         }
-        llvm_x86_32_multiboot(Clang)
+        llvm_x86_32_elf(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
             it.target('host-x86_32-elf', x86_32_elf)
         }
-        llvm_x86_32_elf_multiboot(Clang)
+        llvm_x86_32_multiboot2_elf(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target('host-x86_32-elf-multiboot2', x86_32_elf_multiboot2)
+            it.target('host-x86_32-multiboot2-elf', x86_32_multiboot2_elf)
         }
         llvm_x86_64_elf(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
             it.target('host-x86_64-elf', x86_64_elf)
         }
-        llvm_x86_64_elf_multiboot(Clang)
+        llvm_x86_64_multiboot2_elf(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target('host-x86_64-elf-multiboot2', x86_64_elf_multiboot2)
+            it.target('host-x86_64-multiboot2-elf', x86_64_multiboot2_elf)
         }
-        llvm_x86_64_uefi(Clang)
+        llvm_x86_64_uefi_pe(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target('host-x86_64-pe-uefi', uefi_x86_64)
+            it.target('host-x86_64-uefi-pe', uefi_x86_64)
         }
     }
 }

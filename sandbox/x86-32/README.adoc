@@ -1,0 +1,37 @@
+= x86-32 sandbox
+
+This project provides a sandbox for programming x86 in protected mode.
+
+Feel free to mess with the `sandbox.cpp` file!
+
+You can run this code in QEMU from the root directory with:
+
+`./gradlew :sandbox:x86-32:run-image`
+
+Look for output in QEMU debugcon console!
+
+== machine
+
+The sandbox procedure is called with the machine in the following state:
+
+- protected mode
+- flat segments
+- 4 KiB stack
+- ignored interrupts
+- no paging
+
+== start
+
+Start code is located in `start.cpp`.
+
+The target is `x86_32-bios-multiboot2-elf`.
+This target generates code for x86 processors in protected mode,
+program images in ELF32 format for `EM_386` machines,
+and system images in GRUB2 format for `i386-pc` systems.
+
+This sandbox is loaded by a Multiboot2 loader.
+The loader receives control from BIOS in real mode
+and delivers control to the application in protected mode.
+
+The `multiboot2:start` library provides the Multiboot2 request object and entry point.
+It minimally prepares the machine for running C++ generated code.
