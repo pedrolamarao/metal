@@ -158,7 +158,7 @@ project.model
         llvm_x86_64_elf(Clang)
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
-            it.target('host-x86_64-elf-multiboot2', x86_64_elf)
+            it.target('host-x86_64-elf', x86_64_elf)
         }
         llvm_x86_64_multiboot2_elf(Clang)
         {
