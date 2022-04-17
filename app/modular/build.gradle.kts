@@ -48,6 +48,7 @@ afterEvaluate {
             project.tasks.register<MultibootRunImageTask>("run-image-${name}") {
                 group = "psys"
                 imageFile.set( create.flatMap { it.outputFile } )
+                qemuArgs.debug.set("cpu_reset,int")
             }
         }
     }
