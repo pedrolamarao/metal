@@ -19,6 +19,7 @@ library {
 
     dependencies {
         api(project(":multiboot2:foo"))
+        compileOnly(project(":x86"))
     }
 
     binaries.configureEach {

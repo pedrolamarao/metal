@@ -17,6 +17,8 @@ Put JDK 17 and LLVM 13 in your `${PATH}`.
 
 From the source root, run: `./gradlew build`
 
+To play with code, look inside the `sandbox` folder for a variety of projects you can play with!
+
 # prepare
 
 Psys is built with an LLVM based toolset.
@@ -40,12 +42,6 @@ To assemble all artifacts: `./gradlew assemble`
 
 To clean all artifacts: `./gradlew clean`
 
-# play
-
-To play around, mess with the [sandbox application](app/sandbox).
-
-To run: `./gradlew :app:sandbox:run-image-link-multiboot-x86_32`
-
 # verify
 
 Psys is verified by automated tests.
@@ -53,7 +49,5 @@ Psys is verified by automated tests.
 For more information, see [TEST](doc/TEST.md).
 
 To verify all unit tests: `./gradlew check`
-
-Psys system tests require QEMU; for more information, see [TOOLS](doc/TOOLS.md)
 
 To verify all psys tests: `./gradlew test-image`
