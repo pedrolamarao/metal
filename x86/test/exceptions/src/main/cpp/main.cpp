@@ -32,7 +32,7 @@ namespace
 
     // Interrupts.
 
-    extern interrupt_gate_descriptor interrupt_descriptor_table [256];
+    extern short_interrupt_gate_descriptor interrupt_descriptor_table [256];
 
     void raise_DE ();
     unsigned interrupt_00_counter {};
@@ -180,7 +180,7 @@ namespace
 
     [[gnu::section(".idt")]]
     constinit
-    interrupt_gate_descriptor interrupt_descriptor_table [256] =
+    short_interrupt_gate_descriptor interrupt_descriptor_table [256] =
     { };
 
     // Fault handlers return to the very same location which caused the fault.

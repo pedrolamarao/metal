@@ -36,7 +36,7 @@ namespace
 
     [[gnu::section(".idt")]]
     constinit
-    interrupt_gate_descriptor interrupt_descriptor_table [ interrupt_descriptor_table_size ];
+    short_interrupt_gate_descriptor interrupt_descriptor_table [ interrupt_descriptor_table_size ];
 
     unsigned interrupted {};
 
@@ -131,7 +131,7 @@ void psys::main ()
 
     _test_control = 21;
 
-    auto expected_size = interrupt_descriptor_table_size * sizeof(interrupt_gate_descriptor);
+    auto expected_size = interrupt_descriptor_table_size * sizeof(short_interrupt_gate_descriptor);
     auto expected_offset = halt_cast<size4>(interrupt_descriptor_table);
 
     auto [actual_size, actual_offset] = get_interrupt_descriptor_table();

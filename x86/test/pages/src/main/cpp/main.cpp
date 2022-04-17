@@ -28,7 +28,7 @@ namespace
     // interrupts.
 
     extern
-    interrupt_gate_descriptor interrupt_descriptor_table [ 256 ];
+    short_interrupt_gate_descriptor interrupt_descriptor_table [ 256 ];
 
     void interrupt_handler ();
 
@@ -383,7 +383,7 @@ namespace
     // interrupts.
 
     constinit
-    interrupt_gate_descriptor interrupt_descriptor_table [ 256 ]
+    short_interrupt_gate_descriptor interrupt_descriptor_table [ 256 ]
     { };
 
     [[gnu::naked]]

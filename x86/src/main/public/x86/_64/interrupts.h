@@ -15,15 +15,15 @@ namespace x86::_64
 
   //! Interrupt gate descriptor.
 
-  class interrupt_gate_descriptor : public descriptor
+  class long_interrupt_gate_descriptor : public descriptor
   {
   public:
 
     constexpr
-    interrupt_gate_descriptor ();
+    long_interrupt_gate_descriptor ();
 
     constexpr
-    interrupt_gate_descriptor (
+    long_interrupt_gate_descriptor (
       segment_selector segment,
       size8 offset,
       bool is_present,
@@ -32,7 +32,7 @@ namespace x86::_64
       bool is_32bit
     );
 
-    interrupt_gate_descriptor (
+    long_interrupt_gate_descriptor (
       segment_selector segment,
       void (* offset)(),
       bool is_present,
@@ -53,7 +53,7 @@ namespace x86::_64
 
   };
 
-  static_assert(sizeof(interrupt_gate_descriptor) == 16, "unexpected size of interrupt_gate_descriptor");
+  static_assert(sizeof(long_interrupt_gate_descriptor) == 16, "unexpected size of interrupt_gate_descriptor");
 
   //! Interrupt descriptor table register.
 
@@ -76,7 +76,7 @@ namespace x86::_64
   //! Set the global descriptor table register
 
   template <unsigned N>
-  void set_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] );
+  void set_interrupt_descriptor_table ( long_interrupt_gate_descriptor const (& table) [N] );
 
   //! @}
 }
@@ -86,11 +86,11 @@ namespace x86::_64
 namespace x86::_64
 {
   constexpr inline
-  interrupt_gate_descriptor::interrupt_gate_descriptor () : descriptor {}
+  long_interrupt_gate_descriptor::long_interrupt_gate_descriptor () : descriptor {}
   { }
 
   constexpr inline
-  interrupt_gate_descriptor::interrupt_gate_descriptor (
+  long_interrupt_gate_descriptor::long_interrupt_gate_descriptor (
     segment_selector segment,
     size8 offset,
     bool is_present,
@@ -124,7 +124,7 @@ namespace x86::_64
   { }
 
   inline
-  interrupt_gate_descriptor::interrupt_gate_descriptor (
+  long_interrupt_gate_descriptor::long_interrupt_gate_descriptor (
     segment_selector segment,
     void (* offset)(),
     bool is_present,
@@ -132,27 +132,27 @@ namespace x86::_64
     privilege_level privilege,
     bool is_32bit
   )
-  : interrupt_gate_descriptor { segment, reinterpret_cast<size>(offset), is_present, must_cli, privilege, is_32bit }
+  : long_interrupt_gate_descriptor { segment, reinterpret_cast<size>(offset), is_present, must_cli, privilege, is_32bit }
   { }
 
   inline
-  auto interrupt_gate_descriptor::is_32bit () const -> bool { return (_w2 & 0x400) != 0; }
+  auto long_interrupt_gate_descriptor::is_32bit () const -> bool { return (_w2 & 0x400) != 0; }
 
   inline
-  auto interrupt_gate_descriptor::is_trap () const -> bool { return (_w2 & 0x100) != 0; }
+  auto long_interrupt_gate_descriptor::is_trap () const -> bool { return (_w2 & 0x100) != 0; }
 
   inline
-  auto interrupt_gate_descriptor::must_cli () const -> bool { return (_w2 & 0x100) == 0; }
+  auto long_interrupt_gate_descriptor::must_cli () const -> bool { return (_w2 & 0x100) == 0; }
 
   inline
-  auto interrupt_gate_descriptor::offset () const -> size8 {
+  auto long_interrupt_gate_descriptor::offset () const -> size8 {
     return ((size8{_q4} << 32) & 0xFFFFFFFF00000000) |
            ((size8{_w3} << 16) & 0x00000000FFFF0000) |
             (size8{_w0}        & 0x000000000000FFFF);
   }
 
   inline
-  auto interrupt_gate_descriptor::segment () const -> segment_selector {
+  auto long_interrupt_gate_descriptor::segment () const -> segment_selector {
     return segment_selector { _w1 };
   }
 
@@ -164,9 +164,9 @@ namespace x86::_64
 
   template <unsigned N>
   inline
-  void set_interrupt_descriptor_table ( interrupt_gate_descriptor const (& table) [N] )
+  void set_interrupt_descriptor_table ( long_interrupt_gate_descriptor const (& table) [N] )
   {
-    descriptor_table value { N * sizeof(interrupt_gate_descriptor), reinterpret_cast<size>(table) };
+    descriptor_table value { N * sizeof(long_interrupt_gate_descriptor), reinterpret_cast<size>(table) };
     idtr(value);
   }
 }
