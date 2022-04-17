@@ -36,6 +36,11 @@ namespace x86
         return { a.data, b.data, c.data, d.data  };
     }
 
+    void cli ()
+    {
+        __asm__ ( "cli" : );
+    }
+
     void halt ()
     {
         __asm__ ( "hlt" : );

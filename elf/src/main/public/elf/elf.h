@@ -10,7 +10,20 @@ namespace elf
     using size4 = ps::size4;
     using size8 = ps::size8;
 
-    constexpr auto EI_NIDENT { 16 };
+    //! ELF machine type.
+
+    enum class machine : size2
+    {
+        EM_386    = 3,
+        EM_X86_64 = 62,
+    };
+
+    //! ELF segment type.
+
+    enum class segment : size4
+    {
+        load = 1,
+    };
 
     //! ELF header prologue.
 
@@ -29,12 +42,6 @@ namespace elf
     };
 
     static_assert(sizeof(prologue) == 16, "unexpected size of prologue");
-
-    enum class machine : size1
-    {
-        EM_386    = 3,
-        EM_X86_64 = 62,
-    };
 
     //! ELF 32-bit header.
 
@@ -58,13 +65,6 @@ namespace elf
 
     static_assert(sizeof(header_32) == 52, "unexpected size of header_32");
 
-    //! ELF segment type.
-
-    enum class segment : size1
-    {
-        load = 1,
-    };
-
     //! ELF 32-bit segment header.
 
     struct segment_32
@@ -87,7 +87,7 @@ namespace elf
     {
         prologue ident;
         size2    type;
-        size2    machine;
+        machine  machine;
         size4    version;
         size8    entry;
         size8    phoff;
@@ -102,4 +102,20 @@ namespace elf
      };
 
     static_assert(sizeof(header_64) == 64, "unexpected size of header_64");
+
+    //! ELF 64-bit segment header.
+
+    struct segment_64
+    {
+        segment type;
+        size4 flags;
+        size8 offset;
+        size8 vaddr;
+        size8 paddr;
+        size8 filesz;
+        size8 memsz;
+        size8 align;
+    };
+
+    static_assert(sizeof(segment_64) == 56, "unexpected size of segment_64");
 };

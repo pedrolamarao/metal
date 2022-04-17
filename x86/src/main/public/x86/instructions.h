@@ -29,6 +29,10 @@ namespace x86
 
     auto cpuid (size feature, size variant = 0) -> cpuid_type;
 
+    //! Clear interrupts flag.
+
+    void cli ();
+
     //! Halt processor.
 
     void halt ();

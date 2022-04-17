@@ -137,13 +137,11 @@ project.model
             if (llvmPath.isPresent()) { it.path(llvmPath) }
             final os = System.getProperty("os.name")
             if (os.containsIgnoreCase("linux")) {
-                rootProject.logger.lifecycle("oops")
                 it.target("linuxx86-64", llvm_linux)
             }
             else {
                 it.target("windowsx86-64", llvm)
             }
-
         }
         llvm_x86_32_elf(Clang)
         {
