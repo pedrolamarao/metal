@@ -55,19 +55,6 @@ namespace x86::_64
 
   static_assert(sizeof(long_interrupt_gate_descriptor) == 16, "unexpected size of interrupt_gate_descriptor");
 
-  //! Interrupt descriptor table register.
-
-  struct [[gnu::packed]] interrupt_descriptor_table_register
-  {
-    size2 size;
-    size8 offset;
-  };
-
-  constexpr
-  auto operator== ( interrupt_descriptor_table_register, interrupt_descriptor_table_register) -> bool;
-
-  static_assert(sizeof(interrupt_descriptor_table_register) == 10, "unexpected size of interrupt_descriptor_table_register");
-
   //! @}
 
   //! Operators.
@@ -154,12 +141,6 @@ namespace x86::_64
   inline
   auto long_interrupt_gate_descriptor::segment () const -> segment_selector {
     return segment_selector { _w1 };
-  }
-
-  constexpr inline
-  auto operator== ( interrupt_descriptor_table_register x, interrupt_descriptor_table_register y ) -> bool
-  {
-    return (x.size == y.size) && (x.offset == y.offset);
   }
 
   template <unsigned N>
