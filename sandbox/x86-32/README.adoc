@@ -17,8 +17,8 @@ The sandbox procedure is called with the machine in the following state:
 - protected mode
 - flat segments
 - 4 KiB stack
-- ignore interrupts
-- disabled paging
+- ignored interrupts
+- no paging
 
 == start
 
