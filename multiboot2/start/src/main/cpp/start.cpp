@@ -40,35 +40,16 @@ namespace multiboot2
         {
             // set stack
             mov esp, offset stack + 0x4000
+            mov ebp, esp
             // reset eflags
             xor ecx, ecx
             push ecx
-            popf
+            popfd
             // call C++
             push ebx
             push eax
             call main
             // finish
-            cli
-          halt:
-            hlt
-            jmp halt
-        }
-#elif defined(__x86_64__)
-        __asm__
-        {
-            // set stack
-            mov esp, offset stack + 0x4000
-            // reset eflags
-            xor ecx, ecx
-            push rcx
-            popf
-            // call C++
-            push rbx
-            push rax
-            call main
-            // finish
-          finish:
             cli
           halt:
             hlt

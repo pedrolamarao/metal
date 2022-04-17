@@ -867,9 +867,12 @@ namespace x86
         _address { address >> 12 }
     { }
 
+    inline
     auto long_paging::write_through () const -> bool { return _write_through; }
 
+    inline
     auto long_paging::cache () const -> bool { return _cache; }
 
+    inline
     auto long_paging::address () const -> size8 { return _address << 12; }
 }
