@@ -33,5 +33,5 @@ This sandbox is loaded by a Multiboot2 loader.
 The loader receives control from BIOS in real mode
 and delivers control to the application in protected mode.
 
-The star code provides the Multiboot2 request object and entry point.
-The library prepares the machine for running C++ generated code for long mode.
+The `multiboot2:start` library provides the Multiboot2 request object and entry point.
+It minimally prepares the machine for running C++ generated code.
