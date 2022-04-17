@@ -13,6 +13,7 @@ library {
     targetMachines.addAll(
         // #XXX: build on any for same
         machines.linux.x86_64,
+        machines.macOS.x86_64,
         machines.windows.x86_64,
         // #XXX: build on any for x86_32-elf
         machines.os("host").architecture("-x86_32-elf"),

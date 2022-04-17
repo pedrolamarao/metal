@@ -141,6 +141,7 @@ project.model
                 it.target("linuxx86-64", llvm_linux)
             }
             else {
+                it.target("macosx86-64", llvm)
                 it.target("windowsx86-64", llvm)
             }
 
