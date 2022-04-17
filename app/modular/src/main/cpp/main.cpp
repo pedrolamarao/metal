@@ -377,7 +377,7 @@ namespace x86
     // operators.
 
     constinit
-    decltype(sizeof(nullptr)) trampoline_target {};
+    unsigned long trampoline_target_32 {};
 
     [[gnu::naked]]
     void trampoline_32 ()
@@ -386,12 +386,21 @@ namespace x86
         {
             .code32
             push eax
-            mov eax, trampoline_target
+            mov eax, trampoline_target_32
             call eax
             pop eax
             retf
         }
     }
+
+    void trampoline_call_32 ( segment_selector segment, size target )
+    {
+        trampoline_target_32 = target; // #TODO: use stack
+        far_call(segment, trampoline_32);
+    }
+
+    constinit
+    unsigned long long trampoline_target_64 {};
 
     [[gnu::naked]]
     void trampoline_64 ()
@@ -400,22 +409,16 @@ namespace x86
         {
             .code64
             push rax
-            mov rax, trampoline_target
+            mov rax, trampoline_target_64
             call rax
             pop rax
             retf
         }
     }
 
-    void trampoline_call_32 ( segment_selector segment, size target )
-    {
-        trampoline_target = target; // #TODO: use stack
-        far_call(segment, trampoline_32);
-    }
-
     void trampoline_call_64 ( segment_selector segment, size target )
     {
-        trampoline_target = target; // #TODO: use stack
+        trampoline_target_64 = target; // #TODO: use stack
         far_call(segment, trampoline_64);
     }
 }
