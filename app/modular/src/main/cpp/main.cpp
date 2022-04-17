@@ -23,7 +23,7 @@ namespace x86
     extern
     segment_selector code_segment_64;
 
-    void install_segments_32 ();
+    void install_segments ();
 
     // interrupts.
 
@@ -82,7 +82,40 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
     if (magic != information_magic) {
         debug("?");
         abort();
+        return;
     }
+
+    // Test if has cpuid.
+
+    if (! has_cpuid()) {
+        debug("?");
+        abort();
+        return;
+    }
+
+    // Test if has long mode.
+
+    if (! has_long_mode()) {
+        debug("?");
+        abort();
+        return;
+    }
+
+    // Prepare x86 segments.
+
+    install_segments();
+
+    // Install long mode pages.
+
+    install_pages_64();
+
+    // Enable long mode.
+
+    set_msr(msr::EFER, get_msr(msr::EFER) | (1 << 8));
+
+    // Activate long mode.
+
+    enable_paging();
 
     // Find module: assumes exactly one.
 
@@ -100,50 +133,16 @@ void multiboot2::main ( ps::size4 magic, multiboot2::information_list & response
         abort();
     }
 
-    // Prepare x86 segments.
-
-    install_segments_32();
-
     // Call module entry point.
 
     if (module.bitness == 32) // call 32-bit entry
     {
-        // Prepare x86 interrupts.
-
-        install_interrupts_32();
-
         debug("32>");
         trampoline_call_32(code_segment_32, module.entry);
         debug("!");
     }
     else if (module.bitness == 64) // call 64-bit entry
     {
-        if (! has_long_mode()) { return; }
-
-        // Prepare x86 interrupts.
-
-        install_interrupts_64();
-
-        // prepare long mode pages.
-
-        install_pages_64();
-
-        // enable long mode.
-
-        set_msr(msr::EFER, get_msr(msr::EFER) | (1 << 8));
-
-        // is long mode enabled?
-
-        if ((get_msr(msr::EFER) & (1 << 8)) == 0) { return; }
-
-        // activate long mode.
-
-        enable_paging();
-
-        // is long mode active?
-
-        if ((get_msr(msr::EFER) & (1 << 10)) == 0) { return; }
-
         debug("64>");
         trampoline_call_64(code_segment_64, module.entry);
         debug("!");
@@ -260,6 +259,7 @@ namespace x86
     struct
     {
         size8                   null_descriptor    {};
+        size8                   oops_descriptor    {};
         data_segment_descriptor data_segment       { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true };
         code_segment_descriptor short_code_segment { 0, 0xFFFFF, true, true, true, 0, true, 0, false, true, true };
         code_segment_descriptor long_code_segment  { 0, 0xFFFFF, true, true, true, 0, true, 0, true, true, true };
@@ -267,15 +267,15 @@ namespace x86
     global_descriptor_table;
 
     constinit
-    segment_selector data_segment { 1, false, 0 };
+    segment_selector data_segment { 2, false, 0 };
 
     constinit
-    segment_selector code_segment_32 { 2, false, 0 };
+    segment_selector code_segment_32 { 3, false, 0 };
 
     constinit
-    segment_selector code_segment_64 { 3, false, 0 };
+    segment_selector code_segment_64 { 4, false, 0 };
 
-    void install_segments_32 ()
+    void install_segments ()
     {
         set_global_descriptor_table(&global_descriptor_table,sizeof(global_descriptor_table));
         set_data_segments(data_segment);
