@@ -13,7 +13,7 @@ namespace
             0x00, 0x00, 0x00, 0x00,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::short_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
@@ -32,7 +32,7 @@ namespace
             0xFF, 0xFF, 0xFF, 0xFF,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::short_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_TRUE(descriptor.is_present());
         ASSERT_FALSE(descriptor.is_system());
@@ -58,7 +58,7 @@ namespace
             0x00, 0x00, 0x54, 0x76,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::short_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
@@ -82,7 +82,7 @@ namespace
             0x00, 0x00, 0x00, 0x00,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::short_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
@@ -101,7 +101,7 @@ namespace
             0x00, 0x04, 0x00, 0x00,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::short_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
@@ -120,7 +120,7 @@ namespace
             0x00, 0x01, 0x00, 0x00,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_32::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::short_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
@@ -141,7 +141,7 @@ namespace
             0x00, 0x00, 0x00, 0x00,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
@@ -162,7 +162,7 @@ namespace
             0xFF, 0xFF, 0xFF, 0xFF,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_TRUE(descriptor.is_present());
         ASSERT_FALSE(descriptor.is_system());
@@ -194,7 +194,7 @@ namespace
             0x00, 0x00, 0x00, 0x00,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
@@ -220,7 +220,7 @@ namespace
             0x00, 0x00, 0x00, 0x00,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
@@ -241,7 +241,7 @@ namespace
             0x00, 0x00, 0x00, 0x00,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
@@ -262,7 +262,7 @@ namespace
             0x00, 0x00, 0x00, 0x00,
         };
 
-        auto& descriptor = reinterpret_cast<x86::_64::interrupt_gate_descriptor&>(bytes);
+        auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
         ASSERT_TRUE(descriptor.is_system());
