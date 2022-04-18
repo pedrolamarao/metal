@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include <x86/_64/interrupts.h>
 #include <x86/interrupts.h>
 
 
@@ -144,9 +143,9 @@ namespace
         auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
         ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
+        ASSERT_FALSE(descriptor.is_trap());
+        ASSERT_FALSE(descriptor.is_32bit());
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
@@ -165,9 +164,9 @@ namespace
         auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_TRUE(descriptor.is_present());
-        ASSERT_FALSE(descriptor.is_system());
         ASSERT_EQ(3,descriptor.privilege());
-        ASSERT_EQ(15,descriptor.type());
+        ASSERT_TRUE(descriptor.is_trap());
+        ASSERT_TRUE(descriptor.is_32bit());
         ASSERT_EQ(0xFFFFFFFFFFFFFFFF,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{0xFFFF},descriptor.segment());
         ASSERT_TRUE(descriptor.is_32bit());
@@ -197,9 +196,9 @@ namespace
         auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
         ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
+        ASSERT_FALSE(descriptor.is_trap());
+        ASSERT_FALSE(descriptor.is_32bit());
         ASSERT_EQ(offset,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
@@ -223,9 +222,9 @@ namespace
         auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
         ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(0,descriptor.type());
+        ASSERT_FALSE(descriptor.is_trap());
+        ASSERT_FALSE(descriptor.is_32bit());
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{segment},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());
@@ -236,7 +235,7 @@ namespace
     {
         ps::size1 bytes [16] {
             0x00, 0x00, 0x00, 0x00,
-            0x00, 0x04, 0x00, 0x00,
+            0x00, 0x08, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00,
         };
@@ -244,9 +243,9 @@ namespace
         auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
         ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(4,descriptor.type());
+        ASSERT_FALSE(descriptor.is_trap());
+        ASSERT_TRUE(descriptor.is_32bit());
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_TRUE(descriptor.is_32bit());
@@ -265,9 +264,9 @@ namespace
         auto& descriptor = reinterpret_cast<x86::long_interrupt_gate_descriptor&>(bytes);
 
         ASSERT_FALSE(descriptor.is_present());
-        ASSERT_TRUE(descriptor.is_system());
         ASSERT_EQ(0,descriptor.privilege());
-        ASSERT_EQ(1,descriptor.type());
+        ASSERT_TRUE(descriptor.is_trap());
+        ASSERT_FALSE(descriptor.is_32bit());
         ASSERT_EQ(0,descriptor.offset());
         ASSERT_EQ(x86::segment_selector{},descriptor.segment());
         ASSERT_FALSE(descriptor.is_32bit());

@@ -67,7 +67,6 @@ void test_64 ()
 void psys::main ()
 {
     using namespace x86;
-    using namespace x86::_64;
 
     unsigned step { 1 };
 
