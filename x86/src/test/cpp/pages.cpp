@@ -3,13 +3,13 @@
 #include <x86/pages.h>
 
 
-// short_page_entry
+// short_page_table_entry
 
 namespace x86
 {
-    TEST(short_page_entry, zero)
+    TEST(short_page_table_entry, zero)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -24,21 +24,21 @@ namespace x86
         };
 
         size4 memory = 0;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, false, false, false, false, false, 0, false, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, present)
+    TEST(short_page_table_entry, present)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_TRUE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -53,21 +53,21 @@ namespace x86
         };
 
         size4 memory = 1;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_page_table_entry { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, true, false, false, false, false, false, false, 0, false, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, writable)
+    TEST(short_page_table_entry, writable)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_TRUE(value.writable());
             ASSERT_FALSE(value.user());
@@ -82,21 +82,21 @@ namespace x86
         };
 
         size4 memory = 1 << 1;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_page_table_entry { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, true, false, false, false, false, false, 0, false, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, user)
+    TEST(short_page_table_entry, user)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_TRUE(value.user());
@@ -111,21 +111,21 @@ namespace x86
         };
 
         size4 memory = 1 << 2;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_page_table_entry { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, true, false, false, false, false, 0, false, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, write_through)
+    TEST(short_page_table_entry, write_through)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -140,21 +140,21 @@ namespace x86
         };
 
         size4 memory = 1 << 3;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_page_table_entry { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, false, true, false, false, false, 0, false, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, cache)
+    TEST(short_page_table_entry, cache)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -169,21 +169,21 @@ namespace x86
         };
 
         size4 memory = 1 << 4;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+        auto fields = short_page_table_entry { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, false, false, true, false, false, 0, false, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, accessed)
+    TEST(short_page_table_entry, accessed)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -198,21 +198,21 @@ namespace x86
         };
 
         size4 memory = 1 << 5;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+        auto fields = short_page_table_entry { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, false, false, false, true, false, 0, false, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, dirty)
+    TEST(short_page_table_entry, dirty)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -227,21 +227,21 @@ namespace x86
         };
 
         size4 memory = 1 << 6;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+        auto fields = short_page_table_entry { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, false, false, false, false, true, 0, false, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, attribute)
+    TEST(short_page_table_entry, attribute)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -256,21 +256,21 @@ namespace x86
         };
 
         size4 memory = 1 << 7;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+        auto fields = short_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, false, false, false, false, false, 7, false, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, global)
+    TEST(short_page_table_entry, global)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -285,21 +285,21 @@ namespace x86
         };
 
         size4 memory = 1 << 8;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+        auto fields = short_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, false, false, false, false, false, 0, true, 0, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, available)
+    TEST(short_page_table_entry, available)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -314,21 +314,21 @@ namespace x86
         };
 
         size4 memory = 3 << 9;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0 };
+        auto fields = short_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0 };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, false, false, false, false, false, 0, false, 3, 0
         };
         test(semantic);
     }
 
-    TEST(short_page_entry, address)
+    TEST(short_page_table_entry, address)
     {
-        auto test = [] (short_page_entry& value) {
+        auto test = [] (short_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -343,13 +343,13 @@ namespace x86
         };
 
         size4 memory = 0xFFFFF000;
-        auto& reference = reinterpret_cast<short_page_entry&>(memory);
+        auto& reference = reinterpret_cast<short_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = short_page_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFFFFF };
+        auto fields = short_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFFFFF };
         test(fields);
 
-        auto semantic = short_page_entry {
+        auto semantic = short_page_table_entry {
             {}, false, false, false, false, false, false, false, 0, false, 0, 0xFFFFF000
         };
         test(semantic);
@@ -1042,13 +1042,13 @@ namespace x86
     }
 }
 
-// extended_page_entry
+// extended_page_table_entry
 
 namespace x86
 {
-    TEST(extended_page_entry, zero)
+    TEST(extended_page_table_entry, zero)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1064,21 +1064,21 @@ namespace x86
         };
 
         size8 memory = 0;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, false, false, false, false, false, 0, false, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, present)
+    TEST(extended_page_table_entry, present)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_TRUE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1094,21 +1094,21 @@ namespace x86
         };
 
         size8 memory = 1;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, true, false, false, false, false, false, false, 0, false, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, writable)
+    TEST(extended_page_table_entry, writable)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_TRUE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1124,21 +1124,21 @@ namespace x86
         };
 
         size8 memory = 1 << 1;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, true, false, false, false, false, false, 0, false, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, user)
+    TEST(extended_page_table_entry, user)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_TRUE(value.user());
@@ -1154,21 +1154,21 @@ namespace x86
         };
 
         size8 memory = 1 << 2;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, true, false, false, false, false, 0, false, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, write_through)
+    TEST(extended_page_table_entry, write_through)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1184,21 +1184,21 @@ namespace x86
         };
 
         size8 memory = 1 << 3;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, false, true, false, false, false, 0, false, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, cache)
+    TEST(extended_page_table_entry, cache)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1214,21 +1214,21 @@ namespace x86
         };
 
         size8 memory = 1 << 4;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, false, false, true, false, false, 0, false, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, accessed)
+    TEST(extended_page_table_entry, accessed)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1244,21 +1244,21 @@ namespace x86
         };
 
         size8 memory = 1 << 5;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, false, false, false, true, false, 0, false, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, dirty)
+    TEST(extended_page_table_entry, dirty)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1274,21 +1274,21 @@ namespace x86
         };
 
         size8 memory = 1 << 6;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, false, false, false, false, true, 0, false, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, attribute)
+    TEST(extended_page_table_entry, attribute)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1304,21 +1304,21 @@ namespace x86
         };
 
         size8 memory = 1 << 7;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, false, false, false, false, false, 7, false, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, global)
+    TEST(extended_page_table_entry, global)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1334,21 +1334,21 @@ namespace x86
         };
 
         size8 memory = 1 << 8;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, false, false, false, false, false, 0, true, 0, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, available)
+    TEST(extended_page_table_entry, available)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1364,21 +1364,21 @@ namespace x86
         };
 
         size8 memory = 3 << 9;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, false, false, false, false, false, 0, false, 3, 0, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, address)
+    TEST(extended_page_table_entry, address)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1394,21 +1394,21 @@ namespace x86
         };
 
         size8 memory = 0xFEDCBA9876000;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFEDCBA9876, 0 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFEDCBA9876, 0 };
         test(fields);
 
-        auto semantic = extended_page_entry {
+        auto semantic = extended_page_table_entry {
             {}, false, false, false, false, false, false, false, 0, false, 0, 0xFEDCBA9876000, false
         };
         test(semantic);
     }
 
-    TEST(extended_page_entry, nonexecutable)
+    TEST(extended_page_table_entry, nonexecutable)
     {
-        auto test = [] (extended_page_entry& value) {
+        auto test = [] (extended_page_table_entry& value) {
             ASSERT_FALSE(value.present());
             ASSERT_FALSE(value.writable());
             ASSERT_FALSE(value.user());
@@ -1424,13 +1424,13 @@ namespace x86
         };
 
         size8 memory = size8{1} << 63;
-        auto& reference = reinterpret_cast<extended_page_entry&>(memory);
+        auto& reference = reinterpret_cast<extended_page_table_entry&>(memory);
         test(reference);
 
-        auto fields = extended_page_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+        auto fields = extended_page_table_entry { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
         test(fields);
 
-        auto semantic = extended_page_entry { {}, false, false, false, false, false, false, false, 0, false, 0, 0, true };
+        auto semantic = extended_page_table_entry { {}, false, false, false, false, false, false, false, 0, false, 0, 0, true };
         test(semantic);
     }
 }
