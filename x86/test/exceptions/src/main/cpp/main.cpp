@@ -12,7 +12,6 @@
 namespace
 {
     using namespace x86;
-    using namespace x86::_32;
 
     // Segments.
 
@@ -70,7 +69,6 @@ void psys::main ()
 {
     using namespace ps;
     using namespace x86;
-    using namespace x86::_32;
 
     // set the GDT register and set segment registers
 
@@ -87,16 +85,16 @@ void psys::main ()
     auto interrupt_selector = segment_selector(2, false, 0);
 
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table[i] = { interrupt_selector, interrupt_FF, true, true, 0, true };
+        interrupt_descriptor_table[i] = { interrupt_selector, interrupt_FF, true, false, 0, true };
     }
 
-    interrupt_descriptor_table[0x00] = { interrupt_selector, interrupt_00, true, true, 0, true };
-    interrupt_descriptor_table[0x03] = { interrupt_selector, interrupt_03, true, true, 0, true };
-    interrupt_descriptor_table[0x04] = { interrupt_selector, interrupt_04, true, true, 0, true };
-    interrupt_descriptor_table[0x05] = { interrupt_selector, interrupt_05, true, true, 0, true };
-    interrupt_descriptor_table[0x06] = { interrupt_selector, interrupt_06, true, true, 0, true };
-    interrupt_descriptor_table[0x0B] = { interrupt_selector, interrupt_0B, true, true, 0, true };
-    interrupt_descriptor_table[0x0D] = { interrupt_selector, interrupt_0D, true, true, 0, true };
+    interrupt_descriptor_table[0x00] = { interrupt_selector, interrupt_00, true, false, 0, true };
+    interrupt_descriptor_table[0x03] = { interrupt_selector, interrupt_03, true, false, 0, true };
+    interrupt_descriptor_table[0x04] = { interrupt_selector, interrupt_04, true, false, 0, true };
+    interrupt_descriptor_table[0x05] = { interrupt_selector, interrupt_05, true, false, 0, true };
+    interrupt_descriptor_table[0x06] = { interrupt_selector, interrupt_06, true, false, 0, true };
+    interrupt_descriptor_table[0x0B] = { interrupt_selector, interrupt_0B, true, false, 0, true };
+    interrupt_descriptor_table[0x0D] = { interrupt_selector, interrupt_0D, true, false, 0, true };
 
     set_interrupt_descriptor_table(interrupt_descriptor_table);
 
@@ -170,7 +168,6 @@ void psys::main ()
 namespace
 {
     using namespace x86;
-    using namespace x86::_32;
 
     void set_segment_registers ( segment_selector code, segment_selector data )
     {

@@ -207,7 +207,6 @@ void psys::main ()
 namespace
 {
     using namespace x86;
-    using namespace x86::_32;
 
     // Segments.
 
@@ -331,28 +330,28 @@ namespace
     {
         auto const interrupt_segment = segment_selector(2, false, 0);
 
-        interrupt_descriptor_table[0x00] = { interrupt_segment, fault_handler<0x00>, true, true, 0, true };
-        interrupt_descriptor_table[0x01] = { interrupt_segment, fault_handler<0x01>, true, true, 0, true };
+        interrupt_descriptor_table[0x00] = { interrupt_segment, fault_handler<0x00>, true, false, 0, true };
+        interrupt_descriptor_table[0x01] = { interrupt_segment, fault_handler<0x01>, true, false, 0, true };
         interrupt_descriptor_table[0x02] = { interrupt_segment, trap_handler<0x02>,  true, true, 0, true };
         interrupt_descriptor_table[0x03] = { interrupt_segment, trap_handler<0x03>,  true, true, 0, true };
         interrupt_descriptor_table[0x04] = { interrupt_segment, trap_handler<0x04>,  true, true, 0, true };
-        interrupt_descriptor_table[0x05] = { interrupt_segment, fault_handler<0x05>, true, true, 0, true };
-        interrupt_descriptor_table[0x06] = { interrupt_segment, fault_handler<0x06>, true, true, 0, true };
-        interrupt_descriptor_table[0x07] = { interrupt_segment, fault_handler<0x07>, true, true, 0, true };
-        interrupt_descriptor_table[0x08] = { interrupt_segment, fault_handler<0x08>, true, true, 0, true };
-        interrupt_descriptor_table[0x09] = { interrupt_segment, fault_handler<0x09>, true, true, 0, true };
-        interrupt_descriptor_table[0x0A] = { interrupt_segment, fault_handler<0x0A>, true, true, 0, true };
-        interrupt_descriptor_table[0x0B] = { interrupt_segment, fault_handler<0x0B>, true, true, 0, true };
-        interrupt_descriptor_table[0x0C] = { interrupt_segment, fault_handler<0x0C>, true, true, 0, true };
-        interrupt_descriptor_table[0x0D] = { interrupt_segment, fault_handler<0x0D>, true, true, 0, true };
-        interrupt_descriptor_table[0x0E] = { interrupt_segment, fault_handler<0x0E>, true, true, 0, true };
+        interrupt_descriptor_table[0x05] = { interrupt_segment, fault_handler<0x05>, true, false, 0, true };
+        interrupt_descriptor_table[0x06] = { interrupt_segment, fault_handler<0x06>, true, false, 0, true };
+        interrupt_descriptor_table[0x07] = { interrupt_segment, fault_handler<0x07>, true, false, 0, true };
+        interrupt_descriptor_table[0x08] = { interrupt_segment, fault_handler<0x08>, true, false, 0, true };
+        interrupt_descriptor_table[0x09] = { interrupt_segment, fault_handler<0x09>, true, false, 0, true };
+        interrupt_descriptor_table[0x0A] = { interrupt_segment, fault_handler<0x0A>, true, false, 0, true };
+        interrupt_descriptor_table[0x0B] = { interrupt_segment, fault_handler<0x0B>, true, false, 0, true };
+        interrupt_descriptor_table[0x0C] = { interrupt_segment, fault_handler<0x0C>, true, false, 0, true };
+        interrupt_descriptor_table[0x0D] = { interrupt_segment, fault_handler<0x0D>, true, false, 0, true };
+        interrupt_descriptor_table[0x0E] = { interrupt_segment, fault_handler<0x0E>, true, false, 0, true };
         interrupt_descriptor_table[0x0F] = { interrupt_segment, trap_handler<0x0F>,  true, true, 0, true };
-        interrupt_descriptor_table[0x10] = { interrupt_segment, fault_handler<0x10>, true, true, 0, true };
-        interrupt_descriptor_table[0x11] = { interrupt_segment, fault_handler<0x11>, true, true, 0, true };
-        interrupt_descriptor_table[0x12] = { interrupt_segment, fault_handler<0x12>, true, true, 0, true };
-        interrupt_descriptor_table[0x13] = { interrupt_segment, fault_handler<0x13>, true, true, 0, true };
-        interrupt_descriptor_table[0x14] = { interrupt_segment, fault_handler<0x14>, true, true, 0, true };
-        interrupt_descriptor_table[0x15] = { interrupt_segment, fault_handler<0x15>, true, true, 0, true };
+        interrupt_descriptor_table[0x10] = { interrupt_segment, fault_handler<0x10>, true, false, 0, true };
+        interrupt_descriptor_table[0x11] = { interrupt_segment, fault_handler<0x11>, true, false, 0, true };
+        interrupt_descriptor_table[0x12] = { interrupt_segment, fault_handler<0x12>, true, false, 0, true };
+        interrupt_descriptor_table[0x13] = { interrupt_segment, fault_handler<0x13>, true, false, 0, true };
+        interrupt_descriptor_table[0x14] = { interrupt_segment, fault_handler<0x14>, true, false, 0, true };
+        interrupt_descriptor_table[0x15] = { interrupt_segment, fault_handler<0x15>, true, false, 0, true };
         interrupt_descriptor_table[0x16] = { interrupt_segment, trap_handler<0x16>,  true, true, 0, true };
         interrupt_descriptor_table[0x17] = { interrupt_segment, trap_handler<0x17>,  true, true, 0, true };
         interrupt_descriptor_table[0x18] = { interrupt_segment, trap_handler<0x18>,  true, true, 0, true };

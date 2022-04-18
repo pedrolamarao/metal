@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <x86/_32/interrupts.h>
 #include <x86/_64/interrupts.h>
+#include <x86/interrupts.h>
 
 
 namespace

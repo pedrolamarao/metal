@@ -67,7 +67,6 @@ void test_64 ()
 void psys::main ()
 {
     using namespace x86;
-    using namespace x86::_32;
     using namespace x86::_64;
 
     unsigned step { 1 };
@@ -98,7 +97,7 @@ void psys::main ()
 
     _test_control = step++;
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table_32[i] = { code_segment_32, interrupt_handler_32, true, true, 0, true };
+        interrupt_descriptor_table_32[i] = { code_segment_32, interrupt_handler_32, true, false, 0, true };
     }
     set_interrupt_descriptor_table(interrupt_descriptor_table_32);
     
