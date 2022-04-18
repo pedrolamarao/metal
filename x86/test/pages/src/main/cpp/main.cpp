@@ -36,7 +36,7 @@ namespace
     // short small paging.
 
     alignas(0x1000) constinit
-    short_page_entry short_page_table [ 0x400 ] {};
+    short_page_table_entry short_page_table [ 0x400 ] {};
 
     alignas(0x1000) constinit
     short_small_page_directory_entry short_small_page_directory_table [ 0x400 ] {};
@@ -49,7 +49,7 @@ namespace
     // extended small paging.
 
     alignas(0x1000) constinit
-    extended_page_entry long_page_table [ 0x200 ] {};
+    extended_page_table_entry long_page_table [ 0x200 ] {};
 
     alignas(0x1000) constinit
     extended_small_page_directory_entry long_small_page_directory_table [ 0x200 ] {};
