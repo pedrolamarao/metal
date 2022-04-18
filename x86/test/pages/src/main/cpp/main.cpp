@@ -12,7 +12,6 @@
 namespace
 {
     using namespace x86;
-    using namespace x86::_32;
 
     // segments.
 
@@ -28,7 +27,7 @@ namespace
     // interrupts.
 
     extern
-    interrupt_gate_descriptor interrupt_descriptor_table [ 256 ];
+    short_interrupt_gate_descriptor interrupt_descriptor_table [ 256 ];
 
     void interrupt_handler ();
 
@@ -70,7 +69,6 @@ namespace
 void psys::main ()
 {
     using namespace x86;
-    using namespace x86::_32;
     
     size step = 1;
 
@@ -86,7 +84,7 @@ void psys::main ()
     _test_control = step++;
     auto interrupt_segment = segment_selector(2, false, 0);
     for (auto i = 0U, j = 256U; i != j; ++i) {
-        interrupt_descriptor_table[i] = { interrupt_segment, interrupt_handler, true, true, 0, true };
+        interrupt_descriptor_table[i] = { interrupt_segment, interrupt_handler, true, false, 0, true };
     }
     set_interrupt_descriptor_table(interrupt_descriptor_table);
 
@@ -383,7 +381,7 @@ namespace
     // interrupts.
 
     constinit
-    interrupt_gate_descriptor interrupt_descriptor_table [ 256 ]
+    short_interrupt_gate_descriptor interrupt_descriptor_table [ 256 ]
     { };
 
     [[gnu::naked]]
