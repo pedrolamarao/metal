@@ -11,14 +11,6 @@ final llvm = {
     staticLibArchiver.executable = 'llvm-ar'
 }
 
-final llvm_macos = {
-    assembler.executable = 'clang'
-    cCompiler.executable = 'clang'
-    cppCompiler.executable = 'clang++'
-    linker.executable = 'clang++'
-    staticLibArchiver.executable = 'ar'
-}
-
 final llvm_linux = {
     assembler.executable = 'clang'
     cCompiler.executable = 'clang'
@@ -26,6 +18,14 @@ final llvm_linux = {
     linker.executable = 'clang++'
     linker.withArguments { addAll '-lpthread' }
     staticLibArchiver.executable = 'llvm-ar'
+}
+
+final llvm_macos = {
+    assembler.executable = 'clang'
+    cCompiler.executable = 'clang'
+    cppCompiler.executable = 'clang++'
+    linker.executable = 'clang++'
+    staticLibArchiver.executable = 'ar'
 }
 
 final x86_32_elf = {
