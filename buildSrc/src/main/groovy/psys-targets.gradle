@@ -7,7 +7,9 @@ final llvm = {
     assembler.executable = 'clang'
     cCompiler.executable = 'clang'
     cppCompiler.executable = 'clang++'
+    cppCompiler.withArguments { addAll '-stdlib=libc++' }
     linker.executable = 'clang++'
+    linker.withArguments { addAll '-stdlib=libc++' }
     staticLibArchiver.executable = 'llvm-ar'
 }
 
@@ -26,6 +28,7 @@ final llvm_macos = {
     cppCompiler.executable = 'clang++'
     cppCompiler.withArguments { addAll '-stdlib=libc++' }
     linker.executable = 'clang++'
+    linker.withArguments { addAll '-stdlib=libc++' }
     staticLibArchiver.executable = 'llvm-ar'
 }
 
