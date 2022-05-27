@@ -25,7 +25,7 @@ final llvm_macos = {
     cCompiler.executable = 'clang'
     cppCompiler.executable = 'clang++'
     linker.executable = 'clang++'
-    staticLibArchiver.executable = 'ar'
+    staticLibArchiver.executable = 'llvm-ar'
 }
 
 final x86_32_elf = {
