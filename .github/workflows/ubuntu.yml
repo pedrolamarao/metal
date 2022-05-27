@@ -21,7 +21,7 @@ jobs:
           ubuntu-version: 18.04
           version: 13
       - name: "Build with Gradle"
-        uses: gradle/gradle-build-action@v2.1.3
+        uses: gradle/gradle-build-action@v2.1.6
         with:
           arguments: build
   build-llvm-14:
@@ -44,6 +44,6 @@ jobs:
           ubuntu-version: 18.04
           version: 14
       - name: "Build with Gradle"
-        uses: gradle/gradle-build-action@v2.1.3
+        uses: gradle/gradle-build-action@v2.1.6
         with:
           arguments: build
