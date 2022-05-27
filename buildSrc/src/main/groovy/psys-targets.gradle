@@ -11,6 +11,14 @@ final llvm = {
     staticLibArchiver.executable = 'llvm-ar'
 }
 
+final llvm_macos = {
+    assembler.executable = 'clang'
+    cCompiler.executable = 'clang'
+    cppCompiler.executable = 'clang++'
+    linker.executable = 'clang++'
+    staticLibArchiver.executable = 'ar'
+}
+
 final llvm_linux = {
     assembler.executable = 'clang'
     cCompiler.executable = 'clang'
@@ -136,15 +144,9 @@ project.model
         {
             if (llvmPath.isPresent()) { it.path(llvmPath) }
             final os = System.getProperty("os.name")
-            if (os.containsIgnoreCase("linux")) {
-                rootProject.logger.lifecycle("oops")
-                it.target("linuxx86-64", llvm_linux)
-            }
-            else {
-                it.target("macosx86-64", llvm)
-                it.target("windowsx86-64", llvm)
-            }
-
+            it.target("linuxx86-64", llvm_linux)
+            it.target("macosx86-64", llvm_macos)
+            it.target("windowsx86-64", llvm)
         }
         llvm_x86_32_elf(Clang)
         {
