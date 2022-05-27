@@ -24,6 +24,7 @@ final llvm_macos = {
     assembler.executable = 'clang'
     cCompiler.executable = 'clang'
     cppCompiler.executable = 'clang++'
+    cppCompiler.withArguments { addAll '-stdlib=libc++' }
     linker.executable = 'clang++'
     staticLibArchiver.executable = 'llvm-ar'
 }
