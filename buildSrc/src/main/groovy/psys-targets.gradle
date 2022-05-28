@@ -149,7 +149,7 @@ project.model
             if (llvmPath.isPresent()) { it.path(llvmPath) }
             final os = System.getProperty("os.name")
             it.target("linuxx86-64", llvm_linux)
-            it.target("macosx86-64", llvm_macos)
+            // it.target("macosx86-64", llvm_macos)
             it.target("windowsx86-64", llvm)
         }
         llvm_x86_32_elf(Clang)
