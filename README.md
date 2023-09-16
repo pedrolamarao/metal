@@ -1,4 +1,4 @@
-Date: 2022-04-14
+Date: 2023-09-16
 
 ![ubuntu-latest](https://github.com/pedrolamarao/psys/actions/workflows/ubuntu.yml/badge.svg)
 ![windows-latest](https://github.com/pedrolamarao/psys/actions/workflows/windows.yml/badge.svg)
@@ -13,7 +13,7 @@ For more information on this project's mission, ambitions and aims, see [GOAL](d
 
 # quick start
 
-Put JDK 17 and LLVM 13 in your `${PATH}`.
+Put JDK 17 and LLVM 16 in your `${PATH}`.
 
 From the source root, run: `./gradlew build`
 

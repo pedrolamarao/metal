@@ -20,9 +20,9 @@ namespace x86
   {
   public:
 
-    using address_type = unsigned _ExtInt(16);
+    using address_type = unsigned _BitInt(16);
 
-    using data_type = unsigned _ExtInt(ByteWidth * 8);
+    using data_type = unsigned _BitInt(ByteWidth * 8);
 
     constexpr
     port ( address_type address ) : _address{address} {}

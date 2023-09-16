@@ -11,3 +11,7 @@ allprojects {
     group = "br.dev.pedrolamarao.psys"
     version = "0.5.0-SNAPSHOT"
 }
+
+tasks.wrapper.configure {
+    gradleVersion = "7.6.2"
+}
