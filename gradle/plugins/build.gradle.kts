@@ -4,7 +4,7 @@ plugins {
 
 val elf = "1.0.0-SNAPSHOT"
 val gdb = "1.0.0-SNAPSHOT"
-val nokee = "[0.4.0, 0.5.0)"
+val nokee = "0.4.3129-202303171612.d413fb13"
 
 kotlin.jvmToolchain {
     (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17))

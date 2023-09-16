@@ -5,6 +5,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.CommandLineArgumentProvider
@@ -72,7 +73,7 @@ abstract class QemuSystemEditor : CommandLineArgumentProvider
     @get:Input @get:Optional
     abstract val accelerators : ListProperty<String>
 
-    @get:Input @get:Optional
+    @get:InputFile @get:Optional
     abstract val bios : RegularFileProperty
 
     @get:Input @get:Optional
@@ -90,7 +91,7 @@ abstract class QemuSystemEditor : CommandLineArgumentProvider
     @get:Input @get:Optional
     abstract val debugConsole : Property<String>
 
-    @get:Input @get:Optional
+    @get:InputFile @get:Optional
     abstract val debugFile : RegularFileProperty
 
     @get:Input @get:Optional
@@ -105,7 +106,7 @@ abstract class QemuSystemEditor : CommandLineArgumentProvider
     @get:Input @get:Optional
     abstract val gdb : Property<String>
 
-    @get:Input @get:Optional
+    @get:InputFile @get:Optional
     abstract val kernel : RegularFileProperty
 
     @get:Input @get:Optional

@@ -46,20 +46,20 @@ namespace x86
 
         constexpr
         code_segment_descriptor (
-            unsigned _ExtInt(16) limit_low,
-            unsigned _ExtInt(16) base_low,
-            unsigned _ExtInt(8)  base_middle,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(1)  readable,
-            unsigned _ExtInt(1)  conforming,
-            unsigned _ExtInt(2)  privilege,
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(4)  limit_high,
-            unsigned _ExtInt(1)  available,
-            unsigned _ExtInt(1)  is_long,
-            unsigned _ExtInt(1)  operand,
-            unsigned _ExtInt(1)  granularity,
-            unsigned _ExtInt(8)  base_high
+            unsigned _BitInt(16) limit_low,
+            unsigned _BitInt(16) base_low,
+            unsigned _BitInt(8)  base_middle,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(1)  readable,
+            unsigned _BitInt(1)  conforming,
+            unsigned _BitInt(2)  privilege,
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(4)  limit_high,
+            unsigned _BitInt(1)  available,
+            unsigned _BitInt(1)  is_long,
+            unsigned _BitInt(1)  operand,
+            unsigned _BitInt(1)  granularity,
+            unsigned _BitInt(8)  base_high
         );
 
         //! Semantic constructor.
@@ -71,9 +71,9 @@ namespace x86
             bool accessed,
             bool readable,
             bool conforming,
-            unsigned _ExtInt(2) privilege,
+            unsigned _BitInt(2) privilege,
             bool present,
-            unsigned _ExtInt(1) available,
+            unsigned _BitInt(1) available,
             bool is_64bit,
             bool is_32bit,
             bool is_4kb
@@ -89,11 +89,11 @@ namespace x86
 
         auto conforming () const -> bool ;
 
-        auto privilege () const -> unsigned _ExtInt(2) ;
+        auto privilege () const -> unsigned _BitInt(2) ;
 
         auto present () const -> bool ;
 
-        auto available () const -> unsigned _ExtInt(1) ;
+        auto available () const -> unsigned _BitInt(1) ;
 
         auto is_64bit () const -> bool ;
 
@@ -136,19 +136,19 @@ namespace x86
 
         constexpr
         data_segment_descriptor (
-            unsigned _ExtInt(16) limit_low,
-            unsigned _ExtInt(16) base_low,
-            unsigned _ExtInt(8)  base_middle,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  expand_down,
-            unsigned _ExtInt(2)  privilege,
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(4)  limit_high,
-            unsigned _ExtInt(1)  available,
-            unsigned _ExtInt(1)  operand,
-            unsigned _ExtInt(1)  granularity,
-            unsigned _ExtInt(8)  base_high
+            unsigned _BitInt(16) limit_low,
+            unsigned _BitInt(16) base_low,
+            unsigned _BitInt(8)  base_middle,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  expand_down,
+            unsigned _BitInt(2)  privilege,
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(4)  limit_high,
+            unsigned _BitInt(1)  available,
+            unsigned _BitInt(1)  operand,
+            unsigned _BitInt(1)  granularity,
+            unsigned _BitInt(8)  base_high
         );
 
         //! Semantic constructor.
@@ -160,9 +160,9 @@ namespace x86
             bool accessed,
             bool writable,
             bool expand_down,
-            unsigned _ExtInt(2) privilege,
+            unsigned _BitInt(2) privilege,
             bool present,
-            unsigned _ExtInt(1) available,
+            unsigned _BitInt(1) available,
             bool is_32bit,
             bool is_4kb
         );
@@ -177,11 +177,11 @@ namespace x86
 
         auto expand_down () const -> bool ;
 
-        auto privilege () const -> unsigned _ExtInt(2) ;
+        auto privilege () const -> unsigned _BitInt(2) ;
 
         auto present () const -> bool ;
 
-        auto available () const -> unsigned _ExtInt(1) ;
+        auto available () const -> unsigned _BitInt(1) ;
 
         auto is_32bit () const -> bool ;
 
@@ -220,20 +220,20 @@ namespace x86
 {
     constexpr inline
     code_segment_descriptor::code_segment_descriptor (
-        unsigned _ExtInt(16) limit_low,
-        unsigned _ExtInt(16) base_low,
-        unsigned _ExtInt(8)  base_middle,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(1)  readable,
-        unsigned _ExtInt(1)  conforming,
-        unsigned _ExtInt(2)  privilege,
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(4)  limit_high,
-        unsigned _ExtInt(1)  available,
-        unsigned _ExtInt(1)  is_long,
-        unsigned _ExtInt(1)  operand,
-        unsigned _ExtInt(1)  granularity,
-        unsigned _ExtInt(8)  base_high
+        unsigned _BitInt(16) limit_low,
+        unsigned _BitInt(16) base_low,
+        unsigned _BitInt(8)  base_middle,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(1)  readable,
+        unsigned _BitInt(1)  conforming,
+        unsigned _BitInt(2)  privilege,
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(4)  limit_high,
+        unsigned _BitInt(1)  available,
+        unsigned _BitInt(1)  is_long,
+        unsigned _BitInt(1)  operand,
+        unsigned _BitInt(1)  granularity,
+        unsigned _BitInt(8)  base_high
     ) :
         _limit_low{limit_low},
         _base_low{base_low},
@@ -258,9 +258,9 @@ namespace x86
         bool accessed,
         bool readable,
         bool conforming,
-        unsigned _ExtInt(2) privilege,
+        unsigned _BitInt(2) privilege,
         bool present,
-        unsigned _ExtInt(1) available,
+        unsigned _BitInt(1) available,
         bool is_long,
         bool operand,
         bool granularity
@@ -297,13 +297,13 @@ namespace x86
     auto code_segment_descriptor::conforming () const -> bool { return _conforming; };
 
     inline
-    auto code_segment_descriptor::privilege () const -> unsigned _ExtInt(2) { return _privilege; };
+    auto code_segment_descriptor::privilege () const -> unsigned _BitInt(2) { return _privilege; };
 
     inline
     auto code_segment_descriptor::present () const -> bool { return _present; };
 
     inline
-    auto code_segment_descriptor::available () const -> unsigned _ExtInt(1) { return _available; };
+    auto code_segment_descriptor::available () const -> unsigned _BitInt(1) { return _available; };
 
     inline
     auto code_segment_descriptor::is_64bit () const -> bool { return _long; };
@@ -321,19 +321,19 @@ namespace x86
 {
     constexpr inline
     data_segment_descriptor::data_segment_descriptor (
-        unsigned _ExtInt(16) limit_low,
-        unsigned _ExtInt(16) base_low,
-        unsigned _ExtInt(8)  base_middle,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  expand_down,
-        unsigned _ExtInt(2)  privilege,
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(4)  limit_high,
-        unsigned _ExtInt(1)  available,
-        unsigned _ExtInt(1)  operand,
-        unsigned _ExtInt(1)  granularity,
-        unsigned _ExtInt(8)  base_high
+        unsigned _BitInt(16) limit_low,
+        unsigned _BitInt(16) base_low,
+        unsigned _BitInt(8)  base_middle,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  expand_down,
+        unsigned _BitInt(2)  privilege,
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(4)  limit_high,
+        unsigned _BitInt(1)  available,
+        unsigned _BitInt(1)  operand,
+        unsigned _BitInt(1)  granularity,
+        unsigned _BitInt(8)  base_high
     ) :
         _limit_low{limit_low},
         _base_low{base_low},
@@ -357,9 +357,9 @@ namespace x86
         bool accessed,
         bool writable,
         bool expand_down,
-        unsigned _ExtInt(2) privilege,
+        unsigned _BitInt(2) privilege,
         bool present,
-        unsigned _ExtInt(1) available,
+        unsigned _BitInt(1) available,
         bool operand,
         bool granularity
     ) :
@@ -394,13 +394,13 @@ namespace x86
     auto data_segment_descriptor::expand_down () const -> bool { return _expand_down; };
 
     inline
-    auto data_segment_descriptor::privilege () const -> unsigned _ExtInt(2) { return _privilege; };
+    auto data_segment_descriptor::privilege () const -> unsigned _BitInt(2) { return _privilege; };
 
     inline
     auto data_segment_descriptor::present () const -> bool { return _present; };
 
     inline
-    auto data_segment_descriptor::available () const -> unsigned _ExtInt(1) { return _available; };
+    auto data_segment_descriptor::available () const -> unsigned _BitInt(1) { return _available; };
 
     inline
     auto data_segment_descriptor::is_32bit () const -> bool { return _operand; };

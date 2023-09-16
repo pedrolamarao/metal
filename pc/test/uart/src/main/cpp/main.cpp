@@ -131,7 +131,7 @@ void psys::main ()
 
     _test_control = 200;
 
-    auto uart = pc::uart::uart<x86::port>( _ExtInt(16){0x03F8} );
+    auto uart = pc::uart::uart<x86::port>( _BitInt(16){0x03F8} );
     uart.ier( ier{} );
     uart.lcr( lcr{}.dlab(true) );
     uart.dll( 0x03 );
