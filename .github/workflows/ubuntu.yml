@@ -16,7 +16,7 @@ jobs:
           java-version: "17"
           distribution: "temurin"
       - name: "Install LLVM 16"
-        uses: KyleMayes/install-llvm-action@v1.5.2
+        uses: KyleMayes/install-llvm-action@v1.8.3
         with:
           ubuntu-version: 22.04
           version: 16.0.4
