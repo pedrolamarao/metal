@@ -9,9 +9,9 @@ namespace
     {
     public:
 
-        typedef _ExtInt(16) address_type;
+        typedef _BitInt(16) address_type;
 
-        typedef _ExtInt(Size * 8) data_type;
+        typedef _BitInt(Size * 8) data_type;
 
         port (address_type address) { }
 

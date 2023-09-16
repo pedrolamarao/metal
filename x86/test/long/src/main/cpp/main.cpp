@@ -49,8 +49,8 @@ namespace
     long_page_map_entry page_map [ 0x200 ];
 }
 
-[[gnu::naked, gnu::used]]
 extern "C"
+[[gnu::naked, gnu::used]]
 void test_64 ()
 {
     __asm__ (

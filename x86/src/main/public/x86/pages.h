@@ -39,17 +39,17 @@ namespace x86
 
         constexpr
         short_page_table_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(1)  dirty,
-            unsigned _ExtInt(1)  attribute,
-            unsigned _ExtInt(1)  global,
-            unsigned _ExtInt(3)  available,
-            unsigned _ExtInt(20) address
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(1)  dirty,
+            unsigned _BitInt(1)  attribute,
+            unsigned _BitInt(1)  global,
+            unsigned _BitInt(3)  available,
+            unsigned _BitInt(20) address
         );
 
         //! Semantic constructor.
@@ -66,9 +66,9 @@ namespace x86
             bool cache,
             bool accessed,
             bool dirty,
-            unsigned _ExtInt(3) attribute,
+            unsigned _BitInt(3) attribute,
             bool global,
-            unsigned _ExtInt(3) available,
+            unsigned _BitInt(3) available,
             size4 address
         );
 
@@ -102,7 +102,7 @@ namespace x86
 
         //! Page attribute high bit.
 
-        auto attribute () const -> unsigned _ExtInt(3);
+        auto attribute () const -> unsigned _BitInt(3);
 
         //! Page is global.
 
@@ -110,7 +110,7 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(3);
+        auto available () const -> unsigned _BitInt(3);
 
         //! Page address.
 
@@ -144,14 +144,14 @@ namespace x86
 
         constexpr
         short_small_page_directory_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(3)  available,
-            unsigned _ExtInt(20) address
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(3)  available,
+            unsigned _BitInt(20) address
         );
 
         //! Semantic constructor.
@@ -167,7 +167,7 @@ namespace x86
             bool write_through,
             bool cache,
             bool accessed,
-            unsigned _ExtInt(3) available,
+            unsigned _BitInt(3) available,
             size4 address
         );
 
@@ -197,7 +197,7 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(3);
+        auto available () const -> unsigned _BitInt(3);
 
         //! Page table address.
 
@@ -236,18 +236,18 @@ namespace x86
 
         constexpr
         short_large_page_directory_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(1)  dirty,
-            unsigned _ExtInt(1)  global,
-            unsigned _ExtInt(3)  available,
-            unsigned _ExtInt(1)  attribute,
-            unsigned _ExtInt(8)  address_high,
-            unsigned _ExtInt(10) address_low
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(1)  dirty,
+            unsigned _BitInt(1)  global,
+            unsigned _BitInt(3)  available,
+            unsigned _BitInt(1)  attribute,
+            unsigned _BitInt(8)  address_high,
+            unsigned _BitInt(10) address_low
         );
 
         //! Semantic constructor.
@@ -262,8 +262,8 @@ namespace x86
             bool accessed,
             bool dirty,
             bool global,
-            unsigned _ExtInt(3) available,
-            unsigned _ExtInt(3) attribute,
+            unsigned _BitInt(3) available,
+            unsigned _BitInt(3) attribute,
             size8 address
         );
 
@@ -301,11 +301,11 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(3);
+        auto available () const -> unsigned _BitInt(3);
 
         //! Page attribute high bit.
 
-        auto attribute () const -> unsigned _ExtInt(3);
+        auto attribute () const -> unsigned _BitInt(3);
 
         //! Page address.
 
@@ -343,18 +343,18 @@ namespace x86
 
         constexpr
         extended_page_table_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(1)  dirty,
-            unsigned _ExtInt(1)  attribute,
-            unsigned _ExtInt(1)  global,
-            unsigned _ExtInt(3)  available,
-            unsigned _ExtInt(40) address,
-            unsigned _ExtInt(1)  nonexecutable
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(1)  dirty,
+            unsigned _BitInt(1)  attribute,
+            unsigned _BitInt(1)  global,
+            unsigned _BitInt(3)  available,
+            unsigned _BitInt(40) address,
+            unsigned _BitInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -371,9 +371,9 @@ namespace x86
             bool cache,
             bool accessed,
             bool dirty,
-            unsigned _ExtInt(3) attribute,
+            unsigned _BitInt(3) attribute,
             bool global,
-            unsigned _ExtInt(3) available,
+            unsigned _BitInt(3) available,
             size8 address,
             bool nonexecutable
         );
@@ -408,7 +408,7 @@ namespace x86
 
         //! Page attribute high bit.
 
-        auto attribute () const -> unsigned _ExtInt(3);
+        auto attribute () const -> unsigned _BitInt(3);
 
         //! Page is global.
 
@@ -416,7 +416,7 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(3);
+        auto available () const -> unsigned _BitInt(3);
 
         //! Page address.
 
@@ -456,15 +456,15 @@ namespace x86
 
         constexpr
         extended_small_page_directory_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(3)  available,
-            unsigned _ExtInt(40) address,
-            unsigned _ExtInt(1)  nonexecutable
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(3)  available,
+            unsigned _BitInt(40) address,
+            unsigned _BitInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -480,7 +480,7 @@ namespace x86
             bool write_through,
             bool cache,
             bool accessed,
-            unsigned _ExtInt(3) available,
+            unsigned _BitInt(3) available,
             size8 address,
             bool nonexecutable
         );
@@ -511,7 +511,7 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(3);
+        auto available () const -> unsigned _BitInt(3);
 
         //! Page table address.
 
@@ -555,18 +555,18 @@ namespace x86
 
         constexpr
         extended_large_page_directory_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(1)  dirty,
-            unsigned _ExtInt(1)  global,
-            unsigned _ExtInt(3)  available,
-            unsigned _ExtInt(1)  attribute,
-            unsigned _ExtInt(31) address,
-            unsigned _ExtInt(1)  nonexecutable
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(1)  dirty,
+            unsigned _BitInt(1)  global,
+            unsigned _BitInt(3)  available,
+            unsigned _BitInt(1)  attribute,
+            unsigned _BitInt(31) address,
+            unsigned _BitInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -584,8 +584,8 @@ namespace x86
             bool accessed,
             bool dirty,
             bool global,
-            unsigned _ExtInt(3) available,
-            unsigned _ExtInt(3) attribute,
+            unsigned _BitInt(3) available,
+            unsigned _BitInt(3) attribute,
             size8 address,
             bool nonexecutable
         );
@@ -624,11 +624,11 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(3);
+        auto available () const -> unsigned _BitInt(3);
 
         //! Page attribute high bit.
 
-        auto attribute () const -> unsigned _ExtInt(3);
+        auto attribute () const -> unsigned _BitInt(3);
 
         //! Page address.
 
@@ -665,11 +665,11 @@ namespace x86
 
         constexpr
         extended_page_directory_pointer_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(3)  available,
-            unsigned _ExtInt(40) address
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(3)  available,
+            unsigned _BitInt(40) address
         );
 
         //! Semantic constructor.
@@ -682,7 +682,7 @@ namespace x86
             bool present,
             bool write_through,
             bool cache,
-            unsigned _ExtInt(3) available,
+            unsigned _BitInt(3) available,
             size8 address
         );
 
@@ -700,7 +700,7 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(3);
+        auto available () const -> unsigned _BitInt(3);
 
         //! Page directory table address.
 
@@ -730,9 +730,9 @@ namespace x86
 
         constexpr
         short_paging (
-            unsigned _ExtInt(1) write_through,
-            unsigned _ExtInt(1) cache,
-            unsigned _ExtInt(20) address
+            unsigned _BitInt(1) write_through,
+            unsigned _BitInt(1) cache,
+            unsigned _BitInt(20) address
         );
 
         //! Semantic constructor.
@@ -783,9 +783,9 @@ namespace x86
 
         constexpr
         extended_paging (
-            unsigned _ExtInt(1) write_through,
-            unsigned _ExtInt(1) cache,
-            unsigned _ExtInt(27) address
+            unsigned _BitInt(1) write_through,
+            unsigned _BitInt(1) cache,
+            unsigned _BitInt(27) address
         );
 
         //! Semantic constructor.
@@ -844,20 +844,20 @@ namespace x86
 
         constexpr
         long_page_table_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(1)  dirty,
-            unsigned _ExtInt(1)  attribute,
-            unsigned _ExtInt(1)  global,
-            unsigned _ExtInt(3)  available_low,
-            unsigned _ExtInt(40) address,
-            unsigned _ExtInt(7)  available_high,
-            unsigned _ExtInt(4)  mpk,
-            unsigned _ExtInt(1)  nonexecutable
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(1)  dirty,
+            unsigned _BitInt(1)  attribute,
+            unsigned _BitInt(1)  global,
+            unsigned _BitInt(3)  available_low,
+            unsigned _BitInt(40) address,
+            unsigned _BitInt(7)  available_high,
+            unsigned _BitInt(4)  mpk,
+            unsigned _BitInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -871,11 +871,11 @@ namespace x86
             bool cache,
             bool accessed,
             bool dirty,
-            unsigned _ExtInt(3) attribute,
+            unsigned _BitInt(3) attribute,
             bool global,
-            unsigned _ExtInt(10) available,
+            unsigned _BitInt(10) available,
             size8 address,
-            unsigned _ExtInt(4) mpk,
+            unsigned _BitInt(4) mpk,
             bool nonexecutable
         );
 
@@ -905,7 +905,7 @@ namespace x86
 
         //! Page attribute.
 
-        auto attribute () const -> unsigned _ExtInt(3);
+        auto attribute () const -> unsigned _BitInt(3);
 
         //! Page is global.
 
@@ -917,7 +917,7 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(10);
+        auto available () const -> unsigned _BitInt(10);
 
         //! Page address.
 
@@ -925,7 +925,7 @@ namespace x86
 
         //! Page memory protection key.
 
-        auto mpk () const -> unsigned _ExtInt(4);
+        auto mpk () const -> unsigned _BitInt(4);
 
         //! Page is not executable.
 
@@ -963,16 +963,16 @@ namespace x86
 
         constexpr
         long_small_page_directory_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(3)  available_low,
-            unsigned _ExtInt(40) address,
-            unsigned _ExtInt(11) available_high,
-            unsigned _ExtInt(1)  nonexecutable
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(3)  available_low,
+            unsigned _BitInt(40) address,
+            unsigned _BitInt(11) available_high,
+            unsigned _BitInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -985,7 +985,7 @@ namespace x86
             bool write_through,
             bool cache,
             bool accessed,
-            unsigned _ExtInt(14) available,
+            unsigned _BitInt(14) available,
             size8 address,
             bool nonexecutable
         );
@@ -1016,7 +1016,7 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(14);
+        auto available () const -> unsigned _BitInt(14);
 
         //! Page table address.
 
@@ -1058,16 +1058,16 @@ namespace x86
 
         constexpr
         long_small_page_directory_pointer_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(3)  available_low,
-            unsigned _ExtInt(40) address,
-            unsigned _ExtInt(11) available_high,
-            unsigned _ExtInt(1)  nonexecutable
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(3)  available_low,
+            unsigned _BitInt(40) address,
+            unsigned _BitInt(11) available_high,
+            unsigned _BitInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -1080,7 +1080,7 @@ namespace x86
             bool write_through,
             bool cache,
             bool accessed,
-            unsigned _ExtInt(14) available,
+            unsigned _BitInt(14) available,
             size8 address,
             bool nonexecutable
         );
@@ -1111,7 +1111,7 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(14);
+        auto available () const -> unsigned _BitInt(14);
 
         //! Page directory address.
 
@@ -1153,16 +1153,16 @@ namespace x86
 
         constexpr
         long_page_map_entry (
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(1)  writable,
-            unsigned _ExtInt(1)  user,
-            unsigned _ExtInt(1)  write_through,
-            unsigned _ExtInt(1)  cache,
-            unsigned _ExtInt(1)  accessed,
-            unsigned _ExtInt(3)  available_low,
-            unsigned _ExtInt(40) address,
-            unsigned _ExtInt(11) available_high,
-            unsigned _ExtInt(1)  nonexecutable
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(1)  writable,
+            unsigned _BitInt(1)  user,
+            unsigned _BitInt(1)  write_through,
+            unsigned _BitInt(1)  cache,
+            unsigned _BitInt(1)  accessed,
+            unsigned _BitInt(3)  available_low,
+            unsigned _BitInt(40) address,
+            unsigned _BitInt(11) available_high,
+            unsigned _BitInt(1)  nonexecutable
         );
 
         //! Semantic constructor.
@@ -1175,7 +1175,7 @@ namespace x86
             bool write_through,
             bool cache,
             bool accessed,
-            unsigned _ExtInt(14) available,
+            unsigned _BitInt(14) available,
             size8 address,
             bool nonexecutable
         );
@@ -1206,7 +1206,7 @@ namespace x86
 
         //! Bits available to software.
 
-        auto available () const -> unsigned _ExtInt(14);
+        auto available () const -> unsigned _BitInt(14);
 
         //! Page directory pointer address.
 
@@ -1242,9 +1242,9 @@ namespace x86
 
         constexpr
         long_paging (
-            unsigned _ExtInt(1) write_through,
-            unsigned _ExtInt(1) cache,
-            unsigned _ExtInt(40) address
+            unsigned _BitInt(1) write_through,
+            unsigned _BitInt(1) cache,
+            unsigned _BitInt(40) address
         );
 
         //! Semantic constructor.
@@ -1347,17 +1347,17 @@ namespace x86
 {
     constexpr inline
     short_page_table_entry::short_page_table_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(1)  dirty,
-        unsigned _ExtInt(1)  attribute,
-        unsigned _ExtInt(1)  global,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(20) address
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(1)  dirty,
+        unsigned _BitInt(1)  attribute,
+        unsigned _BitInt(1)  global,
+        unsigned _BitInt(3)  available,
+        unsigned _BitInt(20) address
     ) :
         _present{present},
         _writable{writable},
@@ -1382,9 +1382,9 @@ namespace x86
         bool cache,
         bool accessed,
         bool dirty,
-        unsigned _ExtInt(3) attribute,
+        unsigned _BitInt(3) attribute,
         bool global,
-        unsigned _ExtInt(3) available,
+        unsigned _BitInt(3) available,
         size4 address
     ) :
         _present{present},
@@ -1422,13 +1422,13 @@ namespace x86
     auto short_page_table_entry::dirty () const -> bool { return _dirty; }
 
     inline
-    auto short_page_table_entry::attribute () const -> unsigned _ExtInt(3) { return _attribute << 2; }
+    auto short_page_table_entry::attribute () const -> unsigned _BitInt(3) { return _attribute << 2; }
 
     inline
     auto short_page_table_entry::global () const -> bool { return _global; }
 
     inline
-    auto short_page_table_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto short_page_table_entry::available () const -> unsigned _BitInt(3) { return _available; }
 
     inline
     auto short_page_table_entry::address () const -> size4 { return size4{_address} << 12; }
@@ -1440,14 +1440,14 @@ namespace x86
 {
     constexpr inline
     short_small_page_directory_entry::short_small_page_directory_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(20) address
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(3)  available,
+        unsigned _BitInt(20) address
     ) :
         _present{present},
         _writable{writable},
@@ -1468,7 +1468,7 @@ namespace x86
         bool write_through,
         bool cache,
         bool accessed,
-        unsigned _ExtInt(3) available,
+        unsigned _BitInt(3) available,
         size4 address
     ) :
         _present{present},
@@ -1500,7 +1500,7 @@ namespace x86
     auto short_small_page_directory_entry::accessed () const -> bool { return _accessed; }
 
     inline
-    auto short_small_page_directory_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto short_small_page_directory_entry::available () const -> unsigned _BitInt(3) { return _available; }
 
     inline
     auto short_small_page_directory_entry::address () const -> size4 { return size4{_address} << 12; }
@@ -1512,18 +1512,18 @@ namespace x86
 {
     constexpr inline
     short_large_page_directory_entry::short_large_page_directory_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(1)  dirty,
-        unsigned _ExtInt(1)  global,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(1)  attribute,
-        unsigned _ExtInt(8)  address_high,
-        unsigned _ExtInt(10) address_low
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(1)  dirty,
+        unsigned _BitInt(1)  global,
+        unsigned _BitInt(3)  available,
+        unsigned _BitInt(1)  attribute,
+        unsigned _BitInt(8)  address_high,
+        unsigned _BitInt(10) address_low
     ) :
         _present{present},
         _writable{writable},
@@ -1549,8 +1549,8 @@ namespace x86
         bool accessed,
         bool dirty,
         bool global,
-        unsigned _ExtInt(3) available,
-        unsigned _ExtInt(3) attribute,
+        unsigned _BitInt(3) available,
+        unsigned _BitInt(3) attribute,
         size8 address
     ) :
         _present{present},
@@ -1592,10 +1592,10 @@ namespace x86
     auto short_large_page_directory_entry::global () const -> bool { return _global; }
 
     inline
-    auto short_large_page_directory_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto short_large_page_directory_entry::available () const -> unsigned _BitInt(3) { return _available; }
 
     inline
-    auto short_large_page_directory_entry::attribute () const -> unsigned _ExtInt(3) { return _attribute << 2; }
+    auto short_large_page_directory_entry::attribute () const -> unsigned _BitInt(3) { return _attribute << 2; }
 
     inline
     auto short_large_page_directory_entry::address () const -> size8 { return (size8{_address_high} << 32) | (size8{_address_low} << 22); }
@@ -1607,9 +1607,9 @@ namespace x86
 {
     constexpr inline
     short_paging::short_paging (
-        unsigned _ExtInt(1) write_through,
-        unsigned _ExtInt(1) cache,
-        unsigned _ExtInt(20) address
+        unsigned _BitInt(1) write_through,
+        unsigned _BitInt(1) cache,
+        unsigned _BitInt(20) address
     ) :
         _write_through{write_through},
         _cache{cache},
@@ -1644,18 +1644,18 @@ namespace x86
 {
     constexpr inline
     extended_page_table_entry::extended_page_table_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(1)  dirty,
-        unsigned _ExtInt(1)  attribute,
-        unsigned _ExtInt(1)  global,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(40) address,
-        unsigned _ExtInt(1)  nonexecutable
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(1)  dirty,
+        unsigned _BitInt(1)  attribute,
+        unsigned _BitInt(1)  global,
+        unsigned _BitInt(3)  available,
+        unsigned _BitInt(40) address,
+        unsigned _BitInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -1681,9 +1681,9 @@ namespace x86
         bool cache,
         bool accessed,
         bool dirty,
-        unsigned _ExtInt(3) attribute,
+        unsigned _BitInt(3) attribute,
         bool global,
-        unsigned _ExtInt(3) available,
+        unsigned _BitInt(3) available,
         size8 address,
         bool nonexecutable
     ) :
@@ -1723,13 +1723,13 @@ namespace x86
     auto extended_page_table_entry::dirty () const -> bool { return _dirty; }
 
     inline
-    auto extended_page_table_entry::attribute () const -> unsigned _ExtInt(3) { return _attribute << 2; }
+    auto extended_page_table_entry::attribute () const -> unsigned _BitInt(3) { return _attribute << 2; }
 
     inline
     auto extended_page_table_entry::global () const -> bool { return _global; }
 
     inline
-    auto extended_page_table_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto extended_page_table_entry::available () const -> unsigned _BitInt(3) { return _available; }
 
     inline
     auto extended_page_table_entry::address () const -> size8 { return size8{_address} << 12; }
@@ -1744,15 +1744,15 @@ namespace x86
 {
     constexpr inline
     extended_small_page_directory_entry::extended_small_page_directory_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(40) address,
-        unsigned _ExtInt(1)  nonexecutable
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(3)  available,
+        unsigned _BitInt(40) address,
+        unsigned _BitInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -1774,7 +1774,7 @@ namespace x86
         bool write_through,
         bool cache,
         bool accessed,
-        unsigned _ExtInt(3) available,
+        unsigned _BitInt(3) available,
         size8 address,
         bool nonexecutable
     ) :
@@ -1808,7 +1808,7 @@ namespace x86
     auto extended_small_page_directory_entry::accessed () const -> bool { return _accessed; }
 
     inline
-    auto extended_small_page_directory_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto extended_small_page_directory_entry::available () const -> unsigned _BitInt(3) { return _available; }
 
     inline
     auto extended_small_page_directory_entry::address () const -> size8 { return size8{_address} << 12; }
@@ -1823,18 +1823,18 @@ namespace x86
 {
     constexpr inline
     extended_large_page_directory_entry::extended_large_page_directory_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(1)  dirty,
-        unsigned _ExtInt(1)  global,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(1)  attribute,
-        unsigned _ExtInt(31) address,
-        unsigned _ExtInt(1)  nonexecutable
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(1)  dirty,
+        unsigned _BitInt(1)  global,
+        unsigned _BitInt(3)  available,
+        unsigned _BitInt(1)  attribute,
+        unsigned _BitInt(31) address,
+        unsigned _BitInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -1861,8 +1861,8 @@ namespace x86
         bool accessed,
         bool dirty,
         bool global,
-        unsigned _ExtInt(3) available,
-        unsigned _ExtInt(3) attribute,
+        unsigned _BitInt(3) available,
+        unsigned _BitInt(3) attribute,
         size8 address,
         bool nonexecutable
     ) :
@@ -1905,10 +1905,10 @@ namespace x86
     auto extended_large_page_directory_entry::global () const -> bool { return _global; }
 
     inline
-    auto extended_large_page_directory_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto extended_large_page_directory_entry::available () const -> unsigned _BitInt(3) { return _available; }
 
     inline
-    auto extended_large_page_directory_entry::attribute () const -> unsigned _ExtInt(3) { return _attribute << 2; }
+    auto extended_large_page_directory_entry::attribute () const -> unsigned _BitInt(3) { return _attribute << 2; }
 
     inline
     auto extended_large_page_directory_entry::address () const -> size8 { return size8{_address} << 21; }
@@ -1923,11 +1923,11 @@ namespace x86
 {
     constexpr inline
     extended_page_directory_pointer_entry::extended_page_directory_pointer_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(3)  available,
-        unsigned _ExtInt(40) address
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(3)  available,
+        unsigned _BitInt(40) address
     ) :
         _present{present},
         _write_through{write_through},
@@ -1942,7 +1942,7 @@ namespace x86
         bool present,
         bool write_through,
         bool cache,
-        unsigned _ExtInt(3) available,
+        unsigned _BitInt(3) available,
         size8 address
     ) :
         _present{present},
@@ -1962,7 +1962,7 @@ namespace x86
     auto extended_page_directory_pointer_entry::cache () const -> bool { return _cache; }
 
     inline
-    auto extended_page_directory_pointer_entry::available () const -> unsigned _ExtInt(3) { return _available; }
+    auto extended_page_directory_pointer_entry::available () const -> unsigned _BitInt(3) { return _available; }
 
     inline
     auto extended_page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
@@ -1974,9 +1974,9 @@ namespace x86
 {
     constexpr inline
     extended_paging::extended_paging (
-        unsigned _ExtInt(1) write_through,
-        unsigned _ExtInt(1) cache,
-        unsigned _ExtInt(27) address
+        unsigned _BitInt(1) write_through,
+        unsigned _BitInt(1) cache,
+        unsigned _BitInt(27) address
     ) :
         _write_through{write_through},
         _cache{cache},
@@ -2011,20 +2011,20 @@ namespace x86
 {
     constexpr inline
     long_page_table_entry::long_page_table_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(1)  dirty,
-        unsigned _ExtInt(1)  attribute,
-        unsigned _ExtInt(1)  global,
-        unsigned _ExtInt(3)  available_low,
-        unsigned _ExtInt(40) address,
-        unsigned _ExtInt(7)  available_high,
-        unsigned _ExtInt(4)  mpk,
-        unsigned _ExtInt(1)  nonexecutable
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(1)  dirty,
+        unsigned _BitInt(1)  attribute,
+        unsigned _BitInt(1)  global,
+        unsigned _BitInt(3)  available_low,
+        unsigned _BitInt(40) address,
+        unsigned _BitInt(7)  available_high,
+        unsigned _BitInt(4)  mpk,
+        unsigned _BitInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -2051,11 +2051,11 @@ namespace x86
         bool cache,
         bool accessed,
         bool dirty,
-        unsigned _ExtInt(3) attribute,
+        unsigned _BitInt(3) attribute,
         bool global,
-        unsigned _ExtInt(10) available,
+        unsigned _BitInt(10) available,
         size8 address,
-        unsigned _ExtInt(4) mpk,
+        unsigned _BitInt(4) mpk,
         bool nonexecutable
     ) :
         _present{present},
@@ -2096,19 +2096,19 @@ namespace x86
     auto long_page_table_entry::dirty () const -> bool { return _dirty; }
 
     inline
-    auto long_page_table_entry::attribute () const -> unsigned _ExtInt(3) { return _attribute << 2; }
+    auto long_page_table_entry::attribute () const -> unsigned _BitInt(3) { return _attribute << 2; }
 
     inline
     auto long_page_table_entry::global () const -> bool { return _global; }
 
     inline
-    auto long_page_table_entry::available () const -> unsigned _ExtInt(10) { return (_available_high << 3) | _available_low; }
+    auto long_page_table_entry::available () const -> unsigned _BitInt(10) { return (_available_high << 3) | _available_low; }
 
     inline
     auto long_page_table_entry::address () const -> size8 { return size8{_address} << 12; }
 
     inline
-    auto long_page_table_entry::mpk () const -> unsigned _ExtInt(4) { return _mpk; }
+    auto long_page_table_entry::mpk () const -> unsigned _BitInt(4) { return _mpk; }
 
     inline
     auto long_page_table_entry::nonexecutable () const -> bool { return _nonexecutable; }
@@ -2120,16 +2120,16 @@ namespace x86
 {
     constexpr inline
     long_small_page_directory_entry::long_small_page_directory_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(3)  available_low,
-        unsigned _ExtInt(40) address,
-        unsigned _ExtInt(11) available_high,
-        unsigned _ExtInt(1)  nonexecutable
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(3)  available_low,
+        unsigned _BitInt(40) address,
+        unsigned _BitInt(11) available_high,
+        unsigned _BitInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -2151,7 +2151,7 @@ namespace x86
         bool write_through,
         bool cache,
         bool accessed,
-        unsigned _ExtInt(14) available,
+        unsigned _BitInt(14) available,
         size8 address,
         bool nonexecutable
     ) :
@@ -2186,7 +2186,7 @@ namespace x86
     auto long_small_page_directory_entry::accessed () const -> bool { return _accessed; }
 
     inline
-    auto long_small_page_directory_entry::available () const -> unsigned _ExtInt(14) { return (_available_high << 3) | _available_low; }
+    auto long_small_page_directory_entry::available () const -> unsigned _BitInt(14) { return (_available_high << 3) | _available_low; }
 
     inline
     auto long_small_page_directory_entry::address () const -> size8 { return size8{_address} << 12; }
@@ -2201,16 +2201,16 @@ namespace x86
 {
     constexpr inline
     long_small_page_directory_pointer_entry::long_small_page_directory_pointer_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(3)  available_low,
-        unsigned _ExtInt(40) address,
-        unsigned _ExtInt(11) available_high,
-        unsigned _ExtInt(1)  nonexecutable
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(3)  available_low,
+        unsigned _BitInt(40) address,
+        unsigned _BitInt(11) available_high,
+        unsigned _BitInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -2232,7 +2232,7 @@ namespace x86
         bool write_through,
         bool cache,
         bool accessed,
-        unsigned _ExtInt(14) available,
+        unsigned _BitInt(14) available,
         size8 address,
         bool nonexecutable
     ) :
@@ -2267,7 +2267,7 @@ namespace x86
     auto long_small_page_directory_pointer_entry::accessed () const -> bool { return _accessed; }
 
     inline
-    auto long_small_page_directory_pointer_entry::available () const -> unsigned _ExtInt(14) { return (_available_high << 3) | _available_low; }
+    auto long_small_page_directory_pointer_entry::available () const -> unsigned _BitInt(14) { return (_available_high << 3) | _available_low; }
 
     inline
     auto long_small_page_directory_pointer_entry::address () const -> size8 { return size8{_address} << 12; }
@@ -2282,16 +2282,16 @@ namespace x86
 {
     constexpr inline
     long_page_map_entry::long_page_map_entry (
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(1)  writable,
-        unsigned _ExtInt(1)  user,
-        unsigned _ExtInt(1)  write_through,
-        unsigned _ExtInt(1)  cache,
-        unsigned _ExtInt(1)  accessed,
-        unsigned _ExtInt(3)  available_low,
-        unsigned _ExtInt(40) address,
-        unsigned _ExtInt(11) available_high,
-        unsigned _ExtInt(1)  nonexecutable
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(1)  writable,
+        unsigned _BitInt(1)  user,
+        unsigned _BitInt(1)  write_through,
+        unsigned _BitInt(1)  cache,
+        unsigned _BitInt(1)  accessed,
+        unsigned _BitInt(3)  available_low,
+        unsigned _BitInt(40) address,
+        unsigned _BitInt(11) available_high,
+        unsigned _BitInt(1)  nonexecutable
     ) :
         _present{present},
         _writable{writable},
@@ -2313,7 +2313,7 @@ namespace x86
         bool write_through,
         bool cache,
         bool accessed,
-        unsigned _ExtInt(14) available,
+        unsigned _BitInt(14) available,
         size8 address,
         bool nonexecutable
     ) :
@@ -2348,7 +2348,7 @@ namespace x86
     auto long_page_map_entry::accessed () const -> bool { return _accessed; }
 
     inline
-    auto long_page_map_entry::available () const -> unsigned _ExtInt(14) { return (_available_high << 3) | _available_low; }
+    auto long_page_map_entry::available () const -> unsigned _BitInt(14) { return (_available_high << 3) | _available_low; }
 
     inline
     auto long_page_map_entry::address () const -> size8 { return size8{_address} << 12; }
@@ -2363,9 +2363,9 @@ namespace x86
 {
     constexpr inline
     long_paging::long_paging (
-        unsigned _ExtInt(1) write_through,
-        unsigned _ExtInt(1) cache,
-        unsigned _ExtInt(40) address
+        unsigned _BitInt(1) write_through,
+        unsigned _BitInt(1) cache,
+        unsigned _BitInt(40) address
     ) :
         _write_through { write_through },
         _cache { cache },

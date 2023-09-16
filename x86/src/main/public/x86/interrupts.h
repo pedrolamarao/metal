@@ -40,13 +40,13 @@ namespace x86
 
         constexpr
         short_interrupt_gate_descriptor (
-            unsigned _ExtInt(16) offset_low,
-            unsigned _ExtInt(16) segment,
-            unsigned _ExtInt(1)  trap,
-            unsigned _ExtInt(1)  is_32bit,
-            unsigned _ExtInt(2)  privilege,
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(16) offset_high
+            unsigned _BitInt(16) offset_low,
+            unsigned _BitInt(16) segment,
+            unsigned _BitInt(1)  trap,
+            unsigned _BitInt(1)  is_32bit,
+            unsigned _BitInt(2)  privilege,
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(16) offset_high
         );
 
         //! Semantic constructor.
@@ -116,14 +116,14 @@ namespace x86
 
         constexpr
         long_interrupt_gate_descriptor (
-            unsigned _ExtInt(16) offset_low,
-            unsigned _ExtInt(16) segment,
-            unsigned _ExtInt(1)  trap,
-            unsigned _ExtInt(1)  is_32bit,
-            unsigned _ExtInt(2)  privilege,
-            unsigned _ExtInt(1)  present,
-            unsigned _ExtInt(16) offset_mid,
-            unsigned _ExtInt(32) offset_high
+            unsigned _BitInt(16) offset_low,
+            unsigned _BitInt(16) segment,
+            unsigned _BitInt(1)  trap,
+            unsigned _BitInt(1)  is_32bit,
+            unsigned _BitInt(2)  privilege,
+            unsigned _BitInt(1)  present,
+            unsigned _BitInt(16) offset_mid,
+            unsigned _BitInt(32) offset_high
         );
 
         //! Semantic constructor.
@@ -201,13 +201,13 @@ namespace x86
 {
     constexpr
     short_interrupt_gate_descriptor::short_interrupt_gate_descriptor (
-        unsigned _ExtInt(16) offset_low,
-        unsigned _ExtInt(16) segment,
-        unsigned _ExtInt(1)  trap,
-        unsigned _ExtInt(1)  is_32bit,
-        unsigned _ExtInt(2)  privilege,
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(16) offset_high
+        unsigned _BitInt(16) offset_low,
+        unsigned _BitInt(16) segment,
+        unsigned _BitInt(1)  trap,
+        unsigned _BitInt(1)  is_32bit,
+        unsigned _BitInt(2)  privilege,
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(16) offset_high
     ) :
         _offset_low { offset_low },
         _segment { segment },
@@ -267,14 +267,14 @@ namespace x86
     auto short_interrupt_gate_descriptor::segment () const -> segment_selector { return segment_selector { _segment }; }
     constexpr
     long_interrupt_gate_descriptor::long_interrupt_gate_descriptor (
-        unsigned _ExtInt(16) offset_low,
-        unsigned _ExtInt(16) segment,
-        unsigned _ExtInt(1)  trap,
-        unsigned _ExtInt(1)  is_32bit,
-        unsigned _ExtInt(2)  privilege,
-        unsigned _ExtInt(1)  present,
-        unsigned _ExtInt(16) offset_mid,
-        unsigned _ExtInt(32) offset_high
+        unsigned _BitInt(16) offset_low,
+        unsigned _BitInt(16) segment,
+        unsigned _BitInt(1)  trap,
+        unsigned _BitInt(1)  is_32bit,
+        unsigned _BitInt(2)  privilege,
+        unsigned _BitInt(1)  present,
+        unsigned _BitInt(16) offset_mid,
+        unsigned _BitInt(32) offset_high
     ) :
         _offset_low { offset_low },
         _segment { segment },

@@ -20,11 +20,11 @@ namespace x86
 
   //! Descriptor type.
 
-  using descriptor_type = unsigned _ExtInt(4);
+  using descriptor_type = unsigned _BitInt(4);
 
   //! Privilege level.
 
-  using privilege_level = unsigned _ExtInt(2);
+  using privilege_level = unsigned _BitInt(2);
 
   //! Segment selector.
 
