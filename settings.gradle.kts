@@ -2,71 +2,26 @@ import java.nio.file.Files
 
 pluginManagement {
     includeBuild("gradle/plugins")
+    plugins {
+        id("br.dev.pedrolamarao.metal.archive") version("1.0-SNAPSHOT")
+        id("br.dev.pedrolamarao.metal.base") version("1.0-SNAPSHOT")
+        id("br.dev.pedrolamarao.metal.commands") version("1.0-SNAPSHOT")
+        id("br.dev.pedrolamarao.metal.cpp") version("1.0-SNAPSHOT")
+        id("br.dev.pedrolamarao.metal.cxx") version("1.0-SNAPSHOT")
+    }
     repositories {
-        maven {
-            name = "Nokee Release Repository"
-            url = uri("https://repo.nokee.dev/release")
-            mavenContent() {
-                includeGroupByRegex("dev\\.nokee.*")
-                includeGroupByRegex("dev\\.gradleplugins.*")
-            }
-        }
-        maven {
-            name = "Nokee Snapshot Repository"
-            url = uri("https://repo.nokee.dev/snapshot")
-            mavenContent() {
-                includeGroupByRegex("dev\\.nokee.*")
-                includeGroupByRegex("dev\\.gradleplugins.*")
-            }
-        }
-        maven {
-            name = "Sonatype Open Source Snapshot Repository"
-            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-        }
-        gradlePluginPortal()
+        mavenLocal()
     }
 }
 
-rootProject.name = "psys"
+rootProject.name = "metal"
 
 // components
 
+include("pc")
 include("elf")
-
 include("googletest")
-
 include("multiboot2:foo")
 include("multiboot2:start")
-rootProject.projectDir.resolve("multiboot2/test").toPath().apply {
-    Files.list(this).forEach {
-        if (Files.isDirectory(it))
-            include("multiboot2:test:${it.fileName}")
-    }
-}
-
-include("pc")
-rootProject.projectDir.resolve("pc/test").toPath().apply {
-    Files.list(this).forEach {
-        if (Files.isDirectory(it))
-            include("pc:test:${it.fileName}")
-    }
-}
-
 include("psys")
-include("psys:start")
-
 include("x86")
-rootProject.projectDir.resolve("x86/test").toPath().apply {
-    Files.list(this).forEach {
-        if (Files.isDirectory(it))
-            include("x86:test:${it.fileName}")
-    }
-}
-
-// applications
-
-include("sandbox:modular:module-32")
-include("sandbox:modular:module-64")
-include("sandbox:modular:start")
-include("sandbox:x86-32")
-include("sandbox:x86-64")

@@ -1,18 +1,11 @@
-import dev.nokee.platform.nativebase.NativeBinary
-
 plugins {
-    id("psys-component")
+    id("br.dev.pedrolamarao.metal.cpp")
+    id("br.dev.pedrolamarao.metal.prebuilt")
 }
 
-library {
-    targetLinkages.add(linkages.static)
-    publicHeaders.from("include")
-    privateHeaders.from(".")
-    binaries.configureEach {
-        if (this is NativeBinary) {
-            compileTasks.configureEach {
-                compilerArgs.addAll("-std=c++17", "-flto")
-            }
-        }
+metal {
+    prebuilt {
+        includable( layout.projectDirectory.dir("src/googletest/include") )
+        linkable( layout.projectDirectory.file("src/lib/Release/gtest.lib") )
     }
 }
