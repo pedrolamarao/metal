@@ -5,4 +5,5 @@
 .settings/
 **/bin/
 **/build/
+compile_commands.json
 tools.properties

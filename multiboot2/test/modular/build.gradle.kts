@@ -1,23 +1,22 @@
+import br.dev.pedrolamarao.gradle.metal.base.MetalCapability
+
 plugins {
     id("psys-test")
 }
 
-val modules: Configuration by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-}
+val multibootModule = configurations.dependencyScope("multibootModule").get()
 
 dependencies {
-    modules(project(":multiboot2:test:module"))
+    implementation(project(":elf"))
+    implementation(project(":multiboot2:start"))
+    multibootModule(project(":multiboot2:test:module"))
 }
 
-application {
-    dependencies {
-        implementation(project(":elf"))
-        implementation(project(":multiboot2:start"))
-    }
+val multibootModuleDependencies = configurations.resolvable("multibootModuleDependencies") {
+    attributes { attribute(MetalCapability.ATTRIBUTE,MetalCapability.EXECUTABLE) }
+    extendsFrom(multibootModule);
 }
 
 tasks.withType<MultibootCreateImageTask> {
-    moduleFiles.from( modules )
+    moduleFiles.from(multibootModuleDependencies)
 }

@@ -42,8 +42,9 @@ abstract class MultibootCreateImageTask : DefaultTask()
         val layout = project.layout
         val tools = project.rootProject.extensions["tools"] as java.util.Properties
         val grubPath = tools["br.dev.pedrolamarao.psys.grub.path"]
+        val target = project.providers.gradleProperty("metal.target").orElse("default").get()
         command.convention( if (grubPath != null) "${grubPath}/grub-mkstandalone" else "grub-mkstandalone" )
-        outputFile.convention( inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${it.asFile.name}/image") } )
+        outputFile.convention( inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${target}/${it.asFile.nameWithoutExtension}") } )
     }
 
     @TaskAction
@@ -90,7 +91,7 @@ abstract class MultibootRunImageTask : DefaultTask()
     @get:Nested
     abstract val qemuArgs : QemuSystemEditor
 
-    @get:Nested
+    @get:Input
     abstract val qemuExecutable : Property<String>
 
     @get:Inject
@@ -236,7 +237,7 @@ abstract class MultibootTestImageTask : DefaultTask()
     @get:Nested
     abstract val qemuArgs : QemuSystemEditor
 
-    @get:Nested
+    @get:Input
     abstract val qemuExecutable : Property<String>
 
     init

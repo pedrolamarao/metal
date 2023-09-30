@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    nativeImplementation(project(":psys"))
+    api(project(":psys"))
 }
 
 metal {

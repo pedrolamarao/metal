@@ -1,38 +1,30 @@
-import dev.nokee.platform.nativebase.ExecutableBinary
-
 plugins {
-    id("psys-application")
+    id("br.dev.pedrolamarao.metal.application")
+    id("br.dev.pedrolamarao.metal.cxx")
 }
 
-apply(plugin ="psys-targets")
+val linkExecutable = metal.applications.named("main").flatMap { it.linkTask }
 
-val testAll = project.tasks.register("test-image") {
-    group = "psys"
+val createImage = project.tasks.register<MultibootCreateImageTask>("make-main-image") {
+    dependsOn(linkExecutable)
+    inputFile = linkExecutable.flatMap { it.output }
 }
 
-project.afterEvaluate {
-    application.binaries.get().forEach { binary ->
-        if (binary is ExecutableBinary) {
-            val name = binary.linkTask.name
-            val executable = binary.linkTask.flatMap { it.linkedFile }
-            val create = project.tasks.register<MultibootCreateImageTask>("image-${name}") {
-                group = "psys"
-                description = "creates image"
-                inputFile.set(executable)
-            }
-            val image = create.flatMap { it.outputFile }
-            project.tasks.register<MultibootRunImageTask>("run-image-${name}") {
-                group = "psys"
-                description = "runs image"
-                imageFile.set(image)
-            }
-            val test = project.tasks.register<MultibootTestImageTask>("test-image-${name}") {
-                group = "psys"
-                description = "tests image"
-                imageFile.set(image)
-                executableFile.set(executable)
-            }
-            testAll { dependsOn(test) }
-        }
-    }
+tasks.register("image") {
+    group = "metal"
+    dependsOn(createImage)
+}
+
+val testImage = project.tasks.register<MultibootTestImageTask>("test-main-image") {
+    imageFile = createImage.flatMap { it.outputFile }
+    executableFile = linkExecutable.flatMap { it.output }
+}
+
+val test = tasks.register("test") {
+    group = "verification"
+    dependsOn(testImage)
+}
+
+tasks.check.configure {
+    dependsOn(test)
 }

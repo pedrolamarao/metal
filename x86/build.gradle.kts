@@ -4,8 +4,10 @@ plugins {
     id("br.dev.pedrolamarao.metal.cxx")
 }
 
+group = "br.dev.pedrolamarao.metal.x86"
+
 dependencies {
-    nativeImplementation(project(":psys"))
+    api(project(":psys"))
 }
 
 metal {

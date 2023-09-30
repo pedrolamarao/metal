@@ -4,6 +4,8 @@ plugins {
     id("br.dev.pedrolamarao.metal.cxx")
 }
 
+group = "br.dev.pedrolamarao.metal.psys"
+
 metal {
     cxx {
         named("main") {
