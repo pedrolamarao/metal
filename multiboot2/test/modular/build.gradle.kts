@@ -1,7 +1,7 @@
 import br.dev.pedrolamarao.gradle.metal.base.MetalCapability
 
 plugins {
-    id("psys-test")
+    id("metal-test")
 }
 
 val multibootModule = configurations.dependencyScope("multibootModule").get()

@@ -1,5 +1,5 @@
 plugins {
-    id("psys-test")
+    id("metal-test")
 }
 
 dependencies {
