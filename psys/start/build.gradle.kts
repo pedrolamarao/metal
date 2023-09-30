@@ -11,9 +11,5 @@ dependencies {
 }
 
 metal {
-    cxx {
-       named("main") {
-            compileOptions = listOf("-std=c++20", "-flto", "-fasm-blocks", "-gdwarf")
-        }
-    }
+    compileOptions = listOf("-std=c++20", "-flto", "-fasm-blocks", "-gdwarf")
 }

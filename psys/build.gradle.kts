@@ -7,9 +7,5 @@ plugins {
 group = "br.dev.pedrolamarao.metal.psys"
 
 metal {
-    cxx {
-        named("main") {
-            compileOptions = listOf("-g","-std=c++20")
-        }
-    }
+    compileOptions = listOf("-g","-std=c++20")
 }

@@ -15,20 +15,19 @@ subprojects {
         dependencies {
             add("implementation",project(":multiboot2:foo"))
         }
-        (extensions["metal"] as MetalExtension).run {
-            (extensions["cxx"] as NamedDomainObjectContainer<*>) {
-                (getByName("main") as MetalCxxSources).run {
-                    compileOptions = listOf(
-                        "-std=c++20", "-flto", "-fasm-blocks", "-gdwarf",
-                        "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2"
-                    )
-                }
-            }
-            (extensions["applications"] as NamedDomainObjectContainer<*>) {
-                (getByName("main") as MetalApplication).run {
-                    linkOptions = listOf("-gdwarf","-nostdlib","-static","-Wl,--script=${x86_32_elf_multiboot2_ld}")
-                }
-            }
+        extensions.configure<MetalExtension>() {
+            compileOptions = listOf(
+                "-flto", "-fasm-blocks",
+                "-gdwarf",
+                "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2",
+                "-std=c++20"
+            )
+            linkOptions = listOf(
+                "-gdwarf",
+                "-nostdlib",
+                "-static",
+                "-Wl,--script=${x86_32_elf_multiboot2_ld}"
+            )
         }
     }
 }

@@ -9,9 +9,5 @@ dependencies {
 }
 
 metal {
-    cxx {
-        named("main") {
-            compileOptions = listOf("-g","-std=c++20")
-        }
-    }
+    compileOptions = listOf("-g","-std=c++20")
 }

@@ -12,14 +12,6 @@ val options = listOf(
 )
 
 metal {
-    cxx {
-        named("main") {
-            compileOptions = options
-        }
-    }
-    applications {
-        named("main") {
-            linkOptions = options
-        }
-    }
+    compileOptions = options
+    linkOptions = options
 }
