@@ -1,4 +1,5 @@
 import org.ajoberstar.grgit.Grgit
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id("br.dev.pedrolamarao.metal.cpp")
@@ -39,9 +40,11 @@ val make = tasks.register<Exec>("make") {
     args("--build",build)
 }
 
+val archiveSuffix = if (DefaultNativePlatform.getCurrentOperatingSystem().isWindows) ".lib" else ".a"
+
 metal {
     prebuilt {
         includable(source.dir("googletest/include")) { builtBy(clone) }
-        linkable(build.file("lib/gtest.lib")) { builtBy(make) }
+        linkable(build.file("lib/gtest${archiveSuffix}")) { builtBy(make) }
     }
 }
