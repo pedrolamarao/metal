@@ -1,8 +1,8 @@
 name: "windows"
 on: [pull_request,workflow_dispatch]
 jobs:
-  compile-target-x86_64-elf:
-    name: "compile target x86_64-elf"
+  target-i686-elf:
+    name: "compile target i686-elf"
     runs-on: windows-latest
     timeout-minutes: 10
     steps:
@@ -18,4 +18,4 @@ jobs:
       - name: "Build with Gradle"
         uses: gradle/gradle-build-action@v2.8.0
         with:
-          arguments: compile "-Pmetal.target=x86_64-elf"
+          arguments: compile "-Pmetal.target=i686-elf"
