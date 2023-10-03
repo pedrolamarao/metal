@@ -1,8 +1,8 @@
 name: "ubuntu"
 on: [pull_request,workflow_dispatch]
 jobs:
-  llvm-16-target-i686-elf:
-    name: "compile with llvm 16 for target i686-elf"
+  target-i686-elf:
+    name: "compile target i686-elf"
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     steps:
@@ -20,29 +20,6 @@ jobs:
         with:
           ubuntu-version: 22.04
           version: 16.0.4
-      - name: "Build with Gradle"
-        uses: gradle/gradle-build-action@v2.8.0
-        with:
-          arguments: compile "-Pmetal.target=i686-elf"
-  llvm-17-target-i686-elf:
-    name: "compile with llvm 16 for target i686-elf"
-    runs-on: ubuntu-22.04
-    timeout-minutes: 10
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v2
-      - name: "Validate Gradle Wrapper"
-        uses: gradle/wrapper-validation-action@v1
-      - name: "Set up JDK 17"
-        uses: actions/setup-java@v2
-        with:
-          java-version: "17"
-          distribution: "temurin"
-      - name: "Install LLVM 17"
-        uses: KyleMayes/install-llvm-action@v1.8.3
-        with:
-          ubuntu-version: 22.04
-          version: 17.0.2
       - name: "Build with Gradle"
         uses: gradle/gradle-build-action@v2.8.0
         with:
