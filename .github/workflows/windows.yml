@@ -3,7 +3,7 @@ on: [pull_request,workflow_dispatch]
 jobs:
   target-host:
     name: "check target host"
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 10
     steps:
       - name: "Checkout"
@@ -23,7 +23,7 @@ jobs:
           arguments: --info --no-daemon :elf:check :multiboot2:foo:check
   target-i686-elf:
     name: "assemble target i686-elf"
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 10
     steps:
       - name: "Checkout"
