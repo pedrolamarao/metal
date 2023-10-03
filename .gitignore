@@ -1,9 +1,9 @@
 .classpath/
-.project/
 .gradle/
 .idea/
+.project/
 .settings/
-**/bin/
-**/build/
+bin/
+build/
 compile_commands.json
 tools.properties
