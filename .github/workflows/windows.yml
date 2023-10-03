@@ -20,7 +20,7 @@ jobs:
       - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: :elf:check :multiboot2:foo:check
+          arguments: --info --no-daemon :elf:check :multiboot2:foo:check
   target-i686-elf:
     name: "assemble target i686-elf"
     runs-on: windows-latest
@@ -38,4 +38,4 @@ jobs:
       - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: assemble "-Pmetal.target=i686-elf"
+          arguments: --info --no-daemon assemble "-Pmetal.target=i686-elf"
