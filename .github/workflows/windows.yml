@@ -1,8 +1,8 @@
 name: "windows"
 on: [pull_request,workflow_dispatch]
 jobs:
-  target-default:
-    name: "check target i686-elf"
+  target-host:
+    name: "check target host"
     runs-on: windows-latest
     timeout-minutes: 10
     steps:
