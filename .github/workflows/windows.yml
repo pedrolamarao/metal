@@ -1,6 +1,24 @@
 name: "windows"
 on: [pull_request,workflow_dispatch]
 jobs:
+  target-default:
+    name: "assemble target i686-elf"
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Validate Gradle Wrapper"
+        uses: gradle/wrapper-validation-action@v1
+      - name: "Set up JDK 17"
+        uses: actions/setup-java@v2
+        with:
+          java-version: "17"
+          distribution: "temurin"
+      - name: "Invoke Gradle"
+        uses: gradle/gradle-build-action@v2.8.0
+        with:
+          arguments: :elf:check
   target-i686-elf:
     name: "assemble target i686-elf"
     runs-on: windows-latest
@@ -15,7 +33,7 @@ jobs:
         with:
           java-version: "17"
           distribution: "temurin"
-      - name: "Build with Gradle"
+      - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2.8.0
         with:
           arguments: assemble "-Pmetal.target=i686-elf"
