@@ -34,8 +34,10 @@ metal {
 }
 
 tasks.register<Exec>("run-test") {
-    dependsOn( metal.applications.named("test").flatMap { it.linkTask } )
-    executable( metal.applications.named("test").flatMap { it.linkTask }.flatMap { it.output }.get() )
+    group = "metal"
+    val linkTask = metal.applications.named("test").flatMap { it.linkTask }
+    dependsOn(linkTask)
+    executable( linkTask.flatMap{ it.output }.get() )
 }
 
 tasks.create("test") {
