@@ -1,19 +1,20 @@
 pluginManagement {
     includeBuild("gradle/plugins")
-    plugins {
-        val metalVersion = "0.1+a43c5d5f65"
-        id("br.dev.pedrolamarao.metal.archive") version(metalVersion)
-        id("br.dev.pedrolamarao.metal.base") version(metalVersion)
-        id("br.dev.pedrolamarao.metal.commands") version(metalVersion)
-        id("br.dev.pedrolamarao.metal.cpp") version(metalVersion)
-        id("br.dev.pedrolamarao.metal.cxx") version(metalVersion)
-    }
     repositories {
+        gradlePluginPortal()
+        mavenCentral()
         maven() {
             name = "Sonatype Open Source Snapshot Repository"
             url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         }
         mavenLocal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id.startsWith("br.dev.pedrolamarao.metal.")) {
+                useModule("br.dev.pedrolamarao.gradle.metal:plugins:[0.1,0.2)")
+            }
+        }
     }
 }
 
