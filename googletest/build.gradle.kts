@@ -40,11 +40,12 @@ val make = tasks.register<Exec>("make") {
     args("--build",build)
 }
 
+val archivePrefix = if (DefaultNativePlatform.getCurrentOperatingSystem().isWindows) "" else "lib"
 val archiveSuffix = if (DefaultNativePlatform.getCurrentOperatingSystem().isWindows) ".lib" else ".a"
 
 metal {
     prebuilt {
         includable(source.dir("googletest/include")) { builtBy(clone) }
-        linkable(build.file("lib/gtest${archiveSuffix}")) { builtBy(make) }
+        linkable(build.file("lib/${archivePrefix}gtest${archiveSuffix}")) { builtBy(make) }
     }
 }
