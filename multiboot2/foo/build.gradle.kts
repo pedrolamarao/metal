@@ -9,7 +9,7 @@ dependencies {
 }
 
 metal {
-    compileOptions = listOf("-g","-std=c++20")
+    compileOptions = listOf("-std=c++20")
 }
 
 // ----
