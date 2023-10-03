@@ -2,7 +2,7 @@ name: "ubuntu"
 on: [pull_request,workflow_dispatch]
 jobs:
   target-host:
-    name: "test target host"
+    name: "check target host"
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     steps:

@@ -2,7 +2,7 @@ name: "windows"
 on: [pull_request,workflow_dispatch]
 jobs:
   target-default:
-    name: "assemble target i686-elf"
+    name: "check target i686-elf"
     runs-on: windows-latest
     timeout-minutes: 10
     steps:
