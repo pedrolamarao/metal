@@ -20,6 +20,8 @@ jobs:
         with:
           ubuntu-version: 22.04
           version: 16.0.4
+      - name: "Install Ninja"
+        uses: seanmiddleditch/gha-setup-ninja@v3
       - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2.8.0
         with:
