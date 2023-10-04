@@ -3,11 +3,12 @@ import br.dev.pedrolamarao.gdb.rsp.GdbRemote
 import br.dev.pedrolamarao.gdb.rsp.GdbRemoteParser
 import br.dev.pedrolamarao.gdb.rsp.GdbRemoteStopSignal
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.ExecOperations
 import java.io.File
@@ -16,9 +17,22 @@ import java.net.InetSocketAddress
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
 import java.nio.channels.FileChannel.MapMode
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.dropLastWhile
+import kotlin.collections.forEach
+import kotlin.collections.listOf
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.plus
+import kotlin.collections.plusAssign
+import kotlin.collections.set
+import kotlin.collections.toTypedArray
 
 abstract class MultibootCreateImageTask : DefaultTask()
 {
@@ -37,13 +51,31 @@ abstract class MultibootCreateImageTask : DefaultTask()
     @get:InputFiles
     abstract val moduleFiles : ConfigurableFileCollection
 
+    @get:Inject
+    abstract val providers: ProviderFactory
+
     init
     {
-        val layout = project.layout
-        val tools = project.rootProject.extensions["tools"] as java.util.Properties
-        val grubPath = tools["br.dev.pedrolamarao.psys.grub.path"]
+        // TODO: expose Gradle Metal locateToolFile utility
+        fun locateExecutableFile (list: String, name: String): File {
+            for (item in list.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+                val directory = Paths.get(item)
+                if (! Files.isDirectory(directory)) continue
+                val file = directory.resolve(name)
+                if (Files.isExecutable(file)) return file.toFile()
+                val file_exe = file.resolveSibling("$name.exe")
+                if (Files.isExecutable(file_exe)) return file_exe.toFile()
+            }
+            throw GradleException("executable file not found: $name")
+        }
+        val metalPath = providers.gradleProperty("metal.path")
+            .orElse(providers.environmentVariable("PATH"))
+
         val target = project.providers.gradleProperty("metal.target").orElse("default").get()
-        command.convention( if (grubPath != null) "${grubPath}/grub-mkstandalone" else "grub-mkstandalone" )
+        val tool = metalPath.map { locateExecutableFile(it,"grub-mkstandalone").toString() }
+
+        val layout = project.layout
+        command.convention(tool)
         outputFile.convention( inputFile.flatMap { layout.buildDirectory.file("grub/standalone/${target}/${it.asFile.nameWithoutExtension}") } )
     }
 
@@ -97,11 +129,30 @@ abstract class MultibootRunImageTask : DefaultTask()
     @get:Inject
     abstract val execOperations : ExecOperations
 
+    @get:Inject
+    abstract val providers: ProviderFactory;
+
     init
     {
-        val tools = project.rootProject.extensions["tools"] as java.util.Properties
-        val path = tools["br.dev.pedrolamarao.psys.qemu.path"]
-        qemuExecutable.convention( if (path != null) "${path}/qemu-system-x86_64" else "qemu-system-x86_64" )
+        // TODO: expose Gradle Metal locateToolFile utility
+        fun locateExecutableFile (list: String, name: String): File {
+            for (item in list.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+                val directory = Paths.get(item)
+                if (! Files.isDirectory(directory)) continue
+                val file = directory.resolve(name)
+                if (Files.isExecutable(file)) return file.toFile()
+                val file_exe = file.resolveSibling("$name.exe")
+                if (Files.isExecutable(file_exe)) return file_exe.toFile()
+            }
+            throw GradleException("executable file not found: $name")
+        }
+        val metalPath = providers.gradleProperty("metal.path")
+            .orElse(providers.environmentVariable("PATH"))
+
+        val target = project.providers.gradleProperty("metal.target").orElse("default").get()
+        val tool = metalPath.map { locateExecutableFile(it,"qemu-system-x86_64").toString() }
+
+        qemuExecutable.convention(tool)
 
         qemuArgs.debug.convention("cpu_reset,int")
         qemuArgs.debugConsole.convention("vc")
@@ -240,10 +291,28 @@ abstract class MultibootTestImageTask : DefaultTask()
     @get:Input
     abstract val qemuExecutable : Property<String>
 
+    @get:Inject
+    abstract val providers: ProviderFactory
+
     init
     {
-        val tools = project.rootProject.extensions["tools"] as java.util.Properties
-        val qemuPath = tools["br.dev.pedrolamarao.psys.qemu.path"]
+        // TODO: expose Gradle Metal locateToolFile utility
+        fun locateExecutableFile (list: String, name: String): File {
+            for (item in list.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+                val directory = Paths.get(item)
+                if (! Files.isDirectory(directory)) continue
+                val file = directory.resolve(name)
+                if (Files.isExecutable(file)) return file.toFile()
+                val file_exe = file.resolveSibling("$name.exe")
+                if (Files.isExecutable(file_exe)) return file_exe.toFile()
+            }
+            throw GradleException("executable file not found: $name")
+        }
+        val metalPath = providers.gradleProperty("metal.path")
+            .orElse(providers.environmentVariable("PATH"))
+
+        val target = project.providers.gradleProperty("metal.target").orElse("default").get()
+        val tool = metalPath.map { locateExecutableFile(it,"qemu-system-x86_64").toString() }
 
         qemuArgs.apply {
             debug.set("cpu_reset,int")
@@ -262,7 +331,7 @@ abstract class MultibootTestImageTask : DefaultTask()
             stop.set(true)
         }
 
-        qemuExecutable.convention( if (qemuPath != null) "${qemuPath}/qemu-system-x86_64" else "qemu-system-x86_64" )
+        qemuExecutable.convention(tool)
     }
 
     @TaskAction
