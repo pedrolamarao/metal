@@ -31,7 +31,6 @@ val metalPath = providers.gradleProperty("metal.path")
 val cmake = metalPath.map { locateExecutableFile(it,"cmake") }
 
 val clone = tasks.register("clone") {
-    outputs.dir(source)
     doLast {
         if (! source.asFile.exists()) {
             Grgit.clone {
