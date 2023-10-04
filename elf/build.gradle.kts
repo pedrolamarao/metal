@@ -28,6 +28,7 @@ metal {
     }
     applications {
         create("test") {
+            linkOptions = listOf("-static")
             source( cxx.named("test").map { it.outputs } )
         }
     }
