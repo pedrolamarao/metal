@@ -28,7 +28,7 @@ metal {
     }
     applications {
         create("test") {
-            linkOptions = listOf("-static")
+            linkOptions = listOf("-fuse-ld=lld","-static")
             source( cxx.named("test").map { it.outputs } )
         }
     }
