@@ -1,8 +1,0 @@
-# GRUB search path (default: system PATH)
-# br.dev.pedrolamarao.psys.grub.path = /usr/bin
-
-# LLVM search path (default: system PATH)
-# br.dev.pedrolamarao.psys.llvm.path =
-
-# QEMU search path (default: system PATH)
-# br.dev.pedrolamarao.psys.qemu.path = /usr/bin

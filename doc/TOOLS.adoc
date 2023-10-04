@@ -1,0 +1,32 @@
+= metal: tools
+:author: Pedro Lamarão <pedro.lamarao@gmail.com>
+
+The Gradle Metal driver requires a JDK 17 in either `JAVA_HOME` or `PATH`.
+It is an application of the link:https://github.com/gradle/gradle[Gradle] build tool.
+
+Generally, tools will be found in the system `PATH`.
+This may be replaced with a custom tools path in gradle property `metal.path`.
+To set Gradle properties, look link:https://docs.gradle.org/current/userguide/build_environment.html[here].
+
+For assembling main components, LLVM 16 or newer is required.
+Metal employs LLVM's cross-compilation capabilities.
+
+For assembling Multiboot2 system test programs, GNU GRUB 2 is required.
+Currently, Metal creates "standalone" images for test programs.
+
+For running system test programs, QEMU 6.0 exactly is required.
+For more information, see link:TEST.adoc[TEST].
+
+== Microsoft Windows
+
+Windows 10 and 11 have been verified to work.
+
+Quick start:
+
+1. Install any JDK 17
+2. Set `JAVA_HOME` to JDK 17
+3. Install Visual Studio Build Tools 2022
+4. Install LLVM 16 or newer for Windows from https://github.com/llvm/llvm-project/releases
+5. Install GNU GRUB 2.06 for Windows from https://ftp.gnu.org/gnu/grub/
+6. Install QEMU for Windows version qemu-w64-setup-20210505 from https://qemu.weilnetz.de/w64/
+7. Edit `gradle.properties` settings `metal.path` with the appropriate values

@@ -2,10 +2,6 @@ plugins {
     id("br.dev.pedrolamarao.metal.commands")
 }
 
-val tools = java.util.Properties()
-try { tools.load(java.io.FileReader(file("tools.properties"))) } catch (_: Exception) { }
-extensions.add("tools", tools)
-
 allprojects {
     group = "br.dev.pedrolamarao.metal"
     version = "0.6.0-SNAPSHOT"

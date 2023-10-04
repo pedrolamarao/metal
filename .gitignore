@@ -6,4 +6,5 @@
 bin/
 build/
 compile_commands.json
+gradle.properties
 tools.properties

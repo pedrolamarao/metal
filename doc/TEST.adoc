@@ -1,13 +1,14 @@
-Date: 2021-08-13
+= project metal: test
+:author: Pedro Lamarão <pedro.lamarao@gmail.com>
 
-# test
+== test
 
 One of this project's aims is to define a technique, complementary to unit testing, for the 
 automated execution of "bare metal" test programs.
 
-## psys test protocol
+=== metal test protocol
 
-Psys test programs shall define these symbols:
+Metal test programs shall define these symbols:
 
 * `__test_control`
 * `__test_debug`
@@ -28,9 +29,9 @@ the facts must be reported:
 * `new == 0` -> testing stage `old` failed
 * `default`  -> testing stages `old` suceeded, `new` entered 
 
-## psys test driver
+=== metal test driver
 
-Psys tests are currently executed by a driver combining QEMU and GDB.
+Metal tests are currently executed by a driver combining QEMU and GDB.
 
 Test programs are executed in an appropriate QEMU system emulator with debugging support.
 
