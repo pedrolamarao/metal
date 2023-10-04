@@ -1,9 +1,7 @@
 plugins {
-    id("psys-test")
+    id("metal-test")
 }
 
-application {
-    dependencies {
-        implementation(project(":multiboot2:start"))
-    }
+dependencies {
+    implementation(project(":multiboot2:start"))
 }

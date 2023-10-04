@@ -1,69 +1,61 @@
-import dev.nokee.platform.nativebase.ExecutableBinary
-import dev.nokee.platform.nativebase.NativeBinary
-import dev.nokee.testing.nativebase.NativeTestSuite
-import dev.nokee.testing.nativebase.internal.DefaultNativeTestSuiteComponent
-
 plugins {
-    id("psys-component")
+    id("br.dev.pedrolamarao.metal.archive")
+    id("br.dev.pedrolamarao.metal.cpp")
+    id("br.dev.pedrolamarao.metal.cxx")
 }
 
-library {
-    targetLinkages.add(linkages.static)
+group = "br.dev.pedrolamarao.metal.x86"
 
-    targetMachines.addAll(
-        // #XXX: build on any for same
-        machines.linux.x86_64,
-        machines.windows.x86_64,
-        // #XXX: build on any for x86_32-elf
-        machines.os("host").architecture("-x86_32-elf"),
-        // #XXX: build on any for x86_32-elf-multiboot2
-        machines.os("host").architecture("-x86_32-multiboot2-elf"),
-        // #XXX: build on any for x86_64-elf
-        machines.os("host").architecture("-x86_64-elf"),
-        // #XXX: build on any for x86_64-elf-multiboot2
-        machines.os("host").architecture("-x86_64-multiboot2-elf"),
-    )
+dependencies {
+    api(project(":psys"))
+}
 
-    dependencies {
-      api(project(":psys"))
+metal {
+    compileOptions = listOf("-fasm-blocks","-g","-std=c++20")
+}
+
+// TODO: enhance Gradle Metal with conventional test application
+
+dependencies {
+    implementation(project(":googletest"))
+}
+
+metal {
+    cxx {
+        create("test") {
+            includable( cpp.named("main").map { it.sources.sourceDirectories } )
+        }
     }
-
-    val baseArgs = listOf(
-        "-std=c++20", "-flto", "-fasm-blocks",
-        "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2"
-    )
-
-    binaries.configureEach {
-        if (this is NativeBinary) {
-            compileTasks.configureEach {
-                compilerArgs.addAll(baseArgs)
-            }
+    applications {
+        create("test") {
+            linkOptions = listOf("-fuse-ld=lld","-static")
+            source( cxx.named("test").map { it.outputs } )
         }
     }
 }
 
-testSuites {
-    register("test", NativeTestSuite::class.java) {
-        testedComponent(library)
+tasks.register<Exec>("run-test") {
+    group = "metal"
+    val linkTask = metal.applications.named("test").flatMap { it.linkTask }
+    dependsOn(linkTask)
+    executable( linkTask.flatMap{ it.output }.get() )
+}
 
-        dependencies {
-            // #XXX: Nokee does not transitively include main `api` dependencies
-            implementation(project(":psys"))
-            implementation(project(":googletest"))
-        }
+tasks.create("test") {
+    group = "verification"
+    dependsOn("run-test")
+}
 
-        if (this is DefaultNativeTestSuiteComponent) {
-            binaries.configureEach {
-                if (this is ExecutableBinary) {
-                    compileTasks.configureEach {
-                        compilerArgs.addAll("-std=c++20", "-flto")
-                    }
-                    linkTask {
-                        // #XXX: Nokee ignores toolchain linker arguments
-                        linkerArgs.addAll("-fuse-ld=lld", "-flto")
-                    }
-                }
-            }
-        }
-    }
+tasks.check.configure {
+    dependsOn("test")
+}
+
+// TODO: enhance Gradle Metal with target includes/excludes support
+afterEvaluate {
+    val targets = listOf("default")
+    val targetEnabled = providers.gradleProperty("metal.target").orElse("default").map{ targets.contains(it) }
+    tasks.named("compile-test-cxx") { enabled = targetEnabled.get() }
+    tasks.named("link-test") { enabled = targetEnabled.get() }
+    tasks.named("run-test") { enabled = targetEnabled.get() }
+    tasks.named("test") { enabled = targetEnabled.get() }
 }

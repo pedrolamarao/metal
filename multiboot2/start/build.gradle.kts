@@ -1,32 +1,17 @@
-import dev.nokee.platform.nativebase.NativeBinary
-
 plugins {
-    id("psys-component")
+    id("br.dev.pedrolamarao.metal.archive")
+    id("br.dev.pedrolamarao.metal.cpp")
+    id("br.dev.pedrolamarao.metal.cxx")
 }
 
-// #XXX: Gradle cannot disambiguate subprojects with the same group and name
-group = "oops"
+group = "br.dev.pedrolamarao.metal.multiboot2"
 
-library {
-    targetLinkages.add(linkages.static)
+dependencies {
+    api(project(":psys"))
+    api(project(":multiboot2:foo"))
+    api(project(":x86"))
+}
 
-    targetMachines.addAll(
-        // #XXX: build on any for x86_32-multiboot2-elf
-        machines.os("host").architecture("-x86_32-multiboot2-elf"),
-        // #XXX: build on any for x86_64-multiboot2-elf
-        machines.os("host").architecture("-x86_64-multiboot2-elf"),
-    )
-
-    dependencies {
-        api(project(":multiboot2:foo"))
-        compileOnly(project(":x86"))
-    }
-
-    binaries.configureEach {
-        if (this is NativeBinary) {
-            compileTasks.configureEach {
-                compilerArgs.addAll("-std=c++20", "-flto", "-fasm-blocks")
-            }
-        }
-    }
+metal {
+    compileOptions = listOf("-fasm-blocks","-g","-std=c++20")
 }

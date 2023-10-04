@@ -1,3 +1,6 @@
+= metal: debug
+:author: Pedro Lamarão <pedro.lamarao@gmail.com>
+
 This project's purpose is to achieve "high engineering" for the "bare metal".
 When something goes wrong, the "bare metal" explains very little, and abstractions become a burden.
 

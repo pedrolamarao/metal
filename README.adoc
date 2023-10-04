@@ -1,0 +1,52 @@
+= project metal
+:author: Pedro Lamarão <pedro.lamarao@gmail.com>
+
+image:https://github.com/pedrolamarao/psys/actions/workflows/ubuntu.yml/badge.svg[ubuntu]
+image:https://github.com/pedrolamarao/psys/actions/workflows/windows.yml/badge.svg[windows]
+
+== summary
+
+Welcome to project Metal!
+
+Metal is a research project on "bare metal" software engineering.
+
+For more information on this project's mission, ambitions and aims, see link:doc/GOAL.adoc[GOAL].
+
+== prepare
+
+Metal is built with an LLVM based toolset.
+
+JDK 17 or newer is required in either environment `JAVA_HOME` or `PATH`.
+
+The following tools are required in gradle property `metal.path` or environment `PATH`.
+
+- CMake 3
+- GNU grub 2
+- LLVM 16 or newer
+- Ninja
+- QEMU 6.0 exactly
+
+For more information, see link:doc/TOOLS.adoc[TOOLS].
+
+== build
+
+Metal is built by link:https://github.com/pedrolamarao/gradle-metal[Gradle Metal].
+
+To assemble everything for host: `./gradlew build`
+This task shall compile and run modules and unit test programs.
+
+To assemble everything for target `i686-elf`: `./gradlew build -Pmetal.target=i686-elf`
+This task shall compile and run modules and QEMU emulated system test programs.
+
+Currently, only targets host and `i686-elf` are supported.
+We expect to include target `x86_64-elf` very soon.
+
+To clean everything: `./gradlew clean`
+
+== verify
+
+Metal is verified by automated tests.
+
+For more information, see link:doc/TEST.adoc[TEST].
+
+The `check` task runs all verifications, and the `test` task runs test programs.

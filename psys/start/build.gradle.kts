@@ -1,28 +1,15 @@
-import dev.nokee.platform.nativebase.NativeBinary
-
 plugins {
-    id("psys-component")
+    id("br.dev.pedrolamarao.metal.archive")
+    id("br.dev.pedrolamarao.metal.cpp")
+    id("br.dev.pedrolamarao.metal.cxx")
 }
 
-library {
-    targetLinkages.add(linkages.static)
+group = "br.dev.pedrolamarao.metal.psys"
 
-    targetMachines.addAll(
-        // #XXX: build on any for x86_32-elf-multiboot2
-        machines.os("host").architecture("-x86_32-multiboot2-elf"),
-        // #XXX: build on any for x86_64-elf-multiboot2
-        machines.os("host").architecture("-x86_64-multiboot2-elf"),
-    )
+dependencies {
+    api(project(":multiboot2:start"))
+}
 
-    dependencies {
-        implementation(project(":multiboot2:start"))
-    }
-
-    binaries.configureEach {
-        if (this is NativeBinary) {
-            compileTasks.configureEach {
-                compilerArgs.addAll("-std=c++20", "-flto", "-fasm-blocks")
-            }
-        }
-    }
+metal {
+    compileOptions = listOf("-std=c++20", "-flto", "-fasm-blocks", "-gdwarf")
 }
