@@ -12,7 +12,7 @@ metal {
     compileOptions = listOf("-std=c++20")
 }
 
-// ----
+// TODO: enhance Gradle Metal with conventional test application
 
 dependencies {
     implementation(project(":googletest"))
@@ -46,4 +46,14 @@ tasks.create("test") {
 
 tasks.check.configure {
     dependsOn("test")
+}
+
+// TODO: enhance Gradle Metal with target includes/excludes support
+afterEvaluate {
+    val targets = listOf("default")
+    val targetEnabled = providers.gradleProperty("metal.target").orElse("default").map{ targets.contains(it) }
+    tasks.named("compile-test-cxx") { enabled = targetEnabled.get() }
+    tasks.named("link-test") { enabled = targetEnabled.get() }
+    tasks.named("run-test") { enabled = targetEnabled.get() }
+    tasks.named("test") { enabled = targetEnabled.get() }
 }

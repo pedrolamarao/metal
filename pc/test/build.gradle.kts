@@ -1,6 +1,5 @@
-import br.dev.pedrolamarao.gradle.metal.base.MetalApplication
 import br.dev.pedrolamarao.gradle.metal.base.MetalExtension
-import br.dev.pedrolamarao.gradle.metal.cxx.MetalCxxSources
+import br.dev.pedrolamarao.gradle.metal.base.MetalSourceTask
 
 plugins {
     id("metal-test") apply(false)
@@ -26,5 +25,16 @@ subprojects {
             "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2"
         )
         linkOptions = listOf("-gdwarf","-nostdlib","-static","-Wl,--script=${x86_32_elf_multiboot2_ld}")
+    }
+
+    // TODO: enhance Gradle Metal with target includes/excludes support
+    afterEvaluate {
+        val targets = listOf("x86_64-elf","i686-elf")
+        val targetEnabled = providers.gradleProperty("metal.target").orElse("default").map{ targets.contains(it) }
+        tasks.withType<MetalSourceTask>().configureEach { this.enabled = targetEnabled.get() }
+        tasks.withType<MultibootCreateImageTask>().configureEach { this.enabled = targetEnabled.get() }
+        tasks.withType<MultibootRunImageTask>().configureEach { this.enabled = targetEnabled.get() }
+        tasks.withType<MultibootTestImageTask>().configureEach { this.enabled = targetEnabled.get() }
+        tasks.named("test") { this.enabled = targetEnabled.get() }
     }
 }
