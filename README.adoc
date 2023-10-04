@@ -10,7 +10,7 @@ Welcome to project Metal!
 
 Metal is a research project on "bare metal" software engineering.
 
-For more information on this project's mission, ambitions and aims, see link:doc/GOAL.md[GOAL].
+For more information on this project's mission, ambitions and aims, see link:doc/GOAL.adoc[GOAL].
 
 == prepare
 

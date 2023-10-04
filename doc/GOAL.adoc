@@ -1,6 +1,5 @@
-Date: 2021-08-13
-
-# goal
+= project metal: goal
+:author: Pedro Lamarão <pedro.lamarao@gmail.com>
 
 The project's primary goal is to investigate the impact of state-of-the-art tools and practices in
 crafting software for the "bare metal".
@@ -41,7 +40,7 @@ testing of "bare metal" test programs. The tools must observe program execution 
 reports on test success or failure. The technique is allowed to require specialized debugger
 support in hardware or system emulator.
 
-For more information on Psys test protocol, see [TEST](TEST.md).
+For more information on project Metal test protocol, see link:TEST.adoc[TEST].
 
 The third technique we aim to enable is that of cross development. Since time immemorial, there
 have been native tools capable of producing programs for "cross targets". However, to this day,
@@ -50,4 +49,4 @@ believe this difficulty induces projects to reuse whatever tool is available at 
 no consideration to appropriateness, usability or other factors.
 
 Our aim is therefore to obtain a technique capable of easy "cross development", such that users
-may work on highly usable environments producing programs for whatevever appropriate targets.
+may work on highly usable environments producing programs for whatever appropriate targets.
