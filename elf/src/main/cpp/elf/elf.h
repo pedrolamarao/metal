@@ -1,6 +1,8 @@
-// Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <psys/size.h>
+#pragma once
+
+import br.dev.pedrolamarao.metal.psys;
 
 namespace elf
 {

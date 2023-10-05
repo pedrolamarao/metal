@@ -1,4 +1,6 @@
-#include <psys/integer.h>
+// Copyright (C) 2020,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+
+import br.dev.pedrolamarao.metal.psys;
 
 static_assert(sizeof(ps::size1) == 1, "unexpected size of size1");
 static_assert(sizeof(ps::size2) == 2, "unexpected size of size2");

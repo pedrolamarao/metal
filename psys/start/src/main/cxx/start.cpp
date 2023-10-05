@@ -1,12 +1,11 @@
-// Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-
-#include <psys/size.h>
 #include <psys/start.h>
 #include <psys/test.h>
 
 #include <multiboot2/start.h>
 
+import br.dev.pedrolamarao.metal.psys;
 
 namespace multiboot2
 {

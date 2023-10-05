@@ -1,8 +1,6 @@
-// Copyright (C) 2021 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2021,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <psys/integer.h>
-#include <psys/move.h>
-#include <psys/port.h>
+import br.dev.pedrolamarao.metal.psys;
 
 /**
  * PC UART.

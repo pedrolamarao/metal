@@ -1,9 +1,8 @@
-// Copyright (C) 2012,2013,2014,2015,2016,2021,2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2012,2013,2014,2015,2016,2021,2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
-#include <psys/size.h>
-
+import br.dev.pedrolamarao.metal.psys;
 
 //! Declarations
 
