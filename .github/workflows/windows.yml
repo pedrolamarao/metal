@@ -2,7 +2,7 @@ name: "windows"
 on: [pull_request,workflow_dispatch]
 jobs:
   target-host:
-    name: "check target host"
+    name: "build target host"
     runs-on: windows-2022
     timeout-minutes: 10
     steps:
@@ -20,7 +20,7 @@ jobs:
       - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: --info --no-daemon check
+          arguments: --info --no-daemon build
   target-i686-elf:
     name: "assemble target i686-elf"
     runs-on: windows-2022

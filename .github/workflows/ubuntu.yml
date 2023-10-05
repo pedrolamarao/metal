@@ -2,7 +2,7 @@ name: "ubuntu"
 on: [pull_request,workflow_dispatch]
 jobs:
   llvm-16-target-host:
-    name: "check with LLVM 16 target host"
+    name: "build with LLVM 16 target host"
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     steps:
@@ -25,9 +25,9 @@ jobs:
       - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: --info --no-daemon check
+          arguments: --info --no-daemon build
   llvm-17-target-host:
-    name: "check with LLVM 17 target host"
+    name: "build with LLVM 17 target host"
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     steps:
@@ -51,7 +51,7 @@ jobs:
       - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: --info --no-daemon check
+          arguments: --info --no-daemon build
   llvm-16-target-i686-elf:
     name: "assemble with LLVM 16 target i686-elf"
     runs-on: ubuntu-22.04
