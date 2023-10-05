@@ -9,7 +9,7 @@ dependencies {
 }
 
 metal {
-    compileOptions = listOf("-std=c++20")
+    compileOptions = listOf("-fasm-blocks","-g","-std=c++20")
 }
 
 // TODO: enhance Gradle Metal with conventional test application

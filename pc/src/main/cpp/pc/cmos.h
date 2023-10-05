@@ -1,9 +1,8 @@
-// Copyright (C) 2020 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2020,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 #pragma once
 
-#include <psys/integer.h>
-#include <psys/port.h>
+import br.dev.pedrolamarao.metal.psys;
 
 namespace pc
 {
