@@ -7,12 +7,11 @@ pluginManagement {
             name = "Sonatype Open Source Snapshot Repository"
             url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         }
-        mavenLocal()
     }
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("br.dev.pedrolamarao.metal.")) {
-                useModule("br.dev.pedrolamarao.gradle.metal:plugins:0.1-rc-1")
+                useModule("br.dev.pedrolamarao.gradle.metal:plugins:0.2")
             }
         }
     }
