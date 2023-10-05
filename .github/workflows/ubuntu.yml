@@ -1,7 +1,7 @@
 name: "ubuntu"
 on: [pull_request,workflow_dispatch]
 jobs:
-  target-host:
+  llvm-16-target-host:
     name: "check target host"
     runs-on: ubuntu-22.04
     timeout-minutes: 10
@@ -26,7 +26,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: --info --no-daemon :elf:check :multiboot2:foo:check
-  target-i686-elf:
+  llvm-16-target-i686-elf:
     name: "assemble target i686-elf"
     runs-on: ubuntu-22.04
     timeout-minutes: 10
