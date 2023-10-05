@@ -1,5 +1,8 @@
-// Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
+#if defined(__x86_64__)
+
+#include <multiboot2/header.h>
 #include <multiboot2/start.h>
 
 #include <x86/pages.h>
@@ -45,11 +48,46 @@ namespace x86
 
 namespace multiboot2
 {
+    //! Request.
+
+    struct request_type
+    {
+        header_prologue prologue;
+        end_request     end;
+    };
+
+    [[gnu::used, gnu::section(".multiboot2.request")]]
+    constinit
+    request_type request =
+    {
+        { architecture_type::x86, sizeof(request), },
+        { },
+    };
+
+    //! Start procedure stack.
+
+    [[gnu::section(".multiboot2.stack")]]
+    constinit
+    unsigned char stack [ 0x4000 ] {};
+
     //! x86-64 start procedure.
 
-    [[gnu::naked, gnu::section(".multiboot2.start")]]
-    void start_x86_64 ()
+    extern "C"
+    [[gnu::naked, gnu::section(".multiboot2.start"), gnu::used]]
+    void multiboot2_start ()
     {
+        __asm__
+        {
+            .code32
+            // set stack
+            mov esp, offset multiboot2::stack + 0x4000
+            mov ebp, esp
+            // reset eflags
+            xor ecx, ecx
+            push ecx
+            popfd
+            // #TODO: validate magic number in eax
+        }
         // Load global descriptor table register.
         __asm__
         {
@@ -2272,3 +2310,5 @@ namespace x86
         long_page_map_entry { true, true, true, false, false, false, 0, 0, false },
     };
 }
+
+#endif // defined(__x86_64__)
