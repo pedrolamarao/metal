@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <elf/elf.h>
+import br.dev.pedrolamarao.metal.elf;
 
 namespace elf
 {

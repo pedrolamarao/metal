@@ -1,12 +1,11 @@
 // Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <elf/elf.h>
-
 #include <multiboot2/information.h>
 #include <multiboot2/start.h>
 
 #include <psys/test.h>
 
+import br.dev.pedrolamarao.metal.elf;
 
 //! Modular application test.
 

@@ -1,7 +1,5 @@
 // Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <elf/elf.h>
-
 #include <multiboot2/information.h>
 #include <multiboot2/start.h>
 
@@ -12,6 +10,7 @@
 #include <x86/pages.h>
 #include <x86/segments.h>
 
+import br.dev.pedrolamarao.metal.elf;
 
 namespace x86
 {
