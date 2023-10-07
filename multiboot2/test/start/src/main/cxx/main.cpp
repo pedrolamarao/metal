@@ -1,10 +1,9 @@
 // Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <multiboot2/information.h>
-#include <multiboot2/start.h>
-
 #include <psys/test.h>
 
+import br.dev.pedrolamarao.metal.multiboot2;
+import br.dev.pedrolamarao.metal.psys;
 
 //! Start library test.
 
