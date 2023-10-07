@@ -2,9 +2,10 @@
 
 #if defined(__i386__)
 
-#include <multiboot2/header.h>
 #include <multiboot2/start.h>
 
+import br.dev.pedrolamarao.metal.multiboot2;
+import br.dev.pedrolamarao.metal.psys;
 
 namespace multiboot2
 {

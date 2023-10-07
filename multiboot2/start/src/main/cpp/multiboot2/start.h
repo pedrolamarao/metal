@@ -1,7 +1,7 @@
-// Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-
-#include <multiboot2/information.h>
+import br.dev.pedrolamarao.metal.multiboot2;
+import br.dev.pedrolamarao.metal.psys;
 
 namespace multiboot2
 {

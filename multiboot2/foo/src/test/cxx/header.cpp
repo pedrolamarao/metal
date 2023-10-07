@@ -1,6 +1,6 @@
-#include <multiboot2/header.h>
-
 #include <gtest/gtest.h>
+
+import br.dev.pedrolamarao.metal.multiboot2;
 
 namespace
 {

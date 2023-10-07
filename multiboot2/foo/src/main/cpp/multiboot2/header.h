@@ -10,15 +10,15 @@ namespace multiboot2
 {
   //! @brief Multiboot2 header alignment
 
-  constexpr unsigned header_alignment = 8;
+  constexpr inline unsigned header_alignment = 8;
 
   //! @brief Multiboot2 header tag alignment
 
-  constexpr unsigned tag_alignment = 8;
+  constexpr inline unsigned tag_alignment = 8;
 
   //! @brief Multiboot2 header magic number
 
-  constexpr ps::size4 header_magic = 0xe85250d6;
+  constexpr inline ps::size4 header_magic = 0xe85250d6;
 
   //! @brief Multiboot2 request architecture
 

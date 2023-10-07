@@ -2,6 +2,7 @@ plugins {
     id("br.dev.pedrolamarao.metal.archive")
     id("br.dev.pedrolamarao.metal.cpp")
     id("br.dev.pedrolamarao.metal.cxx")
+    id("br.dev.pedrolamarao.metal.ixx")
 }
 
 dependencies {
@@ -21,7 +22,8 @@ dependencies {
 metal {
     cxx {
         create("test") {
-            includable( cpp.named("main").map { it.sources.sourceDirectories } )
+            importable( ixx.named("main").map { it.outputDirectory } )
+            source( ixx.named("main").map{ it.outputs } )
         }
     }
     applications {

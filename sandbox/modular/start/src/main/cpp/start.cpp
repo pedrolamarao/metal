@@ -1,8 +1,5 @@
 // Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <multiboot2/information.h>
-#include <multiboot2/start.h>
-
 #include <x86/identification.h>
 #include <x86/instructions.h>
 #include <x86/interrupts.h>
@@ -11,6 +8,9 @@
 #include <x86/segments.h>
 
 import br.dev.pedrolamarao.metal.elf;
+import br.dev.pedrolamarao.metal.multiboot2;
+import br.dev.pedrolamarao.metal.multiboot2.start;
+import br.dev.pedrolamarao.metal.psys;
 
 namespace x86
 {

@@ -1,2 +1,2 @@
-#include <multiboot2/header.h>
-#include <multiboot2/information.h>
+module br.dev.pedrolamarao.metal.multiboot2;
+

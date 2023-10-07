@@ -10,11 +10,11 @@ namespace multiboot2
 {
   //! @brief Multiboot2 information magic number
 
-  constexpr ps::size4 information_magic = 0x36d76289;
+  constexpr inline ps::size4 information_magic = 0x36d76289;
 
   //! @brief Multiboot2 information list alignment
 
-  constexpr unsigned information_alignment = 8;
+  constexpr inline unsigned information_alignment = 8;
 
   //! @brief Multiboot2 information list
 

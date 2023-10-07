@@ -2,12 +2,13 @@
 
 #if defined(__x86_64__)
 
-#include <multiboot2/header.h>
 #include <multiboot2/start.h>
 
 #include <x86/pages.h>
 #include <x86/segments.h>
 
+import br.dev.pedrolamarao.metal.multiboot2;
+import br.dev.pedrolamarao.metal.psys;
 
 namespace x86
 {
