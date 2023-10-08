@@ -4,11 +4,10 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/ports.h>
-
 #include <pc/cmos.h>
 
 import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 void psys::main ()
 {

@@ -1,12 +1,15 @@
 #include <gtest/gtest.h>
 
-#include <x86/pages.h>
-
+import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 // short_page_table_entry
 
 namespace x86
 {
+    using size4 = ps::size4;
+    using size8 = ps::size8;
+
     TEST(short_page_table_entry, zero)
     {
         auto test = [] (short_page_table_entry& value) {

@@ -3,9 +3,8 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/identification.h>
-
 import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 void psys::main ()
 {

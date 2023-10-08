@@ -2,6 +2,7 @@ plugins {
     id("br.dev.pedrolamarao.metal.archive")
     id("br.dev.pedrolamarao.metal.cpp")
     id("br.dev.pedrolamarao.metal.cxx")
+    id("br.dev.pedrolamarao.metal.ixx")
 }
 
 group = "br.dev.pedrolamarao.metal.x86"
@@ -24,11 +25,14 @@ metal {
     cxx {
         create("test") {
             includable( cpp.named("main").map { it.sources.sourceDirectories } )
+            importable( ixx.named("main").map { it.outputDirectory } )
+            source( ixx.named("main").map { it.outputs } )
         }
     }
     applications {
         create("test") {
             linkOptions = listOf("-fuse-ld=lld","-static")
+            source( archives.named("main").map { it.archiveTask } )
             source( cxx.named("test").map { it.outputs } )
         }
     }

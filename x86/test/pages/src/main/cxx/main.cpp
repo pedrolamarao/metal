@@ -1,16 +1,15 @@
-// Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
+// Copyright (C) 2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/interrupts.h>
-#include <x86/pages.h>
-#include <x86/segments.h>
-
+import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 namespace
 {
+    using namespace ps;
     using namespace x86;
 
     // segments.
