@@ -1,12 +1,15 @@
 #include <gtest/gtest.h>
 
-#include <x86/segments.h>
-
+import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 // code_segment_descriptor
 
 namespace x86
 {
+    using size4 = ps::size4;
+    using size8 = ps::size8;
+
     TEST(code_segment_descriptor, zero)
     {
         auto test = [] (code_segment_descriptor& value) {

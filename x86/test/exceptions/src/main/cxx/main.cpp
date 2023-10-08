@@ -3,13 +3,12 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/segments.h>
-#include <x86/interrupts.h>
-
 import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 namespace
 {
+    using namespace ps;
     using namespace x86;
 
     // Segments.

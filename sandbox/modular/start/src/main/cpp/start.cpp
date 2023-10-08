@@ -1,16 +1,10 @@
-// Copyright (C) 2022 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
-
-#include <x86/identification.h>
-#include <x86/instructions.h>
-#include <x86/interrupts.h>
-#include <x86/msr.h>
-#include <x86/pages.h>
-#include <x86/segments.h>
+// Copyright (C) 2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
 import br.dev.pedrolamarao.metal.elf;
 import br.dev.pedrolamarao.metal.multiboot2;
 import br.dev.pedrolamarao.metal.multiboot2.start;
 import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 namespace x86
 {

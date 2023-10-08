@@ -4,6 +4,7 @@
 #include <psys/test.h>
 
 import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 void psys::main ()
 {

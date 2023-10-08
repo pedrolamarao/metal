@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <x86/interrupts.h>
-
+import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 namespace
 {

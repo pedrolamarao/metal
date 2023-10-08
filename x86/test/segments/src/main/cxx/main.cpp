@@ -3,12 +3,13 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/segments.h>
-
 import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
+
 
 namespace
 {
+    using namespace ps;
     using namespace x86;
 
     constexpr unsigned global_descriptor_table_size = 6;

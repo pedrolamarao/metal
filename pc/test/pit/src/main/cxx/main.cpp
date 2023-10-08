@@ -3,16 +3,11 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <x86/segments.h>
-#include <x86/identification.h>
-#include <x86/interrupts.h>
-#include <x86/msr.h>
-#include <x86/ports.h>
-
 #include <pc/pic.h>
 #include <pc/pit.h>
 
 import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 namespace
 {
@@ -28,6 +23,7 @@ namespace
 
 void psys::main ()
 {
+    using namespace ps;
     using namespace x86;
 
     // set the GDT register and set segment registers
@@ -205,6 +201,7 @@ void psys::main ()
 
 namespace
 {
+    using namespace ps;
     using namespace x86;
 
     // Segments.

@@ -4,14 +4,14 @@
 
 #include <multiboot2/start.h>
 
-#include <x86/pages.h>
-#include <x86/segments.h>
-
 import br.dev.pedrolamarao.metal.multiboot2;
 import br.dev.pedrolamarao.metal.psys;
+import br.dev.pedrolamarao.metal.x86;
 
 namespace x86
 {
+    using namespace ps;
+
     // x86 segments.
 
     struct
