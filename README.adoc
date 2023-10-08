@@ -24,7 +24,7 @@ The following tools are required in gradle property `metal.path` or environment 
 - GNU grub 2
 - LLVM 16 or newer
 - Ninja
-- QEMU 6.0 exactly
+- QEMU 6.0 up to 7.2
 
 For more information, see link:doc/TOOLS.adoc[TOOLS].
 

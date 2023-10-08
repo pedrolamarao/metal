@@ -16,8 +16,8 @@ For assembling Multiboot2 system test programs, GNU GRUB 2 is required.
 Currently, Metal creates "standalone" images for test programs.
 
 For running system test programs, QEMU is required.
-Versions from 6.0 to 7.1 are known to work.
-Versions 7.2 or more recent are known to *not* work.
+Versions from 6.0 up to 7.2 are known to work.
+Versions 8.0 or more recent are known to *not* work.
 For more information, see link:TEST.adoc[TEST].
 
 == Microsoft Windows
@@ -31,5 +31,5 @@ Quick start:
 3. Install Visual Studio Build Tools 2022
 4. Install LLVM 17 for Windows from https://github.com/llvm/llvm-project/releases
 5. Install GNU GRUB 2.06 for Windows from https://ftp.gnu.org/gnu/grub/
-6. Install QEMU 7.1 for Windows (qemu-w64-setup-20220831) from https://qemu.weilnetz.de/w64/
-7. Edit `gradle.properties` settings `metal.path` with the appropriate values
+6. Install QEMU 7.2 for Windows (qemu-w64-setup-20221230) from https://qemu.weilnetz.de/w64/
+7. Edit `gradle.properties` setting `metal.path` with the appropriate values
