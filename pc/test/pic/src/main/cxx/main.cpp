@@ -1,9 +1,5 @@
 // Copyright (C) 2020,2021,2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-
-#include <psys/start.h>
-#include <psys/test.h>
-
 import br.dev.pedrolamarao.metal.pc;
 import br.dev.pedrolamarao.metal.psys;
 import br.dev.pedrolamarao.metal.x86;
@@ -19,6 +15,8 @@ namespace
 
     void set_interrupt_descriptor_table ();
 }
+
+namespace psys { void main (); }
 
 void psys::main ()
 {

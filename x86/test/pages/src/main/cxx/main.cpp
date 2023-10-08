@@ -1,9 +1,5 @@
 // Copyright (C) 2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-
-#include <psys/start.h>
-#include <psys/test.h>
-
 import br.dev.pedrolamarao.metal.psys;
 import br.dev.pedrolamarao.metal.x86;
 
@@ -64,6 +60,8 @@ namespace
     alignas(0x1000) constinit
     extended_page_directory_pointer_entry large_page_directory_pointer_table [ 4 ] {};
 }
+
+namespace psys { void main (); }
 
 void psys::main ()
 {

@@ -1,8 +1,5 @@
 // Copyright (C) 2020,2021,2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <psys/start.h>
-#include <psys/test.h>
-
 import br.dev.pedrolamarao.metal.psys;
 import br.dev.pedrolamarao.metal.x86;
 
@@ -62,6 +59,8 @@ namespace
     unsigned interrupt_FF_counter {};
     void interrupt_FF ();
 }
+
+namespace psys { void main (); }
 
 void psys::main ()
 {
