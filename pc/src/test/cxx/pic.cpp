@@ -1,6 +1,6 @@
-#include <pc/pic.h>
-
 #include <gtest/gtest.h>
+
+import br.dev.pedrolamarao.metal.pc;
 
 namespace
 {

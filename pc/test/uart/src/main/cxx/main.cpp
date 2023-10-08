@@ -3,9 +3,7 @@
 #include <psys/start.h>
 #include <psys/test.h>
 
-#include <pc/pic.h>
-#include <pc/uart.h>
-
+import br.dev.pedrolamarao.metal.pc;
 import br.dev.pedrolamarao.metal.psys;
 import br.dev.pedrolamarao.metal.x86;
 
