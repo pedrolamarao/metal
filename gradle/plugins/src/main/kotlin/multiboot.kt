@@ -21,18 +21,9 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.dropLastWhile
-import kotlin.collections.forEach
-import kotlin.collections.listOf
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
-import kotlin.collections.plus
-import kotlin.collections.plusAssign
 import kotlin.collections.set
-import kotlin.collections.toTypedArray
 
 abstract class MultibootCreateImageTask : DefaultTask()
 {
@@ -431,6 +422,8 @@ abstract class MultibootTestImageTask : DefaultTask()
             qemuProcess.destroy()
         }
 
-        logger.info("${project.path}:${this.name}: QEMU completed with status = ${qemuProcess.exitValue()}")
+        val exitValue = qemuProcess.waitFor(5, SECONDS);
+
+        logger.info("${project.path}:${this.name}: QEMU completed with status = ${exitValue}")
     }
 }
