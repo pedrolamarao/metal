@@ -10,6 +10,8 @@ import br.dev.pedrolamarao.metal.x86;
 
 namespace x86
 {
+    using namespace ps;
+
     // x86 segments.
 
     struct
