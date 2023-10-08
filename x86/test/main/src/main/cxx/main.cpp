@@ -1,10 +1,9 @@
 // Copyright (C) 2020,2021,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#include <psys/start.h>
-#include <psys/test.h>
-
 import br.dev.pedrolamarao.metal.psys;
 import br.dev.pedrolamarao.metal.x86;
+
+namespace psys { void main (); }
 
 void psys::main ()
 {

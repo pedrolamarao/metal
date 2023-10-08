@@ -2,8 +2,6 @@
 
 #if defined(__x86_64__)
 
-#include <multiboot2/start.h>
-
 import br.dev.pedrolamarao.metal.multiboot2;
 import br.dev.pedrolamarao.metal.psys;
 import br.dev.pedrolamarao.metal.x86;
@@ -70,6 +68,10 @@ namespace multiboot2
     [[gnu::section(".multiboot2.stack")]]
     constinit
     unsigned char stack [ 0x4000 ] {};
+
+    //! User supplied main procedure.
+
+    void main ( ps::size4 magic, multiboot2::information_list & response );
 
     //! x86-64 start procedure.
 
