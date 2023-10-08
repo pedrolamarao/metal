@@ -53,7 +53,7 @@ jobs:
         with:
           arguments: --info --no-daemon build
   llvm-16-target-i686-elf:
-    name: "assemble with LLVM 16 target i686-elf"
+    name: "build with LLVM 16 target i686-elf"
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     steps:
@@ -74,9 +74,9 @@ jobs:
       - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: --info --no-daemon image "-Pmetal.target=i686-elf"
+          arguments: --info --no-daemon build "-Pmetal.target=i686-elf"
   llvm-17-target-i686-elf:
-    name: "assemble with LLVM 17 target i686-elf"
+    name: "build with LLVM 17 target i686-elf"
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     steps:
@@ -98,4 +98,4 @@ jobs:
       - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: --info --no-daemon image "-Pmetal.target=i686-elf"
+          arguments: --info --no-daemon build "-Pmetal.target=i686-elf"
