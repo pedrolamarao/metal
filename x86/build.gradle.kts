@@ -26,17 +26,18 @@ metal {
         create("test") {
             includable( cpp.named("main").map { it.sources.sourceDirectories } )
             importable( ixx.named("main").map { it.outputDirectory } )
-            source( ixx.named("main").map { it.outputs } )
         }
     }
     applications {
         create("test") {
             linkOptions = listOf("-fuse-ld=lld","-static")
-            source( archives.named("main").map { it.archiveTask } )
+            source( cxx.named("main").map { it.outputs } )
             source( cxx.named("test").map { it.outputs } )
         }
     }
 }
+
+tasks.named("compile-test-cxx") { dependsOn("compile-main-ixx") }
 
 tasks.register<Exec>("run-test") {
     group = "metal"
