@@ -9,4 +9,10 @@ group = "br.dev.pedrolamarao.metal.psys"
 
 metal {
     compileOptions = listOf("-fasm-blocks","-g","-std=c++20")
+
+    ixx {
+        main {
+            public = true
+        }
+    }
 }

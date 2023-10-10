@@ -11,6 +11,12 @@ dependencies {
 
 metal {
     compileOptions = listOf("-fasm-blocks","-g","-std=c++20","-Wno-unused-command-line-argument")
+
+    ixx {
+        main {
+            public = true
+        }
+    }
 }
 
 // TODO: enhance Gradle Metal with test dependencies
