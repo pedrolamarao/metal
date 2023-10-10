@@ -1,5 +1,4 @@
 import org.ajoberstar.grgit.Grgit
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -64,13 +63,9 @@ val make = tasks.register<Exec>("make") {
     args("--build",build)
 }
 
-// TODO: enhance Gradle Metal with platform conventional prefixes and suffixes
-val archivePrefix = if (DefaultNativePlatform.getCurrentOperatingSystem().isWindows) "" else "lib"
-val archiveSuffix = if (DefaultNativePlatform.getCurrentOperatingSystem().isWindows) ".lib" else ".a"
-
 metal {
     prebuilt {
-        includable(source.dir("googletest/include")) { builtBy(clone) }
-        linkable(build.file("lib/${archivePrefix}gtest${archiveSuffix}")) { builtBy(make) }
+        includable( source.dir("googletest/include") ) { builtBy(clone) }
+        linkable( metal.archiveFileName("gtest").map { build.file("lib/${it}") } ) { builtBy(make) }
     }
 }
