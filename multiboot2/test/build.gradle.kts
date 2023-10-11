@@ -32,8 +32,9 @@ subprojects {
 
     // TODO: enhance Gradle Metal with target includes/excludes support
     afterEvaluate {
+        val metal: MetalExtension by extensions
         val targets = listOf("x86_64-elf","i686-elf")
-        val targetEnabled = targets.contains( providers.gradleProperty("metal.target").get() )
+        val targetEnabled = targets.contains(metal.target.get())
         tasks.withType<MetalSourceTask>().configureEach { enabled = targetEnabled }
         tasks.withType<MultibootCreateImageTask>().configureEach { enabled = targetEnabled }
         tasks.withType<MultibootRunImageTask>().configureEach { enabled = targetEnabled }
