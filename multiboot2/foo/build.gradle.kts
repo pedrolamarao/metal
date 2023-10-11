@@ -30,8 +30,8 @@ dependencies {
 afterEvaluate {
     val targets = listOf("x86_64-pc-linux-gnu","x86_64-pc-windows-msvc")
     val targetEnabled = targets.contains(metal.target.get())
-    tasks.named("compile-test-cxx") { enabled = targetEnabled }
-    tasks.named("link-test") { enabled = targetEnabled }
-    tasks.named("run-test") { enabled = targetEnabled }
-    tasks.named("test") { enabled = targetEnabled }
+    tasks.`compile-test-cxx` { enabled = targetEnabled }
+    tasks.`link-test` { enabled = targetEnabled }
+    tasks.`run-test` { enabled = targetEnabled }
+    tasks.test { enabled = targetEnabled }
 }
