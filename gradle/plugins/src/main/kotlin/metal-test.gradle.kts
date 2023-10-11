@@ -20,11 +20,6 @@ val testImage = project.tasks.register<MultibootTestImageTask>("test-main-image"
     executableFile = linkExecutable.flatMap { it.output }
 }
 
-val test = tasks.register("test") {
-    group = "verification"
+tasks.named("test") {
     dependsOn(testImage)
-}
-
-tasks.check.configure {
-    dependsOn(test)
 }

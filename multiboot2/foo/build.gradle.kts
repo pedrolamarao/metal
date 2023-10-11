@@ -25,17 +25,6 @@ dependencies {
     implementation(project(":googletest"))
 }
 
-// TODO: enhance Gradle Metal with lifecycle test task
-
-tasks.create("test") {
-    group = "verification"
-    dependsOn("run-test")
-}
-
-tasks.check.configure {
-    dependsOn("test")
-}
-
 // TODO: enhance Gradle Metal with component target selector/filter
 
 afterEvaluate {

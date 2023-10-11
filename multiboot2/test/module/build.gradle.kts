@@ -15,5 +15,3 @@ metal {
     compileOptions = options
     linkOptions = options
 }
-
-tasks.register("test")
