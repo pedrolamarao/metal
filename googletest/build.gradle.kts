@@ -1,9 +1,6 @@
 import org.ajoberstar.grgit.Grgit
-import java.nio.file.Files
-import java.nio.file.Paths
 
 plugins {
-    id("br.dev.pedrolamarao.metal.cpp")
     id("br.dev.pedrolamarao.metal.prebuilt")
     id("org.ajoberstar.grgit") version("5.2.0") apply(false)
 }
@@ -11,27 +8,14 @@ plugins {
 val source = layout.projectDirectory.dir("src")
 val build = layout.buildDirectory.dir("release").get()
 
-// TODO: expose Gradle Metal locateToolFile utility
-fun locateExecutableFile (list: String, name: String): File {
-    for (item in list.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
-        val directory = Paths.get(item)
-        if (! Files.isDirectory(directory)) continue
-        val file = directory.resolve(name)
-        if (Files.isExecutable(file)) return file.toFile()
-        val file_exe = file.resolveSibling("$name.exe")
-        if (Files.isExecutable(file_exe)) return file_exe.toFile()
-    }
-    throw GradleException("executable file not found: $name")
-}
-
 val metalPath = providers.gradleProperty("metal.path")
     .orElse(providers.environmentVariable("PATH"))
 
-val cmake = metalPath.map { locateExecutableFile(it,"cmake") }
+val cmake = metal.locateTool("cmake")
 
 val clone = tasks.register("clone") {
     doLast {
-        if (! source.asFile.exists()) {
+        if (! source.dir(".git").asFile.exists()) {
             Grgit.clone {
                 depth = 1
                 dir = source

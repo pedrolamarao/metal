@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "name": "gradle build host",
+            "type": "gradle",
+            "tasks": [ "build" ],
+        },        
+        {
+            "name": "gradle build i686-elf",
+            "type": "gradle",
+            "tasks": [ "build", "-Pmetal.target=i686-elf" ],
+        },        
+    ]
+}

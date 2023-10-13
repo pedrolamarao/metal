@@ -47,6 +47,8 @@ abstract class MultibootCreateImageTask : DefaultTask()
 
     init
     {
+        onlyIf { inputFile.get().asFile.exists() }
+
         // TODO: expose Gradle Metal locateToolFile utility
         fun locateExecutableFile (list: String, name: String): File {
             for (item in list.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
@@ -125,6 +127,8 @@ abstract class MultibootRunImageTask : DefaultTask()
 
     init
     {
+        onlyIf { imageFile.get().asFile.exists() }
+
         // TODO: expose Gradle Metal locateToolFile utility
         fun locateExecutableFile (list: String, name: String): File {
             for (item in list.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
@@ -287,6 +291,8 @@ abstract class MultibootTestImageTask : DefaultTask()
 
     init
     {
+        onlyIf { imageFile.get().asFile.exists() }
+
         // TODO: expose Gradle Metal locateToolFile utility
         fun locateExecutableFile (list: String, name: String): File {
             for (item in list.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {

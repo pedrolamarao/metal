@@ -12,26 +12,12 @@ dependencies {
 metal {
     compileOptions = listOf("-fasm-blocks","-g","-std=c++20","-Wno-unused-command-line-argument")
 
-    ixx {
-        main {
-            public = true
-        }
-    }
+    applications { test { targets = setOf("x86_64-pc-linux-gnu","x86_64-pc-windows-msvc") } }
+    ixx { main { public = true } }
 }
 
-// TODO: enhance Gradle Metal with test dependencies
+// TODO: enhance Gradle Metal with component-specific dependencies
 
 dependencies {
     implementation(project(":googletest"))
-}
-
-// TODO: enhance Gradle Metal with component target selector/filter
-
-afterEvaluate {
-    val targets = listOf("x86_64-pc-linux-gnu","x86_64-pc-windows-msvc")
-    val targetEnabled = targets.contains(metal.target.get())
-    tasks.`compile-test-cxx` { enabled = targetEnabled }
-    tasks.`link-test` { enabled = targetEnabled }
-    tasks.`run-test` { enabled = targetEnabled }
-    tasks.test { enabled = targetEnabled }
 }

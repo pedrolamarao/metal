@@ -1,4 +1,4 @@
-= metal: debug
+= project metal: debug
 :author: Pedro Lamarão <pedro.lamarao@gmail.com>
 
 This project's purpose is to achieve "high engineering" for the "bare metal".

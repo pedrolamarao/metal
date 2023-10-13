@@ -1,4 +1,4 @@
-= metal: tools
+= project metal: tools
 :author: Pedro Lamarão <pedro.lamarao@gmail.com>
 
 The Gradle Metal driver requires a JDK 17 in either `JAVA_HOME` or `PATH`.

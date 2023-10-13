@@ -19,23 +19,11 @@ subprojects {
         add("implementation",project(":x86"))
     }
 
-    extensions.configure<MetalExtension>() {
-        compileOptions = listOf(
-            "-std=c++20", "-flto", "-fasm-blocks", "-gdwarf",
-            "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2"
-        )
-        linkOptions = listOf("-gdwarf","-nostdlib","-static","-Wl,--script=${x86_32_elf_multiboot2_ld}")
-    }
-
-    // TODO: enhance Gradle Metal with target includes/excludes support
-    afterEvaluate {
-        val metal: MetalExtension by extensions
-        val targets = listOf("x86_64-elf","i686-elf")
-        val targetEnabled = targets.contains(metal.target.get())
-        tasks.withType<MetalSourceTask>().configureEach { this.enabled = targetEnabled }
-        tasks.withType<MultibootCreateImageTask>().configureEach { this.enabled = targetEnabled }
-        tasks.withType<MultibootRunImageTask>().configureEach { this.enabled = targetEnabled }
-        tasks.withType<MultibootTestImageTask>().configureEach { this.enabled = targetEnabled }
-        tasks.named("test") { this.enabled = targetEnabled }
-    }
+    val metal: MetalExtension by extensions
+    metal.compileOptions = listOf(
+        "-std=c++20", "-flto", "-fasm-blocks", "-gdwarf",
+        "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2"
+    )
+    metal.linkOptions = listOf("-gdwarf","-nostdlib","-static","-Wl,--script=${x86_32_elf_multiboot2_ld}")
+    metal.targets = listOf("x86_64-elf","i686-elf")
 }
