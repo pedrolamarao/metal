@@ -377,7 +377,7 @@ abstract class MultibootTestImageTask : DefaultTask()
                 gdb.exchange(format("Z1,%X,0",finish.address))
 
                 // ...watching _test_control and _test_debug
-                var previous = 0
+                var previous = 0L
                 while (true)
                 {
                     // continue until next stop
@@ -395,15 +395,15 @@ abstract class MultibootTestImageTask : DefaultTask()
                     val address = stop.attributes()["watch"]?.toLong(16)
                     val symbol = address?.let { it1 -> symbols.findByAddress(it1) } ?: continue
                     val memory = gdb.exchange(format("m%X,%d",address,symbol.size))
-                    val value = Integer.reverseBytes( Integer.parseUnsignedInt( memory.content(),16 ) )
+                    val value = java.lang.Long.reverseBytes( memory.content().toLong(radix = 16) )
 
                     // interpret watch
                     if (symbol == control) {
-                        if      (previous == 0 && value == 0) { }
-                        else if (previous == 0 && value != 0) {
+                        if      (previous == 0L && value == 0L) { }
+                        else if (previous == 0L && value != 0L) {
                             logger.info("! Test ${this.path}: stage ${previous}: ENTERING...")
                         }
-                        else if (previous != 0 && value == 0) {
+                        else if (previous != 0L && value == 0L) {
                             logger.error("! Test ${this.path}: stage ${previous}: FAILED")
                             throw RuntimeException("test ${this.path}: stage ${previous}: FAILED")
                         }
