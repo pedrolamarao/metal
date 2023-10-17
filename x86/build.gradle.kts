@@ -12,55 +12,14 @@ dependencies {
 }
 
 metal {
-    compileOptions = listOf("-fasm-blocks","-g","-std=c++20")
+    compileOptions = listOf("-fasm-blocks","-g","-std=c++20","-Wno-unused-command-line-argument")
+
+    applications { test { targets = setOf("x86_64-pc-linux-gnu","x86_64-pc-windows-msvc") } }
+    ixx { main { public = true } }
 }
 
-// TODO: enhance Gradle Metal with conventional test application
+// TODO: enhance Gradle Metal with component-specific dependencies
 
 dependencies {
     implementation(project(":googletest"))
-}
-
-metal {
-    cxx {
-        create("test") {
-            includable( cpp.named("main").map { it.sources.sourceDirectories } )
-            importable( ixx.named("main").map { it.outputDirectory } )
-        }
-    }
-    applications {
-        create("test") {
-            linkOptions = listOf("-fuse-ld=lld","-static")
-            source( cxx.named("main").map { it.outputs } )
-            source( cxx.named("test").map { it.outputs } )
-        }
-    }
-}
-
-tasks.named("compile-test-cxx") { dependsOn("compile-main-ixx") }
-
-tasks.register<Exec>("run-test") {
-    group = "metal"
-    val linkTask = metal.applications.named("test").flatMap { it.linkTask }
-    dependsOn(linkTask)
-    executable( linkTask.flatMap{ it.output }.get() )
-}
-
-tasks.create("test") {
-    group = "verification"
-    dependsOn("run-test")
-}
-
-tasks.check.configure {
-    dependsOn("test")
-}
-
-// TODO: enhance Gradle Metal with target includes/excludes support
-afterEvaluate {
-    val targets = listOf("default")
-    val targetEnabled = providers.gradleProperty("metal.target").orElse("default").map{ targets.contains(it) }
-    tasks.named("compile-test-cxx") { enabled = targetEnabled.get() }
-    tasks.named("link-test") { enabled = targetEnabled.get() }
-    tasks.named("run-test") { enabled = targetEnabled.get() }
-    tasks.named("test") { enabled = targetEnabled.get() }
 }
