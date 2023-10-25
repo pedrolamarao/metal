@@ -20,7 +20,7 @@ import java.nio.channels.FileChannel.MapMode
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.ThreadLocalRandom
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 import kotlin.collections.set
@@ -334,27 +334,43 @@ abstract class MultibootTestImageTask : DefaultTask()
     @TaskAction
     fun action ()
     {
-        logger.info("${project.path}:${this.name}: executableFile = ${executableFile.get()}")
-        logger.info("${project.path}:${this.name}: imageFile = ${imageFile.get()}")
-
         val symbols = FileChannel.open( executableFile.asFile.get().toPath() ).use { SymbolTable.parse(it) }
         val control = symbols.findByName("_test_control") ?: throw RuntimeException("_test_control not found")
         val debug = symbols.findByName("_test_debug") ?: throw RuntimeException("_test_debug not found")
         val finish = symbols.findByName("_test_finish") ?: throw RuntimeException("_test_finish not found")
         val start = symbols.findByName("_test_start") ?: throw RuntimeException("_test_start not found")
 
-        val qemuProcess = ProcessBuilder()
+        val qemuProcessBuilder = ProcessBuilder()
             .command( listOf(qemuExecutable.get()) + qemuArgs.build() )
             .redirectError( File(temporaryDir, "qemu.error.txt") )
             .redirectOutput( File(temporaryDir, "qemu.out.txt") )
-            .start()
+        logger.info("${project.path}:${this.name}: starting QEMU: ${qemuProcessBuilder.command()}")
+        val qemuProcess = qemuProcessBuilder.start()
 
-        qemuProcess.waitFor(750, TimeUnit.MILLISECONDS)
+        logger.info("${project.path}:${this.name}: trying to connect GdbRemote to localhost:${port}...")
+
+        var gdbRemote: GdbRemote? = null
+        for (i in 0..10) {
+            try {
+                gdbRemote = GdbRemote.from(InetSocketAddress("localhost", port))
+                break
+            }
+            catch (e : java.net.ConnectException) {
+                if (qemuProcess.waitFor(100,MILLISECONDS)) {
+                    throw GradleException("QEMU exited prematurely")
+                }
+            }
+        }
+
+        if (gdbRemote == null) {
+            qemuProcess.destroy()
+            qemuProcess.waitFor(1000,MILLISECONDS)
+            throw GradleException("failed to connect to QEMU")
+        }
 
         try
         {
-            GdbRemote.from( InetSocketAddress("localhost",port) ).use {
-                gdb ->
+            gdbRemote.use { gdb ->
 
                 // learn server features
                 gdb.exchange("qSupported:hwbreak+;swbreak+;xmlRegisters+")
