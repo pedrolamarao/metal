@@ -1,7 +1,5 @@
 // Copyright (C) 2022,2023 Pedro Lamarão <pedro.lamarao@gmail.com>. All rights reserved.
 
-#if defined(__x86_64__)
-
 import br.dev.pedrolamarao.metal.multiboot2;
 import br.dev.pedrolamarao.metal.psys;
 import br.dev.pedrolamarao.metal.x86;
@@ -2313,5 +2311,3 @@ namespace x86
         long_page_map_entry { true, true, true, false, false, false, 0, 0, false },
     };
 }
-
-#endif // defined(__x86_64__)
