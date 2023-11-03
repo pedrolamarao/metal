@@ -3,11 +3,11 @@ plugins {
     id("br.dev.pedrolamarao.metal.cxx")
 }
 
-val linkExecutable = metal.applications.named("main").flatMap { it.linkTask }
+val linkExecutable = metal.applications.named("main").flatMap { it.output }
 
 val createImage = project.tasks.register<MultibootCreateImageTask>("make-main-image") {
-    dependsOn(linkExecutable)
-    inputFile = linkExecutable.flatMap { it.output }
+    inputFile = linkExecutable
+    dependsOn("link-main")
 }
 
 tasks.register("image") {
@@ -17,9 +17,9 @@ tasks.register("image") {
 
 val testImage = project.tasks.register<MultibootTestImageTask>("test-main-image") {
     imageFile = createImage.flatMap { it.outputFile }
-    executableFile = linkExecutable.flatMap { it.output }
+    executableFile = linkExecutable
 }
 
-tasks.test {
+tasks.test.configure {
     dependsOn(testImage)
 }
