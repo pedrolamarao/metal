@@ -9,6 +9,7 @@ group = "br.dev.pedrolamarao.metal.elf"
 
 dependencies {
     api(project(":psys"))
+    testImplementation(project(":googletest"))
 }
 
 metal {
@@ -16,10 +17,4 @@ metal {
 
     applications { test { targets = setOf("x86_64-pc-linux-gnu","x86_64-pc-windows-msvc") } }
     ixx.main { public = true }
-}
-
-// TODO: enhance Gradle Metal with component-specific dependencies
-
-dependencies {
-    implementation(project(":googletest"))
 }

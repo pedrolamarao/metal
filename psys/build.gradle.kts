@@ -7,15 +7,13 @@ plugins {
 
 group = "br.dev.pedrolamarao.metal.psys"
 
+dependencies {
+    testImplementation(project(":googletest"))
+}
+
 metal {
     compileOptions = listOf("-fasm-blocks","-g","-std=c++20")
 
     applications { test { targets = setOf("x86_64-pc-linux-gnu","x86_64-pc-windows-msvc") } }
     ixx { main { public = true } }
-}
-
-// TODO: enhance Gradle Metal with component-specific dependencies
-
-dependencies {
-    implementation(project(":googletest"))
 }
