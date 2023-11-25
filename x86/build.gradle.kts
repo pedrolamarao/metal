@@ -11,6 +11,7 @@ group = "br.dev.pedrolamarao.metal.x86"
 
 dependencies {
     api(project(":psys"))
+    testImplementation(project(":googletest"))
 }
 
 metal {
@@ -30,10 +31,4 @@ tasks.named<MetalCompileTask>("compile-main-cxx") {
         "x86_64-pc-linux-gnu",
         "x86_64-pc-windows-msvc" -> include("x86_64/*")
     }
-}
-
-// TODO: enhance Gradle Metal with component-specific dependencies
-
-dependencies {
-    implementation(project(":googletest"))
 }
