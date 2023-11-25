@@ -14,11 +14,12 @@ val metalPath = providers.gradleProperty("metal.path")
 val cmake = metal.locateTool("cmake")
 
 val clone = tasks.register("clone") {
+    val cloneDir = source
     doLast {
-        if (! source.dir(".git").asFile.exists()) {
+        if (! cloneDir.dir(".git").asFile.exists()) {
             Grgit.clone {
                 depth = 1
-                dir = source
+                dir = cloneDir
                 uri = "https://github.com/google/googletest"
             }
         }

@@ -40,4 +40,4 @@ jobs:
       - name: "Invoke Gradle"
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: --info --no-daemon assemble "-Pmetal.target=i686-elf"
+          arguments: --configuration-cache --info --no-daemon assemble "-Pmetal.target=i686-elf"

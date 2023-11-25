@@ -20,6 +20,6 @@ val testImage = project.tasks.register<MultibootTestImageTask>("test-main-image"
     executableFile = mainExecutable
 }
 
-tasks.test {
+tasks.test.configure {
     dependsOn(testImage)
 }

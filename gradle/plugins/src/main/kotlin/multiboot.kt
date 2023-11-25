@@ -6,6 +6,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -32,6 +33,9 @@ abstract class MultibootCreateImageTask : DefaultTask()
 
     @get:Input
     abstract val command: Property<String>
+
+    @get:Inject
+    abstract val objects: ObjectFactory
 
     @get:OutputFile
     abstract val outputFile: RegularFileProperty
@@ -91,7 +95,7 @@ abstract class MultibootCreateImageTask : DefaultTask()
             )
         }
 
-        val builder = project.objects.newInstance<GrubMakeImageEditor>()
+        val builder = objects.newInstance<GrubMakeImageEditor>()
         builder.platform.set("i386-pc")
         builder.imageFile.set(outputFile)
         builder.installModules.addAll("configfile", "memdisk", "multiboot2", "normal")
@@ -344,10 +348,10 @@ abstract class MultibootTestImageTask : DefaultTask()
             .command( listOf(qemuExecutable.get()) + qemuArgs.build() )
             .redirectError( File(temporaryDir, "qemu.error.txt") )
             .redirectOutput( File(temporaryDir, "qemu.out.txt") )
-        logger.info("${project.path}:${this.name}: starting QEMU: ${qemuProcessBuilder.command()}")
+        logger.info("${this.path}: starting QEMU: ${qemuProcessBuilder.command()}")
         val qemuProcess = qemuProcessBuilder.start()
 
-        logger.info("${project.path}:${this.name}: trying to connect GdbRemote to localhost:${port}...")
+        logger.info("${this.path}: trying to connect GdbRemote to localhost:${port}...")
 
         var gdbRemote: GdbRemote? = null
         for (i in 0..10) {
@@ -446,6 +450,6 @@ abstract class MultibootTestImageTask : DefaultTask()
 
         val exitValue = qemuProcess.waitFor(5, SECONDS);
 
-        logger.info("${project.path}:${this.name}: QEMU completed with status = ${exitValue}")
+        logger.info("${this.path}: QEMU completed with status = ${exitValue}")
     }
 }
