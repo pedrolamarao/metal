@@ -11,7 +11,7 @@ val options = listOf(
     "-std=c++20"
 )
 
-metal {
+application {
     compileOptions = options
     linkOptions = options
 }

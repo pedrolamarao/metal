@@ -1,4 +1,4 @@
-import br.dev.pedrolamarao.gradle.metal.base.MetalCapability
+import br.dev.pedrolamarao.gradle.metal.MetalCapability
 
 plugins {
     id("metal-test")
