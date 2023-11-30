@@ -1,5 +1,5 @@
 plugins {
-    id("br.dev.pedrolamarao.metal.archive")
+    id("br.dev.pedrolamarao.metal.library")
     id("br.dev.pedrolamarao.metal.cxx")
 }
 
@@ -9,6 +9,6 @@ dependencies {
     api(project(":multiboot2:start"))
 }
 
-metal {
+library {
     compileOptions = listOf("-std=c++20", "-flto", "-fasm-blocks", "-gdwarf")
 }
