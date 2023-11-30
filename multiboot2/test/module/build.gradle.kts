@@ -14,4 +14,5 @@ val options = listOf(
 application {
     compileOptions = options
     linkOptions = options
+    targets = listOf("x86_64-elf","i686-elf")
 }
