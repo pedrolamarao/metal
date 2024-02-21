@@ -12,3 +12,7 @@ dependencies {
 library {
     compileOptions = listOf("-fasm-blocks","-g","-std=c++20")
 }
+
+test {
+    targets = listOf(metal.host.get())
+}
