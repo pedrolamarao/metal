@@ -1,5 +1,4 @@
-import br.dev.pedrolamarao.gradle.metal.base.MetalExtension
-import br.dev.pedrolamarao.gradle.metal.base.MetalSourceTask
+import br.dev.pedrolamarao.gradle.metal.MetalApplication
 
 plugins {
     id("metal-test") apply(false)
@@ -19,11 +18,11 @@ subprojects {
         add("implementation",project(":x86"))
     }
 
-    val metal: MetalExtension by extensions
-    metal.compileOptions = listOf(
+    val application: MetalApplication by extensions
+    application.compileOptions = listOf(
         "-std=c++20", "-flto", "-fasm-blocks", "-gdwarf",
         "-mno-red-zone", "-mno-mmx", "-mno-sse", "-mno-sse2"
     )
-    metal.linkOptions = listOf("-gdwarf","-nostdlib","-static","-Wl,--script=${x86_32_elf_multiboot2_ld}")
-    metal.targets = listOf("x86_64-elf","i686-elf")
+    application.linkOptions = listOf("-gdwarf","-nostdlib","-static","-Wl,--script=${x86_32_elf_multiboot2_ld}")
+    application.targets = listOf("x86_64-elf","i686-elf")
 }

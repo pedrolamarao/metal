@@ -1,4 +1,4 @@
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+//enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 pluginManagement {
     includeBuild("gradle/plugins")
@@ -13,7 +13,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("br.dev.pedrolamarao.metal.")) {
-                useModule("br.dev.pedrolamarao.gradle.metal:plugins:0.4")
+                useModule("br.dev.pedrolamarao.gradle.metal:plugins:0.5")
             }
         }
     }

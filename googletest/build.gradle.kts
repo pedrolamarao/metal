@@ -8,9 +8,6 @@ plugins {
 val source = layout.projectDirectory.dir("src")
 val build = layout.buildDirectory.dir("release").get()
 
-val metalPath = providers.gradleProperty("metal.path")
-    .orElse(providers.environmentVariable("PATH"))
-
 val cmake = metal.locateTool("cmake")
 
 val clone = tasks.register("clone") {
@@ -30,7 +27,7 @@ val configure = tasks.register<Exec>("configure") {
     dependsOn(clone)
     inputs.dir(source)
     outputs.file(build.file("CMakeCache.txt"))
-    environment("PATH" to metalPath.get())
+    environment("PATH" to metal.path.get())
     executable(cmake.get())
     args(
         "-B",build,
@@ -43,14 +40,12 @@ val configure = tasks.register<Exec>("configure") {
 
 val make = tasks.register<Exec>("make") {
     dependsOn(configure)
-    environment("PATH" to metalPath.get())
+    environment("PATH" to metal.path.get())
     executable(cmake.get())
     args("--build",build)
 }
 
-metal {
-    prebuilt {
-        includable( source.dir("googletest/include") ) { builtBy(clone) }
-        linkable( metal.archiveFileName("gtest").map { build.file("lib/${it}") } ) { builtBy(make) }
-    }
+prebuilt {
+    includable( source.dir("googletest/include") ) { builtBy(clone) }
+    linkable( metal.archiveFileName("gtest").map { build.file("lib/${it}") } ) { builtBy(make) }
 }

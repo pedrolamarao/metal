@@ -1,5 +1,5 @@
 plugins {
-    id("br.dev.pedrolamarao.metal.commands")
+    id("br.dev.pedrolamarao.metal.base")
 }
 
 allprojects {
@@ -18,5 +18,5 @@ dependencies {
 }
 
 tasks.wrapper.configure {
-    gradleVersion = "8.4"
+    gradleVersion = "8.6"
 }
