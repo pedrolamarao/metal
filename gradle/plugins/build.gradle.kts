@@ -6,7 +6,7 @@ group = "br.dev.pedrolamarao.metal.plugins"
 
 val elf = "1.0.0-SNAPSHOT"
 val gdb = "1.0.0-SNAPSHOT"
-val metal = "0.5+"
+val metal = "0.5"
 
 kotlin.jvmToolchain {
     languageVersion.set(JavaLanguageVersion.of(17))

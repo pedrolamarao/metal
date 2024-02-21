@@ -1,5 +1,5 @@
 plugins {
-    id("br.dev.pedrolamarao.metal.commands")
+    id("br.dev.pedrolamarao.metal.base")
 }
 
 allprojects {
