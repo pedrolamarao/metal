@@ -1,4 +1,4 @@
-enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
+//enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 pluginManagement {
     includeBuild("gradle/plugins")
