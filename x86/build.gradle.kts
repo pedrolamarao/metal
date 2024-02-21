@@ -14,10 +14,10 @@ library {
     compileOptions = listOf("-fasm-blocks","-g","-std=c++20","-Wno-unused-command-line-argument")
 
     when (metal.target.get()) {
-        "i686-elf" -> include("x86_32/*")
+        "i686-elf" -> include("x86_32/*","*")
         "x86_64-elf",
         "x86_64-pc-linux-gnu",
-        "x86_64-pc-windows-msvc" -> include("x86_64/*")
+        "x86_64-pc-windows-msvc" -> include("x86_64/*","*")
     }
 }
 
