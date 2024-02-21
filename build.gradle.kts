@@ -18,5 +18,5 @@ dependencies {
 }
 
 tasks.wrapper.configure {
-    gradleVersion = "8.5"
+    gradleVersion = "8.6"
 }
