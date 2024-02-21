@@ -32,6 +32,7 @@ val configure = tasks.register<Exec>("configure") {
     args(
         "-B",build,
         "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_TOOLCHAIN_FILE=${projectDir}/llvm.cmake",
         "-G","Ninja",
         "-S",source
     )
