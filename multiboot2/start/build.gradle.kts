@@ -14,11 +14,7 @@ dependencies {
 library {
     compileOptions = listOf("-fasm-blocks","-g","-std=c++20")
     targets = setOf("i686-elf","x86_64-elf")
-}
 
-// #TODO: Gradle Metal DSL does not allow filtering
-
-tasks.compileCxx.configure {
     when (metal.target.get()) {
         "i686-elf" -> include("x86_32-elf/*")
         "x86_64-elf" -> include("x86_64-elf/*")
